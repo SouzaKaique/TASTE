@@ -1,0 +1,52 @@
+<div class="app-shell">
+  <aside class="app-shell__sidebar">
+    <div class="app-shell__brand">
+      <app-logo [showTagline]="true" tone="light"></app-logo>
+    </div>
+
+    <nav class="app-shell__nav" aria-label="Navegação principal">
+      @for (item of navItems; track item.route) {
+        <a
+          [routerLink]="item.route"
+          routerLinkActive="is-active"
+          [routerLinkActiveOptions]="{ exact: false }"
+          class="app-shell__nav-link"
+        >
+          <i class="bi" [class]="item.icon"></i>
+          <span>{{ item.label }}</span>
+        </a>
+      }
+    </nav>
+
+    <a class="btn btn-primary app-shell__cta" routerLink="/app/experiencias/nova">
+      <i class="bi bi-plus-lg"></i> Registrar experiência
+    </a>
+
+    <div class="app-shell__footer">
+      <a class="app-shell__profile" routerLink="/app/perfil">
+        <app-avatar [src]="auth.user()?.avatarUrl ?? null" [name]="auth.user()?.displayName ?? ''" size="sm"></app-avatar>
+        <div>
+          <p class="app-shell__profile-name">{{ auth.user()?.displayName }}</p>
+          <p class="app-shell__profile-username">&#64;{{ auth.user()?.username }}</p>
+        </div>
+      </a>
+      <button type="button" class="app-shell__logout" (click)="logout()" aria-label="Sair da conta">
+        <i class="bi bi-box-arrow-right"></i>
+      </button>
+    </div>
+  </aside>
+
+  <header class="app-shell__mobile-header">
+    <app-logo variant="mark"></app-logo>
+    <span class="app-shell__mobile-title">TASTE</span>
+    <a routerLink="/app/perfil" class="app-shell__mobile-avatar">
+      <app-avatar [src]="auth.user()?.avatarUrl ?? null" [name]="auth.user()?.displayName ?? ''" size="sm"></app-avatar>
+    </a>
+  </header>
+
+  <main class="app-shell__content">
+    <router-outlet></router-outlet>
+  </main>
+
+  <app-bottom-nav></app-bottom-nav>
+</div>

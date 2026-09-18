@@ -1,0 +1,17 @@
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: var(--fs-small);
+  color: var(--color-text-on-bg);
+  margin-bottom: var(--space-4);
+  &:hover { color: var(--color-eyebrow-on-bg); }
+}
+
+.page-header { margin-bottom: var(--space-5); }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--space-4);
+}

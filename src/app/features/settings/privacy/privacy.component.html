@@ -1,0 +1,46 @@
+<div class="container-narrow section-spacing">
+  <header class="page-header">
+    <p class="eyebrow">Sua conta</p>
+    <h1>Privacidade</h1>
+  </header>
+
+  <nav class="settings-nav">
+    <a routerLink="/app/configuracoes">Perfil</a>
+    <a class="is-active">Privacidade</a>
+  </nav>
+
+  <div class="surface-card settings-form">
+    <h2 class="h3">Visibilidade do perfil</h2>
+    <div class="privacy-options">
+      <label class="privacy-option">
+        <input type="radio" name="visibility" [checked]="visibility() === 'public'" (change)="setVisibility('public')" />
+        <div>
+          <strong>Perfil público</strong>
+          <p>Qualquer pessoa pode ver seu perfil e suas experiências públicas.</p>
+        </div>
+      </label>
+      <label class="privacy-option">
+        <input type="radio" name="visibility" [checked]="visibility() === 'private'" (change)="setVisibility('private')" />
+        <div>
+          <strong>Perfil privado</strong>
+          <p>Somente amigos aprovados podem ver seu perfil e suas experiências.</p>
+        </div>
+      </label>
+    </div>
+
+    <hr class="divider-soft my-4" />
+
+    <h2 class="h3">Registros e interações</h2>
+    <div class="form-check form-switch mb-2">
+      <input class="form-check-input" type="checkbox" role="switch" [checked]="allowComments()" (change)="allowComments.set(!allowComments())" />
+      <label class="form-check-label">Permitir comentários nas minhas publicações</label>
+    </div>
+
+    <hr class="divider-soft my-4" />
+
+    <h2 class="h3">Usuários bloqueados</h2>
+    @if (!blockedUsers().length) {
+      <p class="text-secondary-taste">Você não bloqueou nenhum usuário.</p>
+    }
+  </div>
+</div>

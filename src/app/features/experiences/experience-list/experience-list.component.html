@@ -1,0 +1,124 @@
+<div class="container-editorial section-spacing">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Diário gastronômico</p>
+      <h1>Minhas experiências</h1>
+    </div>
+    <a routerLink="/app/experiencias/nova" class="btn btn-primary">
+      <i class="bi bi-plus-lg"></i> Registrar experiência
+    </a>
+  </header>
+
+  <div class="filters-bar surface-card">
+    <select class="form-select form-select-sm" [ngModel]="filters().year" (ngModelChange)="updateFilter('year', $event)">
+      <option value="">Ano</option>
+      @for (year of years(); track year) {
+        <option [value]="year">{{ year }}</option>
+      }
+    </select>
+
+    <select class="form-select form-select-sm" [ngModel]="filters().city" (ngModelChange)="updateFilter('city', $event)">
+      <option value="">Cidade</option>
+      @for (city of cities(); track city) {
+        <option [value]="city">{{ city }}</option>
+      }
+    </select>
+
+    <select class="form-select form-select-sm" [ngModel]="filters().category" (ngModelChange)="updateFilter('category', $event)">
+      <option value="">Categoria</option>
+      @for (cat of categories; track cat[0]) {
+        <option [value]="cat[0]">{{ cat[1] }}</option>
+      }
+    </select>
+
+    <select class="form-select form-select-sm" [ngModel]="filters().cuisineType" (ngModelChange)="updateFilter('cuisineType', $event)">
+      <option value="">Culinária</option>
+      @for (cuisine of cuisineTypes; track cuisine) {
+        <option [value]="cuisine">{{ cuisine }}</option>
+      }
+    </select>
+
+    <div class="form-check filters-bar__favorite">
+      <input
+        id="favoritesOnly"
+        type="checkbox"
+        class="form-check-input"
+        [ngModel]="filters().favoritesOnly"
+        (ngModelChange)="updateFilter('favoritesOnly', $event)"
+      />
+      <label for="favoritesOnly" class="form-check-label">Somente favoritos</label>
+    </div>
+
+    <button type="button" class="btn btn-ghost btn-sm ms-auto" (click)="clearFilters()">Limpar filtros</button>
+
+    <div class="view-toggle" role="group" aria-label="Modo de visualização">
+      <button type="button" [class.is-active]="viewMode() === 'grid'" (click)="viewMode.set('grid')" aria-label="Grade">
+        <i class="bi bi-grid-3x3-gap"></i>
+      </button>
+      <button type="button" [class.is-active]="viewMode() === 'list'" (click)="viewMode.set('list')" aria-label="Lista">
+        <i class="bi bi-list-ul"></i>
+      </button>
+      <button type="button" [class.is-active]="viewMode() === 'timeline'" (click)="viewMode.set('timeline')" aria-label="Linha do tempo">
+        <i class="bi bi-clock-history"></i>
+      </button>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <app-loading-state [count]="6"></app-loading-state>
+  } @else if (!filteredExperiences().length) {
+    <app-empty-state
+      icon="bi-journal-x"
+      title="Nenhuma experiência encontrada"
+      description="Tente ajustar os filtros ou registre uma nova experiência gastronômica."
+    >
+      <a routerLink="/app/experiencias/nova" class="btn btn-primary mt-3">Registrar experiência</a>
+    </app-empty-state>
+  } @else if (viewMode() === 'grid') {
+    <div class="experience-grid">
+      @for (exp of filteredExperiences(); track exp.id) {
+        <app-experience-card [experience]="exp" (toggleFavorite)="onToggleFavorite($event)"></app-experience-card>
+      }
+    </div>
+  } @else if (viewMode() === 'list') {
+    <div class="experience-table surface-card">
+      @for (exp of filteredExperiences(); track exp.id) {
+        <div class="experience-row">
+          <a [routerLink]="['/app/experiencias', exp.id]" class="experience-row__main">
+            @if (exp.photos[0]) {
+              <img [src]="exp.photos[0].url" [alt]="exp.dishName" />
+            }
+            <div>
+              <p class="experience-row__title">{{ exp.dishName }}</p>
+              <p class="experience-row__meta">{{ exp.restaurantName }} · {{ exp.city }}</p>
+            </div>
+          </a>
+          <app-star-rating [readonly]="true" size="sm" [rating]="exp.rating"></app-star-rating>
+          <span class="experience-row__date">{{ exp.date | date: 'd MMM y' }}</span>
+          <div class="experience-row__actions">
+            <a class="btn btn-ghost btn-sm" [routerLink]="['/app/experiencias', exp.id, 'editar']" aria-label="Editar">
+              <i class="bi bi-pencil"></i>
+            </a>
+            <button type="button" class="btn btn-ghost btn-sm" (click)="onDelete(exp)" aria-label="Excluir">
+              <i class="bi bi-trash"></i>
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="timeline">
+      @for (exp of filteredExperiences(); track exp.id) {
+        <div class="timeline__item">
+          <div class="timeline__marker"></div>
+          <div class="timeline__content surface-card">
+            <p class="timeline__date">{{ exp.date | date: 'd MMMM y' }}</p>
+            <a [routerLink]="['/app/experiencias', exp.id]" class="timeline__title">{{ exp.dishName }}</a>
+            <p class="timeline__meta">{{ exp.restaurantName }} · {{ exp.city }}</p>
+            <app-star-rating [readonly]="true" size="sm" [rating]="exp.rating"></app-star-rating>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

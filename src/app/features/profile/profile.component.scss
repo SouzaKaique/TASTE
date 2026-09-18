@@ -1,0 +1,60 @@
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  margin-bottom: var(--space-6);
+  flex-wrap: wrap;
+
+  &__info { flex: 1; min-width: 200px; }
+  &__username { color: var(--color-text-on-bg); margin: 0 0 var(--space-2); }
+
+  h1 { margin: 0; color: var(--color-heading-on-bg); }
+  .lede { color: var(--color-text-on-bg); }
+}
+
+.profile-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: var(--space-3);
+  margin-bottom: var(--space-7);
+  text-align: center;
+}
+
+.profile-stat {
+  padding: var(--space-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+
+  strong { display: block; font-family: var(--font-serif); font-size: 1.5rem; color: var(--color-brand); }
+  span { font-size: var(--fs-caption); color: var(--color-text-secondary); text-transform: uppercase; }
+}
+
+.profile-section {
+  margin-bottom: var(--space-7);
+  h2 { color: var(--color-heading-on-bg); }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--space-4);
+}
+
+.collections-row {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.collection-chip {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  color: var(--color-text-primary);
+  font-size: var(--fs-small);
+  font-weight: 600;
+
+  &:hover { color: var(--color-brand); }
+}

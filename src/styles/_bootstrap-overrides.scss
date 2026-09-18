@@ -1,0 +1,151 @@
+// =============================================================
+// Sobrescreve os componentes Bootstrap que usamos com a
+// identidade visual do TASTE — sem depender de gradientes ou
+// cores saturadas.
+// =============================================================
+
+.btn {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: var(--fs-small);
+  padding: 0.65rem 1.4rem;
+  border-radius: var(--radius-pill);
+  transition: transform var(--dur-fast) var(--ease-standard),
+              box-shadow var(--dur-fast) var(--ease-standard),
+              background-color var(--dur-fast) var(--ease-standard);
+  letter-spacing: 0.01em;
+
+  &:active { transform: scale(0.98); }
+}
+
+.btn-primary {
+  background-color: var(--color-brand);
+  border-color: var(--color-brand);
+  color: var(--color-text-inverse);
+
+  &:hover, &:focus {
+    background-color: var(--color-brand-strong);
+    border-color: var(--color-brand-strong);
+    color: var(--color-text-inverse);
+    box-shadow: var(--shadow-md);
+  }
+
+  &:disabled {
+    background-color: var(--taste-ink-300);
+    border-color: var(--taste-ink-300);
+  }
+}
+
+.btn-outline-primary {
+  color: var(--color-brand);
+  border-color: var(--color-brand);
+
+  &:hover, &:focus {
+    background-color: var(--color-brand);
+    border-color: var(--color-brand);
+    color: var(--color-text-inverse);
+  }
+}
+
+.btn-ghost {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--color-text-secondary);
+
+  &:hover { color: var(--color-brand); background: var(--color-brand-soft); }
+}
+
+.btn-loading {
+  position: relative;
+  color: transparent !important;
+  pointer-events: none;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    color: var(--color-text-inverse);
+    animation: taste-spin 0.7s linear infinite;
+  }
+}
+
+@keyframes taste-spin {
+  to { transform: rotate(360deg); }
+}
+
+.form-control, .form-select {
+  border-radius: var(--radius-md);
+  border-color: var(--color-border-strong);
+  background-color: var(--color-surface);
+  color: var(--color-text-primary);
+  padding: 0.65rem 0.9rem;
+  font-size: var(--fs-body);
+
+  &:focus {
+    border-color: var(--taste-wine-500);
+    box-shadow: 0 0 0 0.2rem rgba(138, 64, 81, 0.15);
+  }
+
+  &::placeholder { color: var(--taste-ink-300); }
+}
+
+.form-label {
+  font-weight: 600;
+  font-size: var(--fs-small);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-2);
+}
+
+.invalid-feedback {
+  font-size: var(--fs-caption);
+}
+
+.card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.modal-content {
+  background-color: var(--color-surface);
+  border-radius: var(--radius-lg);
+  border: none;
+  box-shadow: var(--shadow-lg);
+}
+
+.badge-taste {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.3rem 0.7rem;
+  border-radius: var(--radius-pill);
+  background-color: var(--color-brand-soft);
+  color: var(--color-brand-strong);
+  font-size: var(--fs-caption);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.dropdown-menu {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-md);
+}
+
+.nav-link {
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+.toast {
+  border-radius: var(--radius-md);
+  border: none;
+  box-shadow: var(--shadow-lg);
+}

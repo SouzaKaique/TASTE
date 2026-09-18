@@ -1,0 +1,36 @@
+<div class="user-card surface-card">
+  <a class="user-card__identity" [routerLink]="['/app/perfil', user().username]">
+    <app-avatar [src]="user().avatarUrl" [name]="user().displayName" size="md"></app-avatar>
+    <div>
+      <p class="user-card__name">{{ user().displayName }}</p>
+      <p class="user-card__username">&#64;{{ user().username }}</p>
+    </div>
+  </a>
+
+  <div class="user-card__action">
+    @switch (user().friendshipStatus) {
+      @case ('none') {
+        <button type="button" class="btn btn-outline-primary btn-sm" (click)="sendRequest.emit(user().id)">
+          Adicionar
+        </button>
+      }
+      @case ('pending-sent') {
+        <span class="badge-taste">Solicitação enviada</span>
+      }
+      @case ('pending-received') {
+        <div class="d-flex gap-2">
+          <button type="button" class="btn btn-primary btn-sm" (click)="acceptRequest.emit(user().id)">Aceitar</button>
+          <button type="button" class="btn btn-ghost btn-sm" (click)="declineRequest.emit(user().id)">Recusar</button>
+        </div>
+      }
+      @case ('friends') {
+        <button type="button" class="btn btn-ghost btn-sm" (click)="removeFriend.emit(user().id)">
+          <i class="bi bi-person-check"></i> Amigos
+        </button>
+      }
+      @case ('blocked') {
+        <span class="badge-taste">Bloqueado</span>
+      }
+    }
+  </div>
+</div>

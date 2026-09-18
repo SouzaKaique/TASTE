@@ -1,0 +1,64 @@
+<div class="container-editorial section-spacing">
+  @if (loading()) {
+    <app-loading-state [count]="1"></app-loading-state>
+  } @else if (notFound()) {
+    <app-error-state title="Restaurante não encontrado" [retryable]="false"></app-error-state>
+  } @else {
+    @if (restaurant(); as r) {
+      <a routerLink="/app/restaurantes" class="back-link"><i class="bi bi-arrow-left"></i> Voltar à busca</a>
+
+      <div class="rest-hero">
+        @if (r.imageUrl) {
+          <img [src]="r.imageUrl" [alt]="r.name" class="rest-hero__image" />
+        }
+        <div class="rest-hero__overlay">
+          <p class="eyebrow" style="color: var(--taste-gold-500)">{{ r.cuisineTypes.join(' · ') || 'Restaurante' }}</p>
+          <h1 class="display-title" style="color: var(--taste-beige-100)">{{ r.name }}</h1>
+          <p><i class="bi bi-geo-alt"></i> {{ r.city }}, {{ r.country }}</p>
+        </div>
+      </div>
+
+      @if (r.description) {
+        <p class="lede rest-description">{{ r.description }}</p>
+      }
+
+      @if (r.address) {
+        <p class="text-secondary-taste"><i class="bi bi-signpost"></i> {{ r.address }}</p>
+      }
+
+      <div class="rest-cta">
+        <a class="btn btn-primary" routerLink="/app/experiencias/nova">
+          <i class="bi bi-plus-lg"></i> Registrar experiência aqui
+        </a>
+      </div>
+
+      <section class="section-spacing">
+        <h2>Minhas experiências neste lugar</h2>
+        @if (myExperiences().length) {
+          <div class="rest-grid">
+            @for (exp of myExperiences(); track exp.id) {
+              <app-experience-card [experience]="exp" [compact]="true"></app-experience-card>
+            }
+          </div>
+        } @else {
+          <app-empty-state
+            icon="bi-journal"
+            title="Você ainda não registrou nada aqui"
+            description="Registre sua primeira experiência neste restaurante."
+          ></app-empty-state>
+        }
+      </section>
+
+      @if (favoriteDishes().length) {
+        <section>
+          <h2>Pratos favoritos</h2>
+          <div class="rest-grid">
+            @for (exp of favoriteDishes(); track exp.id) {
+              <app-experience-card [experience]="exp" [compact]="true"></app-experience-card>
+            }
+          </div>
+        </section>
+      }
+    }
+  }
+</div>

@@ -1,0 +1,29 @@
+// Sobrescreve as variáveis Sass do Bootstrap ANTES do import,
+// alinhando a paleta padrão (cores de sistema, links, foco) à
+// identidade TASTE. Os componentes finos são ajustados depois
+// em _bootstrap-overrides.scss usando os design tokens (CSS vars).
+
+$primary: #521c2c;
+$secondary: #776f74;
+$success: #4c7a5e;
+$danger: #a13d3d;
+$warning: #b8925a;
+$info: #6c2b3c;
+$light: #f8f6f1;
+$dark: #242124;
+
+$body-bg: #f8f6f1;
+$body-color: #242124;
+
+$font-family-sans-serif: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+$font-family-base: $font-family-sans-serif;
+
+$link-color: $primary;
+$link-hover-color: darken($primary, 8%);
+
+$border-radius: 10px;
+$border-radius-sm: 6px;
+$border-radius-lg: 16px;
+$border-radius-pill: 999px;
+
+$enable-negative-margins: true;

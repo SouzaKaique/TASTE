@@ -1,0 +1,40 @@
+.confirm-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(36, 21, 25, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1090;
+  padding: var(--space-4);
+  animation: taste-fade-in var(--dur-fast) var(--ease-standard);
+}
+
+.confirm-dialog {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-6);
+  max-width: 400px;
+  width: 100%;
+
+  h3 { margin-bottom: var(--space-2); }
+  p { color: var(--color-text-secondary); margin-bottom: var(--space-5); }
+
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-3);
+  }
+}
+
+.btn-danger {
+  background-color: var(--taste-danger);
+  border-color: var(--taste-danger);
+  color: #fff;
+}
+
+@keyframes taste-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

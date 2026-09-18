@@ -1,0 +1,68 @@
+<header class="landing-nav">
+  <div class="container-editorial landing-nav__inner">
+    <app-logo [showTagline]="true" tone="light"></app-logo>
+    <div class="landing-nav__actions">
+      <a routerLink="/entrar" class="btn btn-ghost">Entrar</a>
+      <a routerLink="/cadastro" class="btn btn-primary">Criar conta</a>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container-editorial hero__grid">
+    <div class="hero__text">
+      <p class="eyebrow">Seu diário gastronômico pessoal</p>
+      <h1 class="display-title">Boa comida, boas memórias.</h1>
+      <p class="lede">
+        Registre cada prato, avalie experiências e descubra, no fim do ano, quais foram os três sabores que mais marcaram sua jornada.
+      </p>
+      <div class="hero__cta">
+        <a routerLink="/cadastro" class="btn btn-primary btn-lg">Começar gratuitamente</a>
+        <a routerLink="/entrar" class="btn btn-ghost btn-lg">Já tenho conta</a>
+      </div>
+    </div>
+    <div class="hero__media">
+      <img src="https://picsum.photos/seed/taste-hero/700/860" alt="Prato gastronômico em destaque" />
+    </div>
+  </div>
+</section>
+
+<section class="container-editorial section-spacing">
+  <div class="section-heading">
+    <p class="eyebrow">Tudo em um só lugar</p>
+    <h2>Uma plataforma para viver e reviver a gastronomia</h2>
+  </div>
+
+  <div class="feature-grid">
+    @for (feature of features; track feature.title) {
+      <div class="feature-card surface-card">
+        <i class="bi" [class]="feature.icon"></i>
+        <h3>{{ feature.title }}</h3>
+        <p>{{ feature.description }}</p>
+      </div>
+    }
+  </div>
+</section>
+
+<section class="retro-teaser">
+  <div class="container-editorial retro-teaser__grid">
+    <div>
+      <p class="eyebrow" style="color: var(--taste-gold-500)">O grande diferencial</p>
+      <h2 style="color: var(--taste-beige-100)">Sua retrospectiva gastronômica anual</h2>
+      <p style="color: var(--taste-beige-500)" class="lede">
+        Ao final de cada ano, descubra automaticamente o Top 3 das suas melhores experiências — e escolha manualmente os destaques que mais importaram para você.
+      </p>
+      <a routerLink="/cadastro" class="btn btn-outline-primary" style="border-color: var(--taste-beige-100); color: var(--taste-beige-100)">
+        Criar minha retrospectiva
+      </a>
+    </div>
+    <img src="https://picsum.photos/seed/taste-retro-teaser/640/500" alt="" class="retro-teaser__image" />
+  </div>
+</section>
+
+<footer class="landing-footer">
+  <div class="container-editorial landing-footer__inner">
+    <app-logo variant="mark"></app-logo>
+    <p>&copy; 2026 TASTE. Um projeto pessoal de curadoria gastronômica.</p>
+  </div>
+</footer>

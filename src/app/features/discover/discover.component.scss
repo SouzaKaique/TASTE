@@ -1,0 +1,47 @@
+.page-header { margin-bottom: var(--space-6); max-width: 640px; }
+
+.discover-section {
+  margin-bottom: var(--space-7);
+
+  &__header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: var(--space-4);
+
+    h2 { color: var(--color-heading-on-bg); }
+    a { color: var(--color-text-on-bg); }
+    a:hover { color: var(--color-eyebrow-on-bg); }
+  }
+}
+
+.discover-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--space-4);
+}
+
+.discover-activity {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--space-3);
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3);
+
+    img { width: 56px; height: 56px; border-radius: var(--radius-md); object-fit: cover; }
+  }
+
+  &__name { margin: 0; font-weight: 600; font-size: var(--fs-small); }
+  &__dish { margin: 0; font-size: var(--fs-caption); color: var(--color-text-secondary); }
+}
+
+.discover-note {
+  font-size: var(--fs-caption);
+  color: var(--color-text-on-bg);
+  opacity: 0.7;
+  text-align: center;
+}

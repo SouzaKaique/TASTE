@@ -1,0 +1,49 @@
+<a
+  class="exp-card surface-card surface-card--hover"
+  [class.exp-card--compact]="compact()"
+  [routerLink]="['/app/experiencias', experience().id]"
+>
+  <div class="exp-card__media">
+    @if (experience().photos[0]) {
+      <img [src]="experience().photos[0].url" [alt]="experience().dishName" loading="lazy" />
+    } @else {
+      <div class="exp-card__media-placeholder"><i class="bi bi-camera"></i></div>
+    }
+
+    <button
+      type="button"
+      class="exp-card__favorite"
+      [class.is-active]="experience().isFavorite"
+      (click)="onFavoriteClick($event)"
+      [attr.aria-pressed]="experience().isFavorite"
+      aria-label="Favoritar experiência"
+    >
+      <i class="bi" [class.bi-heart-fill]="experience().isFavorite" [class.bi-heart]="!experience().isFavorite"></i>
+    </button>
+
+    <span class="badge-taste exp-card__category">{{ categoryLabels[experience().category] }}</span>
+  </div>
+
+  <div class="exp-card__body">
+    <div class="exp-card__header">
+      <h3 class="exp-card__title">{{ experience().dishName }}</h3>
+      <app-star-rating [readonly]="true" size="sm" [rating]="experience().rating"></app-star-rating>
+    </div>
+
+    <p class="exp-card__meta">
+      <i class="bi bi-shop"></i> {{ experience().restaurantName }}
+      <span class="exp-card__dot">·</span>
+      <i class="bi bi-geo-alt"></i> {{ experience().city }}
+    </p>
+
+    <p class="exp-card__date">{{ experience().date | date: 'd MMM y' }}</p>
+
+    @if (!compact() && experience().tags.length) {
+      <div class="exp-card__tags">
+        @for (tag of experience().tags.slice(0, 3); track tag) {
+          <app-tag [label]="tag"></app-tag>
+        }
+      </div>
+    }
+  </div>
+</a>

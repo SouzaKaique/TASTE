@@ -1,0 +1,89 @@
+<article class="feed-item surface-card">
+  <header class="feed-item__header">
+    <a [routerLink]="['/app/perfil', item().user.username]" class="feed-item__author">
+      <app-avatar [src]="item().user.avatarUrl" [name]="item().user.displayName" size="sm"></app-avatar>
+      <div>
+        <p class="feed-item__name">
+          {{ item().user.displayName }} <span class="feed-item__activity">{{ activityLabel() }}</span>
+        </p>
+        <p class="feed-item__time">{{ item().createdAt | date: 'd MMM, HH:mm' }}</p>
+      </div>
+    </a>
+  </header>
+
+  @if (item().text) {
+    <p class="feed-item__text">{{ item().text }}</p>
+  }
+
+  @if (item().dishName) {
+    <div class="feed-item__dish">
+      <strong>{{ item().dishName }}</strong>
+      @if (item().restaurantName) {
+        <span> · {{ item().restaurantName }}</span>
+      }
+      @if (item().city) {
+        <span> · {{ item().city }}</span>
+      }
+      @if (item().rating) {
+        <app-star-rating [readonly]="true" size="sm" [rating]="item().rating ?? 0"></app-star-rating>
+      }
+    </div>
+  }
+
+  @if (item().collectionName) {
+    <p class="feed-item__collection"><i class="bi bi-collection"></i> {{ item().collectionName }}</p>
+  }
+
+  @if (item().photoUrl) {
+    <div class="feed-item__media">
+      <img [src]="item().photoUrl" [alt]="item().dishName ?? 'Publicação'" loading="lazy" />
+    </div>
+  }
+
+  <footer class="feed-item__footer">
+    <button
+      type="button"
+      class="feed-item__action"
+      [class.is-active]="item().likedByMe"
+      (click)="toggleLike.emit(item().id)"
+    >
+      <i class="bi" [class.bi-heart-fill]="item().likedByMe" [class.bi-heart]="!item().likedByMe"></i>
+      {{ item().likesCount }}
+    </button>
+    <button type="button" class="feed-item__action" (click)="showComments.set(!showComments())">
+      <i class="bi bi-chat"></i> {{ item().comments.length }}
+    </button>
+  </footer>
+
+  @if (showComments()) {
+    <div class="feed-item__comments">
+      @for (comment of item().comments; track comment.id) {
+        <div class="feed-item__comment">
+          <app-avatar [src]="comment.userAvatarUrl" [name]="comment.userDisplayName" size="xs"></app-avatar>
+          <p><strong>{{ comment.userDisplayName }}</strong> {{ comment.text }}</p>
+          @if (comment.userId === 'u1') {
+            <button
+              type="button"
+              class="feed-item__comment-remove"
+              (click)="removeComment.emit({ feedItemId: item().id, commentId: comment.id })"
+              aria-label="Excluir comentário"
+            >
+              <i class="bi bi-x"></i>
+            </button>
+          }
+        </div>
+      }
+
+      <form class="feed-item__comment-form" (ngSubmit)="submitComment()">
+        <input
+          type="text"
+          class="form-control form-control-sm"
+          placeholder="Escreva um comentário..."
+          [(ngModel)]="commentDraft"
+          name="commentDraft"
+        />
+        <button type="submit" class="btn btn-primary btn-sm" [disabled]="!commentDraft.trim()">Enviar</button>
+      </form>
+    </div>
+  }
+</article>

@@ -1,0 +1,85 @@
+<div class="container-editorial section-spacing">
+  <header class="page-header">
+    <p class="eyebrow">Organização pessoal</p>
+    <h1>Favoritos e coleções</h1>
+  </header>
+
+  <div class="tabs">
+    <button type="button" [class.is-active]="activeTab() === 'favorites'" (click)="activeTab.set('favorites')">
+      <i class="bi bi-heart"></i> Favoritos
+    </button>
+    <button type="button" [class.is-active]="activeTab() === 'collections'" (click)="activeTab.set('collections')">
+      <i class="bi bi-collection"></i> Coleções
+    </button>
+  </div>
+
+  @if (activeTab() === 'favorites') {
+    @if (loading()) {
+      <app-loading-state [count]="4"></app-loading-state>
+    } @else if (!favorites().length) {
+      <app-empty-state
+        icon="bi-heart"
+        title="Nenhum favorito ainda"
+        description="Favorite pratos e experiências para encontrá-los rapidamente aqui."
+      ></app-empty-state>
+    } @else {
+      <div class="grid">
+        @for (exp of favorites(); track exp.id) {
+          <app-experience-card [experience]="exp" (toggleFavorite)="onToggleFavorite($event)"></app-experience-card>
+        }
+      </div>
+    }
+  } @else {
+    <div class="collections-header">
+      <button type="button" class="btn btn-outline-primary btn-sm" (click)="showNewCollectionForm.set(!showNewCollectionForm())">
+        <i class="bi bi-plus-lg"></i> Nova coleção
+      </button>
+    </div>
+
+    @if (showNewCollectionForm()) {
+      <form [formGroup]="newCollectionForm" (ngSubmit)="createCollection()" class="new-collection-form surface-card">
+        <div class="mb-2">
+          <label class="form-label">Nome da coleção</label>
+          <input type="text" class="form-control" formControlName="name" placeholder="ex: Melhores massas" />
+        </div>
+        <div class="mb-2">
+          <label class="form-label">Descrição (opcional)</label>
+          <input type="text" class="form-control" formControlName="description" />
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Privacidade</label>
+          <select class="form-select" formControlName="privacy">
+            <option value="public">Pública</option>
+            <option value="private">Privada</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary btn-sm">Criar coleção</button>
+      </form>
+    }
+
+    @if (!collections().length) {
+      <app-empty-state
+        icon="bi-collection"
+        title="Você ainda não criou nenhuma coleção"
+        description="Organize suas experiências favoritas em coleções temáticas."
+      ></app-empty-state>
+    } @else {
+      <div class="collections-grid">
+        @for (collection of collections(); track collection.id) {
+          <a [routerLink]="['/app/colecoes', collection.id]" class="collection-card surface-card surface-card--hover">
+            @if (collection.coverImageUrl) {
+              <img [src]="collection.coverImageUrl" [alt]="collection.name" />
+            }
+            <div class="collection-card__body">
+              <h3>{{ collection.name }}</h3>
+              <p>{{ collection.experienceIds.length }} item(ns)</p>
+              @if (collection.privacy === 'private') {
+                <span class="badge-taste"><i class="bi bi-lock"></i> Privada</span>
+              }
+            </div>
+          </a>
+        }
+      </div>
+    }
+  }
+</div>

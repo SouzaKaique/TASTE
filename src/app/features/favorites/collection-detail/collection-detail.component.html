@@ -1,0 +1,29 @@
+<div class="container-editorial section-spacing">
+  @if (loading()) {
+    <app-loading-state [count]="4"></app-loading-state>
+  } @else if (notFound()) {
+    <app-error-state title="Coleção não encontrada" [retryable]="false"></app-error-state>
+  } @else {
+    @if (collection(); as col) {
+      <a routerLink="/app/favoritos" class="back-link"><i class="bi bi-arrow-left"></i> Voltar a favoritos</a>
+
+      <header class="page-header">
+        <p class="eyebrow">Coleção {{ col.privacy === 'private' ? '· privada' : '· pública' }}</p>
+        <h1>{{ col.name }}</h1>
+        @if (col.description) {
+          <p class="text-secondary-taste">{{ col.description }}</p>
+        }
+      </header>
+
+      @if (experiences().length) {
+        <div class="grid">
+          @for (exp of experiences(); track exp.id) {
+            <app-experience-card [experience]="exp"></app-experience-card>
+          }
+        </div>
+      } @else {
+        <app-empty-state icon="bi-collection" title="Coleção vazia" description="Adicione experiências a esta coleção pelos detalhes de cada registro."></app-empty-state>
+      }
+    }
+  }
+</div>

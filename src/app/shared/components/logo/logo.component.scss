@@ -1,0 +1,51 @@
+.taste-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  line-height: 1;
+
+  &__mark {
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+  }
+
+  &__badge { fill: var(--taste-wine-900); }
+  &__glyph { fill: var(--taste-beige-100); }
+  &__spark { fill: var(--taste-gold-500); }
+
+  &__text {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__word {
+    font-family: var(--font-serif);
+    font-weight: 600;
+    font-size: 1.4rem;
+    letter-spacing: 0.12em;
+    color: var(--color-brand);
+  }
+
+  &__tagline {
+    font-family: var(--font-sans);
+    font-size: 0.62rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
+  }
+
+  // Tom claro: wordmark para uso sobre fundos escuros (bordô)
+  &--light {
+    .taste-logo__word { color: var(--taste-beige-100); }
+    .taste-logo__tagline { color: var(--taste-beige-500); }
+  }
+
+  &--stacked {
+    flex-direction: column;
+    text-align: center;
+
+    .taste-logo__mark { width: 52px; height: 52px; }
+    .taste-logo__word { font-size: 1.8rem; }
+  }
+}

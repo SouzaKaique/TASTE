@@ -1,0 +1,46 @@
+<div class="auth-page">
+  <div class="auth-page__panel">
+    <app-logo [showTagline]="true"></app-logo>
+
+    <h1 class="auth-page__title">Bem-vinda de volta</h1>
+    <p class="lede">Boa comida, boas memórias.</p>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="auth-page__form" novalidate>
+      @if (errorMessage()) {
+        <div class="alert alert-danger" role="alert">{{ errorMessage() }}</div>
+      }
+
+      <div class="mb-3">
+        <label class="form-label" for="email">E-mail</label>
+        <input id="email" type="email" class="form-control" formControlName="email" autocomplete="email" />
+        @if (form.controls.email.invalid && form.controls.email.touched) {
+          <div class="invalid-feedback d-block">Informe um e-mail válido.</div>
+        }
+      </div>
+
+      <div class="mb-4">
+        <label class="form-label" for="password">Senha</label>
+        <input id="password" type="password" class="form-control" formControlName="password" autocomplete="current-password" />
+        @if (form.controls.password.invalid && form.controls.password.touched) {
+          <div class="invalid-feedback d-block">A senha deve ter ao menos 4 caracteres.</div>
+        }
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100" [class.btn-loading]="loading()" [disabled]="loading()">
+        Entrar
+      </button>
+
+      <button type="button" class="btn btn-ghost w-100 mt-2" (click)="enterAsDemo()">
+        Entrar com conta de demonstração
+      </button>
+    </form>
+
+    <p class="auth-page__switch">
+      Ainda não tem conta? <a routerLink="/cadastro">Criar conta</a>
+    </p>
+  </div>
+
+  <div class="auth-page__cover" role="presentation">
+    <img src="https://picsum.photos/seed/taste-login-cover/900/1200" alt="" />
+  </div>
+</div>

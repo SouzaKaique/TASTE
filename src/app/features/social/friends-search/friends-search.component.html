@@ -1,0 +1,53 @@
+<div class="container-narrow section-spacing">
+  <header class="page-header">
+    <p class="eyebrow">Rede social</p>
+    <h1>Buscar amigos</h1>
+  </header>
+
+  <div class="search-bar surface-card">
+    <i class="bi bi-search"></i>
+    <input
+      type="text"
+      class="form-control"
+      placeholder="Buscar por username ou nome..."
+      [ngModel]="term()"
+      (ngModelChange)="term.set($event); search()"
+    />
+  </div>
+
+  @if (pendingReceived().length) {
+    <section class="section-block">
+      <h2>Solicitações pendentes</h2>
+      <div class="user-list">
+        @for (user of pendingReceived(); track user.id) {
+          <app-user-card
+            [user]="user"
+            (acceptRequest)="acceptRequest($event)"
+            (declineRequest)="declineRequest($event)"
+          ></app-user-card>
+        }
+      </div>
+    </section>
+  }
+
+  <section class="section-block">
+    <h2>Resultados</h2>
+    @if (loading()) {
+      <app-loading-state [count]="4"></app-loading-state>
+    } @else if (!results().length) {
+      <app-empty-state icon="bi-person-x" title="Nenhum usuário encontrado" description="Tente buscar por outro username."></app-empty-state>
+    } @else {
+      <div class="user-list">
+        @for (user of results(); track user.id) {
+          <app-user-card
+            [user]="user"
+            (sendRequest)="sendRequest($event)"
+            (acceptRequest)="acceptRequest($event)"
+            (declineRequest)="declineRequest($event)"
+            (removeFriend)="removeFriend($event)"
+          ></app-user-card>
+        }
+      </div>
+    }
+  </section>
+</div>

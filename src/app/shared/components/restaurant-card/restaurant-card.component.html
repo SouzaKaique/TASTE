@@ -1,0 +1,19 @@
+<a class="rest-card surface-card surface-card--hover" [routerLink]="['/app/restaurantes', restaurant().id]">
+  <div class="rest-card__media">
+    @if (restaurant().imageUrl) {
+      <img [src]="restaurant().imageUrl" [alt]="restaurant().name" loading="lazy" />
+    } @else {
+      <div class="rest-card__placeholder"><i class="bi bi-shop"></i></div>
+    }
+    @if (restaurant().source === 'manual') {
+      <span class="badge-taste rest-card__badge">Cadastro manual</span>
+    }
+  </div>
+  <div class="rest-card__body">
+    <h3>{{ restaurant().name }}</h3>
+    <p class="rest-card__location"><i class="bi bi-geo-alt"></i> {{ restaurant().city }}, {{ restaurant().country }}</p>
+    @if (restaurant().cuisineTypes.length) {
+      <p class="rest-card__cuisine">{{ restaurant().cuisineTypes.join(' · ') }}</p>
+    }
+  </div>
+</a>

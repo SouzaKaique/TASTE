@@ -1,0 +1,165 @@
+.retro-hero {
+  background: radial-gradient(circle at top right, var(--taste-wine-700), var(--taste-wine-900) 70%);
+  padding: var(--space-8) 0 var(--space-6);
+  color: var(--taste-beige-100);
+}
+
+.year-select {
+  margin-top: var(--space-4);
+  background: rgba(248, 246, 241, 0.12);
+  border: 1px solid rgba(248, 246, 241, 0.35);
+  color: var(--taste-beige-100);
+  border-radius: var(--radius-pill);
+  padding: 0.5rem 1.2rem;
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+
+  option { color: var(--taste-ink-900); }
+}
+
+.retro-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+}
+
+.retro-stat {
+  padding: var(--space-4);
+  text-align: center;
+
+  &__value {
+    display: block;
+    font-family: var(--font-serif);
+    font-size: 1.9rem;
+    font-weight: 600;
+    color: var(--color-brand);
+  }
+
+  &__label {
+    font-size: var(--fs-caption);
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+}
+
+.retro-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+
+  &__card { padding: var(--space-4); }
+  &__value { font-family: var(--font-serif); font-size: 1.3rem; margin: 0.2rem 0 0; }
+}
+
+.retro-chart {
+  padding: var(--space-5);
+  margin-bottom: var(--space-7);
+
+  &__bars {
+    display: flex;
+    align-items: flex-end;
+    gap: var(--space-2);
+    height: 160px;
+    margin-top: var(--space-4);
+  }
+
+  &__bar-wrap {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    height: 100%;
+    gap: var(--space-2);
+
+    span { font-size: var(--fs-caption); color: var(--color-text-secondary); }
+  }
+
+  &__bar {
+    width: 100%;
+    max-width: 28px;
+    background: linear-gradient(180deg, var(--taste-gold-500), var(--taste-wine-800));
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    min-height: 4px;
+    transition: height var(--dur-slow) var(--ease-standard);
+  }
+}
+
+.retro-podium {
+  margin-bottom: var(--space-8);
+  text-align: center;
+
+  &__title { margin-bottom: 0.2rem; color: var(--color-heading-on-bg); }
+  &__subtitle { max-width: 46ch; margin: 0 auto var(--space-6); color: var(--color-text-on-bg); }
+}
+
+.podium {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.podium__place {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 220px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  color: inherit;
+  transition: transform var(--dur-medium) var(--ease-standard);
+
+  &:hover { transform: translateY(-4px); color: inherit; }
+
+  img { width: 100%; aspect-ratio: 1; object-fit: cover; }
+
+  .podium__rank {
+    font-family: var(--font-serif);
+    font-size: 1.3rem;
+    font-weight: 700;
+    padding: 0.4rem 0;
+    width: 100%;
+    text-align: center;
+    color: var(--taste-beige-100);
+    background: var(--taste-wine-800);
+  }
+
+  .podium__info { padding: var(--space-3); width: 100%; }
+  .podium__dish { margin: 0; font-weight: 600; }
+  .podium__meta { margin: 0.1rem 0 0.5rem; font-size: var(--fs-caption); color: var(--color-text-secondary); }
+
+  &--1 {
+    width: 260px;
+    order: 2;
+    .podium__rank { background: var(--taste-gold-500); color: var(--taste-ink-900); font-size: 1.6rem; }
+  }
+  &--2 { order: 1; margin-bottom: var(--space-4); }
+  &--3 { order: 3; margin-bottom: var(--space-4); }
+}
+
+.retro-highlights {
+  h2 { margin-bottom: 0.2rem; color: var(--color-heading-on-bg); }
+  p { max-width: 60ch; margin-bottom: var(--space-5); color: var(--color-text-on-bg); }
+}
+
+.highlight-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--space-4);
+}
+
+.highlight-card {
+  padding: var(--space-4);
+
+  &__dish { font-weight: 600; margin: 0.3rem 0 0; }
+  &__meta { font-size: var(--fs-small); color: var(--color-text-secondary); margin: 0 0 0.6rem; }
+  &__actions { display: flex; gap: var(--space-2); }
+}

@@ -1,0 +1,63 @@
+<div class="auth-page">
+  <div class="auth-page__panel">
+    <app-logo [showTagline]="true"></app-logo>
+
+    <h1 class="auth-page__title">Crie seu perfil gastronômico</h1>
+    <p class="lede">Comece a construir seu diário de sabores.</p>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="auth-page__form" novalidate>
+      @if (errorMessage()) {
+        <div class="alert alert-danger" role="alert">{{ errorMessage() }}</div>
+      }
+
+      <div class="mb-3">
+        <label class="form-label" for="displayName">Nome de exibição</label>
+        <input id="displayName" type="text" class="form-control" formControlName="displayName" />
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label" for="username">Username</label>
+        <input id="username" type="text" class="form-control" formControlName="username" placeholder="ex: clarasabores" />
+        @if (form.controls.username.invalid && form.controls.username.touched) {
+          <div class="invalid-feedback d-block">Use de 3 a 20 letras minúsculas, números, pontos ou underline.</div>
+        }
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label" for="email">E-mail</label>
+        <input id="email" type="email" class="form-control" formControlName="email" />
+      </div>
+
+      <div class="row g-3 mb-3">
+        <div class="col-sm-6">
+          <label class="form-label" for="password">Senha</label>
+          <input id="password" type="password" class="form-control" formControlName="password" />
+        </div>
+        <div class="col-sm-6">
+          <label class="form-label" for="confirmPassword">Confirmar senha</label>
+          <input id="confirmPassword" type="password" class="form-control" formControlName="confirmPassword" />
+        </div>
+      </div>
+      @if (form.errors?.['passwordMismatch'] && form.controls.confirmPassword.touched) {
+        <div class="invalid-feedback d-block mb-3">As senhas não coincidem.</div>
+      }
+
+      <div class="form-check mb-4">
+        <input id="acceptTerms" type="checkbox" class="form-check-input" formControlName="acceptTerms" />
+        <label class="form-check-label" for="acceptTerms">Li e aceito os termos de uso.</label>
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100" [class.btn-loading]="loading()" [disabled]="loading()">
+        Criar conta
+      </button>
+    </form>
+
+    <p class="auth-page__switch">
+      Já tem conta? <a routerLink="/entrar">Entrar</a>
+    </p>
+  </div>
+
+  <div class="auth-page__cover" role="presentation">
+    <img src="https://picsum.photos/seed/taste-register-cover/900/1200" alt="" />
+  </div>
+</div>

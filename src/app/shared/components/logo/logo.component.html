@@ -1,0 +1,22 @@
+<div class="taste-logo" [class]="'taste-logo--' + variant() + ' taste-logo--' + tone()">
+  <svg class="taste-logo__mark" viewBox="0 0 64 64" role="img" aria-label="TASTE">
+    <circle cx="32" cy="32" r="32" class="taste-logo__badge"/>
+    <g transform="rotate(-8 32 32)">
+      <rect x="13" y="17" width="38" height="10" rx="5" class="taste-logo__glyph"/>
+      <rect x="27" y="17" width="10" height="35" rx="5" class="taste-logo__glyph"/>
+    </g>
+    <path
+      d="M47 8 Q48.4 10.6 51 12 Q48.4 13.4 47 16 Q45.6 13.4 43 12 Q45.6 10.6 47 8 Z"
+      class="taste-logo__spark"
+    />
+  </svg>
+
+  @if (variant() !== 'mark') {
+    <div class="taste-logo__text">
+      <span class="taste-logo__word">TASTE</span>
+      @if (showTagline()) {
+        <span class="taste-logo__tagline">diário gastronômico</span>
+      }
+    </div>
+  }
+</div>

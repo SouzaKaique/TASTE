@@ -1,0 +1,31 @@
+.user-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+
+  &__identity {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    color: inherit;
+    min-width: 0;
+
+    &:hover { color: inherit; }
+  }
+
+  &__name {
+    margin: 0;
+    font-weight: 600;
+    color: var(--color-text-primary);
+  }
+
+  &__username {
+    margin: 0;
+    font-size: var(--fs-small);
+    color: var(--color-text-secondary);
+  }
+
+  &__action { flex-shrink: 0; }
+}

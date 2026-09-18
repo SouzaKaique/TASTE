@@ -1,0 +1,156 @@
+<div class="retro-hero">
+  <div class="container-editorial">
+    <p class="eyebrow" style="color: var(--taste-gold-500)">Retrospectiva pessoal</p>
+    <h1 class="display-title" style="color: var(--taste-beige-100)">My Gastronomic Year</h1>
+
+    <select
+      class="year-select"
+      [ngModel]="selectedYear()"
+      (ngModelChange)="onYearChange($event)"
+      aria-label="Selecionar ano da retrospectiva"
+    >
+      @for (year of years(); track year) {
+        <option [value]="year">{{ year }}</option>
+      }
+    </select>
+  </div>
+</div>
+
+<div class="container-editorial section-spacing">
+  @if (loading()) {
+    <app-loading-state [count]="3"></app-loading-state>
+  } @else {
+   @if (data(); as retro) {
+    @if (!retro.stats.totalExperiences) {
+      <app-empty-state
+        icon="bi-stars"
+        title="Sem registros suficientes neste ano"
+        description="Registre experiências ao longo do ano para desbloquear sua retrospectiva."
+      >
+        <a routerLink="/app/experiencias/nova" class="btn btn-primary mt-3">Registrar experiência</a>
+      </app-empty-state>
+    } @else {
+      <section class="retro-stats">
+        <div class="retro-stat surface-card">
+          <span class="retro-stat__value">{{ retro.stats.totalExperiences }}</span>
+          <span class="retro-stat__label">Experiências</span>
+        </div>
+        <div class="retro-stat surface-card">
+          <span class="retro-stat__value">{{ retro.stats.totalRestaurants }}</span>
+          <span class="retro-stat__label">Restaurantes</span>
+        </div>
+        <div class="retro-stat surface-card">
+          <span class="retro-stat__value">{{ retro.stats.totalCities }}</span>
+          <span class="retro-stat__label">Cidades</span>
+        </div>
+        <div class="retro-stat surface-card">
+          <span class="retro-stat__value">{{ retro.stats.totalCountries }}</span>
+          <span class="retro-stat__label">Países</span>
+        </div>
+        <div class="retro-stat surface-card">
+          <span class="retro-stat__value">{{ retro.stats.averageRating }}</span>
+          <span class="retro-stat__label">Nota média</span>
+        </div>
+        <div class="retro-stat surface-card">
+          <span class="retro-stat__value">{{ retro.stats.totalFavorites }}</span>
+          <span class="retro-stat__label">Favoritos</span>
+        </div>
+      </section>
+
+      <section class="retro-summary">
+        <div class="surface-card retro-summary__card">
+          <p class="eyebrow">Categoria mais registrada</p>
+          <p class="retro-summary__value">{{ retro.stats.topCategory ?? '—' }}</p>
+        </div>
+        <div class="surface-card retro-summary__card">
+          <p class="eyebrow">Culinária mais experimentada</p>
+          <p class="retro-summary__value">{{ retro.stats.topCuisine ?? '—' }}</p>
+        </div>
+        <div class="surface-card retro-summary__card">
+          <p class="eyebrow">Mês mais movimentado</p>
+          <p class="retro-summary__value">{{ retro.stats.busiestMonth ?? '—' }}</p>
+        </div>
+      </section>
+
+      <section class="retro-chart surface-card">
+        <h2>Experiências ao longo do ano</h2>
+        <div class="retro-chart__bars">
+          @for (m of retro.stats.experiencesByMonth; track m.month) {
+            <div class="retro-chart__bar-wrap">
+              <div class="retro-chart__bar" [style.height.%]="(m.count / maxMonthCount()) * 100"></div>
+              <span>{{ m.month }}</span>
+            </div>
+          }
+        </div>
+      </section>
+
+      @if (retro.topThree.length) {
+        <section class="retro-podium">
+          <h2 class="retro-podium__title">Top 3 do ano</h2>
+          <p class="text-secondary-taste retro-podium__subtitle">
+            Ranking pessoal baseado nas suas notas de 1 a 5 estrelas.
+          </p>
+
+          <div class="podium">
+            @for (position of podiumOrder; track position) {
+              @if (retro.topThree[position]; as exp) {
+                <a [routerLink]="['/app/experiencias', exp.id]" class="podium__place" [class]="'podium__place--' + (position + 1)">
+                  <span class="podium__rank">{{ position + 1 }}º</span>
+                  @if (exp.photos[0]) {
+                    <img [src]="exp.photos[0].url" [alt]="exp.dishName" />
+                  }
+                  <div class="podium__info">
+                    <p class="podium__dish">{{ exp.dishName }}</p>
+                    <p class="podium__meta">{{ exp.restaurantName }} · {{ exp.city }}</p>
+                    <app-star-rating [readonly]="true" size="sm" [rating]="exp.rating"></app-star-rating>
+                  </div>
+                </a>
+              }
+            }
+          </div>
+        </section>
+      }
+
+      <section class="retro-highlights">
+        <h2>Destaques selecionados por você</h2>
+        <p class="text-secondary-taste">
+          A experiência mais memorável nem sempre é a de maior nota — escolha manualmente seus destaques do ano.
+        </p>
+
+        <div class="highlight-grid">
+          @for (highlight of retro.manualHighlights; track highlight.category) {
+            <div class="highlight-card surface-card">
+              <p class="eyebrow">{{ highlightLabels[highlight.category] }}</p>
+
+              @if (editingHighlight() === highlight.category) {
+                <select
+                  class="form-select form-select-sm mt-2"
+                  (change)="assignHighlight(highlight.category, $any($event.target).value)"
+                >
+                  <option value="">Selecionar experiência...</option>
+                  @for (exp of allExperiencesForYear(); track exp.id) {
+                    <option [value]="exp.id">{{ exp.dishName }} — {{ exp.restaurantName }}</option>
+                  }
+                </select>
+              } @else {
+                @if (highlight.experience; as exp) {
+                  <p class="highlight-card__dish">{{ exp.dishName }}</p>
+                  <p class="highlight-card__meta">{{ exp.restaurantName }} · {{ exp.city }}</p>
+                  <div class="highlight-card__actions">
+                    <button type="button" class="btn btn-ghost btn-sm" (click)="startEditingHighlight(highlight.category)">Alterar</button>
+                    <button type="button" class="btn btn-ghost btn-sm" (click)="clearHighlight(highlight.category)">Remover</button>
+                  </div>
+                } @else {
+                  <button type="button" class="btn btn-outline-primary btn-sm mt-2" (click)="startEditingHighlight(highlight.category)">
+                    Escolher experiência
+                  </button>
+                }
+              }
+            </div>
+          }
+        </div>
+      </section>
+    }
+   }
+  }
+</div>

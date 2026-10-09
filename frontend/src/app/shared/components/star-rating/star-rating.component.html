@@ -1,0 +1,29 @@
+<div
+  class="star-rating"
+  [class]="'star-rating--' + size()"
+  role="radiogroup"
+  [attr.aria-label]="label()"
+  [attr.tabindex]="readonlyMode() ? null : 0"
+  (keydown)="onKeydown($event)"
+>
+  @for (star of stars; track star) {
+    <button
+      type="button"
+      class="star-rating__star"
+      role="radio"
+      [attr.aria-checked]="value() === star"
+      [attr.aria-label]="star + ' de ' + max + ' estrelas'"
+      [disabled]="readonlyMode() || disabled()"
+      [class.is-filled]="isFilled(star)"
+      (click)="select(star)"
+      (mouseenter)="hovered.set(star)"
+      (mouseleave)="hovered.set(null)"
+    >
+      <i class="bi" [class.bi-star-fill]="isFilled(star)" [class.bi-star]="!isFilled(star)"></i>
+    </button>
+  }
+
+  @if (!readonlyMode()) {
+    <span class="star-rating__value visually-hidden" aria-live="polite">{{ value() }} de {{ max }}</span>
+  }
+</div>

@@ -1,0 +1,80 @@
+<div class="container-editorial section-spacing">
+  @if (loading()) {
+    <app-loading-state [count]="1"></app-loading-state>
+  } @else if (notFound()) {
+    <app-error-state
+      title="Experiência não encontrada"
+      description="Este registro pode ter sido removido."
+      [retryable]="false"
+    ></app-error-state>
+  } @else {
+    @if (experience(); as exp) {
+      <a routerLink="/app/experiencias" class="back-link"><i class="bi bi-arrow-left"></i> Voltar à lista</a>
+
+      <article class="detail-page">
+        <div class="detail-page__media" [class.detail-page__media--empty]="!exp.photos[0]">
+          @if (exp.photos[0]) {
+            <img [src]="exp.photos[0].url" [alt]="exp.dishName" />
+          } @else {
+            <div class="detail-page__media-placeholder"><i class="bi bi-camera"></i></div>
+          }
+        </div>
+
+        <div class="detail-page__body">
+          <div class="detail-page__badges">
+            <span class="badge-taste">{{ categoryLabels[exp.category] }}</span>
+            <span class="badge-taste">{{ exp.cuisineType }}</span>
+            <span class="badge-taste"><i class="bi bi-eye"></i> {{ visibilityLabels[exp.visibility] }}</span>
+          </div>
+
+          <h1 class="display-title">{{ exp.dishName }}</h1>
+
+          <app-star-rating [readonly]="true" size="lg" [rating]="exp.rating"></app-star-rating>
+
+          <p class="detail-page__meta">
+            <i class="bi bi-shop"></i> {{ exp.restaurantName }}
+            <span class="detail-page__dot">·</span>
+            <i class="bi bi-geo-alt"></i> {{ exp.city }}, {{ exp.country }}
+            <span class="detail-page__dot">·</span>
+            <i class="bi bi-calendar3"></i> {{ exp.date | date: "d 'de' MMMM 'de' y" }}
+          </p>
+
+          @if (exp.notes) {
+            <p class="detail-page__notes lede">"{{ exp.notes }}"</p>
+          }
+
+          @if (exp.optionalCriteria) {
+            <div class="detail-page__criteria">
+              @if (exp.optionalCriteria.flavor) { <span>Sabor <strong>{{ exp.optionalCriteria.flavor }}/5</strong></span> }
+              @if (exp.optionalCriteria.presentation) { <span>Apresentação <strong>{{ exp.optionalCriteria.presentation }}/5</strong></span> }
+              @if (exp.optionalCriteria.texture) { <span>Textura <strong>{{ exp.optionalCriteria.texture }}/5</strong></span> }
+              @if (exp.optionalCriteria.creativity) { <span>Criatividade <strong>{{ exp.optionalCriteria.creativity }}/5</strong></span> }
+              @if (exp.optionalCriteria.experience) { <span>Experiência <strong>{{ exp.optionalCriteria.experience }}/5</strong></span> }
+            </div>
+          }
+
+          @if (exp.tags.length) {
+            <div class="detail-page__tags">
+              @for (tag of exp.tags; track tag) {
+                <app-tag [label]="tag" tone="soft"></app-tag>
+              }
+            </div>
+          }
+
+          <div class="detail-page__actions">
+            <button type="button" class="btn" [class.btn-outline-primary]="!exp.isFavorite" [class.btn-primary]="exp.isFavorite" (click)="toggleFavorite()">
+              <i class="bi" [class.bi-heart-fill]="exp.isFavorite" [class.bi-heart]="!exp.isFavorite"></i>
+              {{ exp.isFavorite ? 'Favoritado' : 'Favoritar' }}
+            </button>
+            <a class="btn btn-ghost" [routerLink]="['/app/experiencias', exp.id, 'editar']">
+              <i class="bi bi-pencil"></i> Editar
+            </a>
+            <button type="button" class="btn btn-ghost" (click)="onDelete()">
+              <i class="bi bi-trash"></i> Excluir
+            </button>
+          </div>
+        </div>
+      </article>
+    }
+  }
+</div>

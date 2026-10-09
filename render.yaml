@@ -1,0 +1,25 @@
+# Blueprint do Render: cria o servico do backend do TASTE.
+# Painel do Render > New > Blueprint > escolha este repositorio.
+services:
+  - type: web
+    name: taste-backend
+    runtime: docker
+    plan: free
+    region: virginia
+    # Monorepo: so mudancas dentro de backend/ disparam um novo deploy.
+    rootDir: backend
+    # Caminhos do Docker sao relativos a raiz do repositorio.
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    healthCheckPath: /actuator/health
+    autoDeploy: true
+    envVars:
+      # Connection string do Neon (postgresql://...). Preenchida por voce no painel.
+      - key: DATABASE_URL
+        sync: false
+      # Endereco do site na Vercel, ex: https://taste.vercel.app (sem barra no final).
+      - key: TASTE_CORS_ALLOWED_ORIGINS
+        sync: false
+      # Segredo dos tokens de login: o Render gera um valor aleatorio e seguro.
+      - key: TASTE_JWT_SECRET
+        generateValue: true

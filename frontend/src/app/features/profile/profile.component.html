@@ -1,0 +1,73 @@
+<div class="container-editorial section-spacing">
+  @if (notFound()) {
+    <app-error-state title="Usuário não encontrado" [retryable]="false"></app-error-state>
+  } @else {
+    @if (viewedUser(); as user) {
+      <header class="profile-header">
+        <app-avatar [src]="user.avatarUrl" [name]="user.displayName" size="xl"></app-avatar>
+        <div class="profile-header__info">
+          <h1>{{ user.displayName }}</h1>
+          <p class="profile-header__username">&#64;{{ user.username }}</p>
+          @if (user.bio) {
+            <p class="lede">{{ user.bio }}</p>
+          }
+        </div>
+
+        @if (isOwnProfile()) {
+          <a routerLink="/app/configuracoes" class="btn btn-ghost-on-bg">
+            <i class="bi bi-pencil"></i> Editar perfil
+          </a>
+        } @else if (friendshipStatus(user.id) === 'none') {
+          <button type="button" class="btn btn-primary" (click)="sendRequest(user.id)">
+            <i class="bi bi-person-plus"></i> Adicionar
+          </button>
+        } @else if (friendshipStatus(user.id) === 'friends') {
+          <span class="badge-taste"><i class="bi bi-person-check"></i> Amigos</span>
+        } @else if (friendshipStatus(user.id) === 'pending-sent') {
+          <span class="badge-taste">Solicitação enviada</span>
+        }
+      </header>
+
+      <section class="profile-stats">
+        <div class="profile-stat"><strong>{{ user.stats.totalExperiences }}</strong><span>Experiências</span></div>
+        <div class="profile-stat"><strong>{{ user.stats.totalRestaurants }}</strong><span>Restaurantes</span></div>
+        <div class="profile-stat"><strong>{{ user.stats.totalCities }}</strong><span>Cidades</span></div>
+        <div class="profile-stat"><strong>{{ user.stats.totalFavorites }}</strong><span>Favoritos</span></div>
+      </section>
+
+      @if (isPrivateAndBlocked()) {
+        <app-error-state
+          title="Este perfil é privado"
+          description="Envie uma solicitação de amizade para ver as experiências e coleções deste usuário."
+          [retryable]="false"
+        ></app-error-state>
+      } @else {
+        <section class="profile-section">
+          <h2>Experiências {{ isOwnProfile() ? '' : 'públicas' }}</h2>
+          @if (experiences().length) {
+            <div class="grid">
+              @for (exp of experiences().slice(0, 8); track exp.id) {
+                <app-experience-card [experience]="exp" [compact]="true"></app-experience-card>
+              }
+            </div>
+          } @else {
+            <app-empty-state icon="bi-journal" title="Nenhuma experiência para exibir"></app-empty-state>
+          }
+        </section>
+
+        @if (collections().length) {
+          <section class="profile-section">
+            <h2>Coleções públicas</h2>
+            <div class="collections-row">
+              @for (collection of collections(); track collection.id) {
+                <a [routerLink]="['/app/colecoes', collection.id]" class="collection-chip surface-card">
+                  <i class="bi bi-collection"></i> {{ collection.name }}
+                </a>
+              }
+            </div>
+          </section>
+        }
+      }
+    }
+  }
+</div>

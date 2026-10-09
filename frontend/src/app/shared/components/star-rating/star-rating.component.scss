@@ -1,0 +1,43 @@
+.star-rating {
+  display: inline-flex;
+  gap: 0.2rem;
+  border-radius: var(--radius-sm);
+
+  &:focus-visible {
+    outline: 2px solid var(--taste-wine-500);
+    outline-offset: 3px;
+  }
+
+  &__star {
+    background: none;
+    border: none;
+    padding: 0.1rem;
+    cursor: pointer;
+    color: var(--taste-ink-300);
+    font-size: 1.15rem;
+    line-height: 1;
+    transition: transform var(--dur-fast) var(--ease-standard), color var(--dur-fast) var(--ease-standard);
+
+    &.is-filled { color: var(--taste-gold-500); }
+
+    &:hover:not(:disabled) { transform: scale(1.12); }
+
+    &:disabled { cursor: default; }
+  }
+
+  // Telas de toque: estrelas clicáveis com área mínima de ~40px para o dedo
+  @media (pointer: coarse), (max-width: 768px) {
+    gap: 0;
+
+    &__star:not(:disabled) {
+      min-width: 40px;
+      min-height: 40px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  &--sm .star-rating__star { font-size: 0.85rem; }
+  &--lg .star-rating__star { font-size: 1.6rem; }
+}

@@ -1,0 +1,39 @@
+<div class="container-narrow section-spacing">
+  <header class="page-header">
+    <p class="eyebrow">Sua conta</p>
+    <h1>Configurações</h1>
+  </header>
+
+  <nav class="settings-nav">
+    <a class="is-active">Perfil</a>
+    <a routerLink="/app/privacidade">Privacidade</a>
+  </nav>
+
+  <form [formGroup]="form" (ngSubmit)="save()" class="surface-card settings-form" novalidate>
+    <div class="settings-form__avatar">
+      <app-avatar [src]="avatarPreview()" [name]="user()?.displayName ?? ''" size="xl"></app-avatar>
+      <label class="btn btn-ghost btn-sm">
+        Alterar foto
+        <input type="file" accept="image/*" hidden (change)="onAvatarSelected($event)" />
+      </label>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label" for="displayName">Nome de exibição</label>
+      <input id="displayName" type="text" class="form-control" formControlName="displayName" />
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label" for="username">Username</label>
+      <input id="username" type="text" class="form-control" formControlName="username" aria-describedby="usernameHelp" />
+      <div id="usernameHelp" class="form-text">O username não pode ser alterado.</div>
+    </div>
+
+    <div class="mb-4">
+      <label class="form-label" for="bio">Biografia</label>
+      <textarea id="bio" class="form-control" rows="3" formControlName="bio"></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary" [class.btn-loading]="saving()" [disabled]="saving()">Salvar alterações</button>
+  </form>
+</div>

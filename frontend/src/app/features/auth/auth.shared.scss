@@ -1,0 +1,72 @@
+.auth-page {
+  min-height: 100vh;
+  min-height: 100dvh; // altura real visível no celular (desconta a barra do navegador)
+  display: grid;
+  grid-template-columns: minmax(0, 460px) 1fr;
+
+  @media (max-width: 991px) {
+    grid-template-columns: 1fr;
+  }
+
+  &__panel {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: var(--space-7) var(--space-6);
+    max-width: 440px;
+    margin: var(--space-6) auto;
+    width: 100%;
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+
+    @media (max-width: 991px) {
+      // width: auto + margem: o painel ocupa o espaço que sobra, sem passar da tela
+      width: auto;
+      max-width: 480px;
+      margin: var(--space-5) var(--space-5);
+      justify-self: stretch;
+    }
+
+    @media (min-width: 541px) and (max-width: 991px) {
+      margin-inline: auto;
+      width: 100%;
+    }
+
+    @media (max-width: 480px) {
+      margin: var(--space-4);
+      padding: var(--space-6) var(--space-5);
+    }
+  }
+
+  &__title {
+    margin-top: var(--space-5);
+    margin-bottom: var(--space-1);
+  }
+
+  &__form { margin-top: var(--space-5); }
+
+  &__switch {
+    margin-top: var(--space-5);
+    text-align: center;
+    color: var(--color-text-secondary);
+    font-size: var(--fs-small);
+  }
+
+  &__cover {
+    position: relative;
+    overflow: hidden;
+    background: var(--taste-wine-800);
+
+    @media (max-width: 991px) { display: none; }
+
+    img { width: 100%; height: 100%; object-fit: cover; opacity: 0.9; }
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(61, 21, 33, 0.1) 0%, rgba(61, 21, 33, 0.55) 100%);
+    }
+  }
+}

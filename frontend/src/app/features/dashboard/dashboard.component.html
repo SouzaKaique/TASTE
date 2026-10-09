@@ -1,0 +1,92 @@
+<div class="container-editorial section-spacing">
+  <header class="dashboard-header">
+    <p class="eyebrow on-bg-eyebrow">{{ greeting() }}</p>
+    <h1 class="on-bg-heading">Olá, {{ user()?.displayName?.split(' ')?.[0] }}. Vamos descobrir o próximo sabor?</h1>
+  </header>
+
+  @if (loading()) {
+    <app-loading-state [count]="4"></app-loading-state>
+  } @else {
+    <section class="dashboard-stats">
+      <div class="stat-card surface-card">
+        <span class="stat-card__value">{{ stats().total }}</span>
+        <span class="stat-card__label">Experiências</span>
+      </div>
+      <div class="stat-card surface-card">
+        <span class="stat-card__value">{{ stats().restaurants }}</span>
+        <span class="stat-card__label">Restaurantes</span>
+      </div>
+      <div class="stat-card surface-card">
+        <span class="stat-card__value">{{ stats().cities }}</span>
+        <span class="stat-card__label">Cidades exploradas</span>
+      </div>
+      <div class="stat-card surface-card">
+        <span class="stat-card__value">{{ stats().averageRating || '—' }}</span>
+        <span class="stat-card__label">Nota média</span>
+      </div>
+      <div class="stat-card surface-card">
+        <span class="stat-card__value">{{ stats().favorites }}</span>
+        <span class="stat-card__label">Favoritos</span>
+      </div>
+      <div class="stat-card surface-card">
+        <span class="stat-card__value">{{ stats().topCuisine ?? '—' }}</span>
+        <span class="stat-card__label">Culinária mais registrada</span>
+      </div>
+    </section>
+
+    <section class="dashboard-shortcuts">
+      <a routerLink="/app/experiencias/nova" class="shortcut-card surface-card surface-card--hover">
+        <i class="bi bi-plus-circle"></i><span>Registrar experiência</span>
+      </a>
+      <a routerLink="/app/restaurantes" class="shortcut-card surface-card surface-card--hover">
+        <i class="bi bi-shop"></i><span>Explorar restaurantes</span>
+      </a>
+      <a routerLink="/app/mapa" class="shortcut-card surface-card surface-card--hover">
+        <i class="bi bi-geo-alt"></i><span>Ver mapa</span>
+      </a>
+      <a routerLink="/app/retrospectiva" class="shortcut-card surface-card surface-card--hover">
+        <i class="bi bi-stars"></i><span>Ver retrospectiva</span>
+      </a>
+      <a routerLink="/app/amigos" class="shortcut-card surface-card surface-card--hover">
+        <i class="bi bi-person-plus"></i><span>Encontrar amigos</span>
+      </a>
+    </section>
+
+    @if (bestRecent(); as best) {
+      <section class="dashboard-highlight">
+        <div class="dashboard-highlight__text">
+          <p class="eyebrow">Destaque pessoal</p>
+          <h2>{{ best.dishName }}</h2>
+          <p class="text-secondary-taste">{{ best.restaurantName }} · {{ best.city }}</p>
+          <a class="btn btn-ghost-on-bg" [routerLink]="['/app/experiencias', best.id]">Ver detalhes</a>
+        </div>
+        @if (best.photos[0]) {
+          <img [src]="best.photos[0].url" [alt]="best.dishName" class="dashboard-highlight__image" />
+        }
+      </section>
+    }
+
+    <section class="dashboard-recent">
+      <div class="dashboard-recent__header">
+        <h2 class="on-bg-heading">Últimas experiências</h2>
+        <a routerLink="/app/experiencias" class="link-on-bg">Ver todas</a>
+      </div>
+
+      @if (recentExperiences().length) {
+        <div class="dashboard-recent__grid">
+          @for (exp of recentExperiences(); track exp.id) {
+            <app-experience-card [experience]="exp"></app-experience-card>
+          }
+        </div>
+      } @else {
+        <app-empty-state
+          icon="bi-journal-plus"
+          title="Você ainda não registrou nenhuma experiência"
+          description="Que tal adicionar sua primeira descoberta gastronômica?"
+        >
+          <a routerLink="/app/experiencias/nova" class="btn btn-primary mt-3">Registrar experiência</a>
+        </app-empty-state>
+      }
+    </section>
+  }
+</div>

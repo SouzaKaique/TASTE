@@ -1,0 +1,95 @@
+.feed-item {
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+
+  &__author {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    color: inherit;
+    &:hover { color: inherit; }
+  }
+
+  &__name { margin: 0; font-weight: 600; }
+  &__activity { font-weight: 400; color: var(--color-text-secondary); }
+  &__time { margin: 0; font-size: var(--fs-caption); color: var(--color-text-secondary); }
+
+  &__text { margin: 0; color: var(--color-text-primary); }
+
+  &__dish {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    font-size: var(--fs-small);
+    color: var(--color-text-secondary);
+  }
+
+  &__collection {
+    margin: 0;
+    font-size: var(--fs-small);
+    color: var(--color-brand);
+  }
+
+  &__media {
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    aspect-ratio: 16/10;
+
+    img { width: 100%; height: 100%; object-fit: cover; }
+  }
+
+  &__footer {
+    display: flex;
+    gap: var(--space-4);
+    border-top: 1px solid var(--color-border);
+    padding-top: var(--space-3);
+  }
+
+  &__action {
+    background: none;
+    border: none;
+    color: var(--color-text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: var(--fs-small);
+    cursor: pointer;
+    min-height: 40px; // área de toque confortável
+    padding: 0 0.35rem;
+
+    &.is-active { color: var(--taste-wine-800); }
+  }
+
+  &__comments {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    border-top: 1px dashed var(--color-border);
+    padding-top: var(--space-3);
+  }
+
+  &__comment {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-2);
+    font-size: var(--fs-small);
+
+    p { margin: 0; flex: 1; }
+  }
+
+  &__comment-remove {
+    background: none;
+    border: none;
+    color: var(--taste-ink-300);
+    cursor: pointer;
+  }
+
+  &__comment-form {
+    display: flex;
+    gap: var(--space-2);
+    margin-top: var(--space-1);
+  }
+}

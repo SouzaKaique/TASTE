@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Restaurant } from '../models';
-import { MOCK_RESTAURANTS } from '../mock-data/restaurants.mock';
+import { CURATED_RESTAURANTS } from '../data/restaurants.data';
 import { mockResponse } from './mock-http.util';
 
 export interface RestaurantSearchQuery {
@@ -19,7 +19,7 @@ export interface ManualRestaurantPayload {
 
 @Injectable({ providedIn: 'root' })
 export class RestaurantService {
-  private readonly restaurants = signal<Restaurant[]>([...MOCK_RESTAURANTS]);
+  private readonly restaurants = signal<Restaurant[]>([...CURATED_RESTAURANTS]);
 
   search(query: RestaurantSearchQuery): Observable<Restaurant[]> {
     const term = query.term?.trim().toLowerCase();
@@ -56,7 +56,6 @@ export class RestaurantService {
       address: payload.address,
       cuisineTypes: [],
       source: 'manual',
-      createdByUserId: 'u1',
     };
     this.restaurants.update((list) => [created, ...list]);
     return mockResponse(created);

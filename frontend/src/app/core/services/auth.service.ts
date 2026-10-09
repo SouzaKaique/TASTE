@@ -99,6 +99,14 @@ export class AuthService {
     );
   }
 
+  /** Perfil de outra pessoa (sem e-mail), com a situação da amizade. */
+  getPublicProfile(username: string): Observable<User> {
+    return this.http.get<ApiUser>(`${this.baseUrl}/users/${encodeURIComponent(username)}`).pipe(
+      map(toUser),
+      catchError(toFriendlyError),
+    );
+  }
+
   updateProfile(changes: ProfileChanges): Observable<User> {
     return this.http.patch<ApiUser>(`${this.baseUrl}/users/me`, changes).pipe(
       map((api) => this.storeUser(toUser(api))),

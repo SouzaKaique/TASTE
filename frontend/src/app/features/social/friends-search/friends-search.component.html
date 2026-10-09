@@ -1,23 +1,26 @@
 <div class="container-narrow section-spacing">
   <header class="page-header">
     <p class="eyebrow">Rede social</p>
-    <h1>Buscar amigos</h1>
+    <h1>Amigos</h1>
   </header>
 
   <div class="search-bar surface-card">
     <i class="bi bi-search"></i>
     <input
-      type="text"
+      type="search"
       class="form-control"
-      placeholder="Buscar por username ou nome..."
+      placeholder="Buscar por nome ou username..."
+      aria-label="Buscar pessoas"
+      autocapitalize="none"
+      spellcheck="false"
       [ngModel]="term()"
-      (ngModelChange)="term.set($event); search()"
+      (ngModelChange)="onTermChange($event)"
     />
   </div>
 
   @if (pendingReceived().length) {
     <section class="section-block">
-      <h2>Solicitações pendentes</h2>
+      <h2>Solicitações recebidas</h2>
       <div class="user-list">
         @for (user of pendingReceived(); track user.id) {
           <app-user-card
@@ -31,11 +34,15 @@
   }
 
   <section class="section-block">
-    <h2>Resultados</h2>
+    <h2>{{ term().trim() ? 'Resultados' : 'Pessoas no TASTE' }}</h2>
     @if (loading()) {
-      <app-loading-state [count]="4"></app-loading-state>
+      <app-loading-state [count]="3"></app-loading-state>
     } @else if (!results().length) {
-      <app-empty-state icon="bi-person-x" title="Nenhum usuário encontrado" description="Tente buscar por outro username."></app-empty-state>
+      <app-empty-state
+        icon="bi-person-x"
+        [title]="term().trim() ? 'Nenhuma pessoa encontrada' : 'Ainda não há outras pessoas por aqui'"
+        [description]="term().trim() ? 'Confira o username e tente de novo.' : 'Convide amigos para criar uma conta no TASTE.'"
+      ></app-empty-state>
     } @else {
       <div class="user-list">
         @for (user of results(); track user.id) {
@@ -50,4 +57,15 @@
       </div>
     }
   </section>
+
+  @if (friends().length && !term().trim()) {
+    <section class="section-block">
+      <h2>Seus amigos ({{ friends().length }})</h2>
+      <div class="user-list">
+        @for (user of friends(); track user.id) {
+          <app-user-card [user]="user" (removeFriend)="removeFriend($event)"></app-user-card>
+        }
+      </div>
+    </section>
+  }
 </div>

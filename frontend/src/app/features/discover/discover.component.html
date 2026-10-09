@@ -2,41 +2,31 @@
   <header class="page-header">
     <p class="eyebrow">Explore</p>
     <h1>Descobrir novos sabores</h1>
-    <p class="text-secondary-taste">Uma seleção de demonstração para inspirar sua próxima experiência.</p>
+    <p>Restaurantes reais e muito bem avaliados em Assis, Londrina, Curitiba e São Paulo.</p>
   </header>
 
   @if (loading()) {
     <app-loading-state [count]="4"></app-loading-state>
   } @else {
-    <section class="discover-section">
-      <div class="discover-section__header">
-        <h2>Restaurantes em destaque</h2>
-        <a routerLink="/app/restaurantes">Ver todos</a>
-      </div>
-      <div class="discover-grid">
-        @for (r of featured(); track r.id) {
-          <app-restaurant-card [restaurant]="r"></app-restaurant-card>
-        }
-      </div>
-    </section>
-
     @if (friendsActivity().length) {
       <section class="discover-section">
         <div class="discover-section__header">
           <h2>Popular entre amigos</h2>
-          <a routerLink="/app/social">Ver feed completo</a>
+          <a routerLink="/app/social">Ver feed</a>
         </div>
         <div class="discover-activity">
           @for (item of friendsActivity(); track item.id) {
-            <div class="discover-activity__item surface-card">
+            <a class="discover-activity__item surface-card surface-card--hover" [routerLink]="['/app/experiencias', item.experienceId]">
               @if (item.photoUrl) {
                 <img [src]="item.photoUrl" [alt]="item.dishName ?? ''" />
+              } @else {
+                <span class="discover-activity__icon" aria-hidden="true"><i class="bi bi-journal-richtext"></i></span>
               }
               <div>
                 <p class="discover-activity__name">{{ item.user.displayName }}</p>
-                <p class="discover-activity__dish">{{ item.dishName ?? item.text }}</p>
+                <p class="discover-activity__dish">{{ item.dishName }} · {{ item.restaurantName }}</p>
               </div>
-            </div>
+            </a>
           }
         </div>
       </section>
@@ -44,17 +34,29 @@
 
     <section class="discover-section">
       <div class="discover-section__header">
-        <h2>Novas descobertas</h2>
+        <h2>Restaurantes em destaque</h2>
+        <a routerLink="/app/restaurantes">Buscar todos</a>
       </div>
+
+      <div class="city-filter" role="group" aria-label="Filtrar por cidade">
+        <button type="button" class="city-filter__chip" [class.is-active]="!selectedCity()" (click)="selectedCity.set(null)">Todas</button>
+        @for (city of cities; track city) {
+          <button type="button" class="city-filter__chip" [class.is-active]="selectedCity() === city" (click)="selectedCity.set(city)">
+            {{ city }}
+          </button>
+        }
+      </div>
+
       <div class="discover-grid">
-        @for (r of newDiscoveries(); track r.id) {
+        @for (r of visibleRestaurants(); track r.id) {
           <app-restaurant-card [restaurant]="r"></app-restaurant-card>
         }
       </div>
     </section>
 
     <p class="discover-note">
-      <i class="bi bi-info-circle"></i> Esta seleção usa dados de demonstração e não reflete recomendações reais.
+      <i class="bi bi-info-circle"></i>
+      Destaques baseados em guias, prêmios e avaliações públicas (Guia Michelin, Exame Casual, Prazeres da Mesa, Prêmio Bom Gourmet e Tripadvisor). Notas mudam com o tempo — confira antes de visitar.
     </p>
   }
 </div>

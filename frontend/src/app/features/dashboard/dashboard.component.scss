@@ -35,7 +35,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: var(--space-3);
-  margin-bottom: var(--space-7);
+  margin-bottom: var(--space-6);
 }
 
 .shortcut-card {
@@ -60,7 +60,7 @@
   color: var(--taste-beige-100);
   border-radius: var(--radius-lg);
   padding: var(--space-6);
-  margin-bottom: var(--space-7);
+  margin-bottom: var(--space-6);
   overflow: hidden;
 
   @media (max-width: 767px) { flex-direction: column-reverse; text-align: center; }

@@ -6,6 +6,7 @@
   color: var(--color-text-on-bg);
   margin-bottom: var(--space-2);
   padding-block: 0.6rem; // área de toque maior
+  margin-top: -0.6rem; // compensa a área de toque para não somar espaço no topo
 
   &:hover { color: var(--color-eyebrow-on-bg); }
 }
@@ -25,6 +26,8 @@
     border-radius: var(--radius-lg);
     overflow: hidden;
     aspect-ratio: 4 / 5;
+    // No desktop, a foto cabe na tela sem criar rolagem
+    max-height: max(320px, calc(100dvh - 150px));
     background: var(--color-surface-alt);
     box-shadow: var(--shadow-md);
 
@@ -120,4 +123,15 @@
       &:hover { color: var(--color-heading-on-bg); background: rgba(248, 246, 241, 0.08); }
     }
   }
+}
+
+.detail-page__author {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  align-self: flex-start;
+  color: var(--color-text-on-bg);
+
+  strong { color: var(--color-heading-on-bg); }
+  &:hover strong { text-decoration: underline; }
 }

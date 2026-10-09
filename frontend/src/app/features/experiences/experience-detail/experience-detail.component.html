@@ -9,7 +9,11 @@
     ></app-error-state>
   } @else {
     @if (experience(); as exp) {
-      <a routerLink="/app/experiencias" class="back-link"><i class="bi bi-arrow-left"></i> Voltar à lista</a>
+      @if (isOwner()) {
+        <a routerLink="/app/experiencias" class="back-link"><i class="bi bi-arrow-left"></i> Voltar à lista</a>
+      } @else {
+        <a routerLink="/app/social" class="back-link"><i class="bi bi-arrow-left"></i> Voltar ao feed</a>
+      }
 
       <article class="detail-page">
         <div class="detail-page__media" [class.detail-page__media--empty]="!exp.photos[0]">
@@ -28,6 +32,13 @@
           </div>
 
           <h1 class="display-title">{{ exp.dishName }}</h1>
+
+          @if (!isOwner() && exp.author) {
+            <a [routerLink]="['/app/perfil', exp.author.username]" class="detail-page__author">
+              <app-avatar [src]="exp.author.avatarUrl" [name]="exp.author.displayName" size="xs"></app-avatar>
+              por <strong>{{ exp.author.displayName }}</strong>
+            </a>
+          }
 
           <app-star-rating [readonly]="true" size="lg" [rating]="exp.rating"></app-star-rating>
 
@@ -61,6 +72,7 @@
             </div>
           }
 
+          @if (isOwner()) {
           <div class="detail-page__actions">
             <button type="button" class="btn" [class.btn-outline-primary]="!exp.isFavorite" [class.btn-primary]="exp.isFavorite" (click)="toggleFavorite()">
               <i class="bi" [class.bi-heart-fill]="exp.isFavorite" [class.bi-heart]="!exp.isFavorite"></i>
@@ -73,6 +85,7 @@
               <i class="bi bi-trash"></i> Excluir
             </button>
           </div>
+          }
         </div>
       </article>
     }

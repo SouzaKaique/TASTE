@@ -6,6 +6,7 @@
   color: var(--color-text-on-bg);
   margin-bottom: var(--space-2);
   padding-block: 0.6rem; // área de toque maior
+  margin-top: -0.6rem; // compensa a área de toque para não somar espaço no topo
   &:hover { color: var(--color-eyebrow-on-bg); }
 }
 

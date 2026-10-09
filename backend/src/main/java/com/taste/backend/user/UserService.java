@@ -4,6 +4,7 @@ import com.taste.backend.common.BadRequestException;
 import com.taste.backend.common.NotFoundException;
 import com.taste.backend.experience.ExperienceRepository;
 import com.taste.backend.security.JwtService;
+import com.taste.backend.social.FriendshipService;
 import com.taste.backend.user.dto.*;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,12 +19,14 @@ public class UserService {
     private final ExperienceRepository experienceRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final FriendshipService friendshipService;
 
-    public UserService(UserRepository userRepository, ExperienceRepository experienceRepository, PasswordEncoder passwordEncoder, JwtService jwtService) {
+    public UserService(UserRepository userRepository, ExperienceRepository experienceRepository, PasswordEncoder passwordEncoder, JwtService jwtService, FriendshipService friendshipService) {
         this.userRepository = userRepository;
         this.experienceRepository = experienceRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
+        this.friendshipService = friendshipService;
     }
 
     public AuthResponse register(RegisterRequest request) {
@@ -66,10 +69,13 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public UserResponse getPublicProfile(String username) {
+    public UserResponse getPublicProfile(Long viewerId, String username) {
         User user = userRepository.findByUsernameIgnoreCase(username)
                 .orElseThrow(() -> new NotFoundException("Usuário não encontrado."));
-        return toResponse(user, false);
+        if (user.getId().equals(viewerId)) {
+            return toResponse(user);
+        }
+        return toResponse(user, false, friendshipService.statusBetween(viewerId, user.getId()));
     }
 
     public UserResponse updateProfile(Long userId, UpdateProfileRequest request) {
@@ -93,11 +99,11 @@ public class UserService {
     }
 
     private UserResponse toResponse(User user) {
-        return toResponse(user, true);
+        return toResponse(user, true, null);
     }
 
     /** O e-mail so e devolvido para o proprio dono da conta, nunca em perfis publicos. */
-    private UserResponse toResponse(User user, boolean includeEmail) {
+    private UserResponse toResponse(User user, boolean includeEmail, String friendshipStatus) {
         long total = experienceRepository.countByUserId(user.getId());
         long favorites = experienceRepository.countByUserIdAndFavoriteTrue(user.getId());
         long cities = experienceRepository.countDistinctCitiesByUserId(user.getId());
@@ -115,7 +121,8 @@ public class UserService {
                 user.getBio(),
                 user.getCreatedAt(),
                 user.getProfileVisibility(),
-                stats
+                stats,
+                friendshipStatus
         );
     }
 }

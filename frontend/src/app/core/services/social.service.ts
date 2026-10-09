@@ -1,121 +1,134 @@
-import { Injectable, signal } from '@angular/core';
-import { Observable } from 'rxjs';
-import { FeedItem, FriendshipStatus, UserSummary } from '../models';
-import { MOCK_FEED } from '../mock-data/feed.mock';
-import { MOCK_USERS } from '../mock-data/users.mock';
-import { mockResponse } from './mock-http.util';
+import { HttpClient } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
+import { Observable, catchError, map } from 'rxjs';
+import { environment } from '../../../environments/environment';
+import { FeedComment, FeedItem, FriendshipStatus, UserSummary } from '../models';
+import { toFriendlyError } from './api-error.util';
+
+/** Formatos devolvidos pelo backend (ids numéricos). */
+interface ApiUserSummary {
+  id: number;
+  displayName: string;
+  username: string;
+  avatarUrl: string | null;
+  friendshipStatus: FriendshipStatus;
+}
+
+interface ApiFeedComment extends Omit<FeedComment, 'id' | 'userId'> {
+  id: number;
+  userId: number;
+}
+
+interface ApiFeedItem {
+  id: number;
+  type: FeedItem['type'];
+  user: ApiUserSummary;
+  createdAt: string;
+  experienceId: number;
+  dishName: string;
+  restaurantName: string;
+  city: string;
+  rating: number;
+  photoUrl: string | null;
+  text: string | null;
+  likesCount: number;
+  likedByMe: boolean;
+  comments: ApiFeedComment[];
+}
+
+export function toUserSummary(api: ApiUserSummary): UserSummary {
+  return { ...api, id: String(api.id) };
+}
+
+function toFeedItem(api: ApiFeedItem): FeedItem {
+  return {
+    ...api,
+    id: String(api.id),
+    user: toUserSummary(api.user),
+    experienceId: String(api.experienceId),
+    photoUrl: api.photoUrl ?? undefined,
+    text: api.text ?? undefined,
+    comments: api.comments.map((c) => ({ ...c, id: String(c.id), userId: String(c.userId) })),
+  };
+}
 
 @Injectable({ providedIn: 'root' })
 export class SocialService {
-  private readonly feed = signal<FeedItem[]>([...MOCK_FEED]);
-  private readonly friendships = signal<Record<string, FriendshipStatus>>({
-    u2: 'friends',
-    u3: 'friends',
-    u4: 'pending-received',
-    u5: 'friends',
-  });
+  private readonly http = inject(HttpClient);
+  private readonly baseUrl = environment.apiUrl;
+
+  // ---- Feed ----
 
   getFeed(): Observable<FeedItem[]> {
-    return mockResponse(
-      [...this.feed()].sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt)),
-      400,
+    return this.http.get<ApiFeedItem[]>(`${this.baseUrl}/feed`).pipe(
+      map((items) => items.map(toFeedItem)),
+      catchError(toFriendlyError),
     );
   }
 
-  toggleLike(feedItemId: string): void {
-    this.feed.update((items) =>
-      items.map((item) =>
-        item.id === feedItemId
-          ? { ...item, likedByMe: !item.likedByMe, likesCount: item.likesCount + (item.likedByMe ? -1 : 1) }
-          : item,
-      ),
+  /** Curte ou descurte; devolve o item atualizado. */
+  toggleLike(experienceId: string): Observable<FeedItem> {
+    return this.http.post<ApiFeedItem>(`${this.baseUrl}/experiences/${experienceId}/like`, null).pipe(
+      map(toFeedItem),
+      catchError(toFriendlyError),
     );
   }
 
-  addComment(feedItemId: string, text: string): void {
-    this.feed.update((items) =>
-      items.map((item) =>
-        item.id === feedItemId
-          ? {
-              ...item,
-              comments: [
-                ...item.comments,
-                {
-                  id: `cm-${Date.now()}`,
-                  userId: 'u1',
-                  userDisplayName: 'Clara Marques',
-                  userAvatarUrl: 'https://picsum.photos/seed/clara-marques/200/200',
-                  text,
-                  createdAt: new Date().toISOString(),
-                },
-              ],
-            }
-          : item,
-      ),
+  addComment(experienceId: string, text: string): Observable<FeedItem> {
+    return this.http.post<ApiFeedItem>(`${this.baseUrl}/experiences/${experienceId}/comments`, { text }).pipe(
+      map(toFeedItem),
+      catchError(toFriendlyError),
     );
   }
 
-  removeComment(feedItemId: string, commentId: string): void {
-    this.feed.update((items) =>
-      items.map((item) =>
-        item.id === feedItemId
-          ? { ...item, comments: item.comments.filter((c) => c.id !== commentId) }
-          : item,
-      ),
+  removeComment(experienceId: string, commentId: string): Observable<FeedItem> {
+    return this.http.delete<ApiFeedItem>(`${this.baseUrl}/experiences/${experienceId}/comments/${commentId}`).pipe(
+      map(toFeedItem),
+      catchError(toFriendlyError),
     );
   }
+
+  // ---- Amigos ----
 
   searchUsers(term: string): Observable<UserSummary[]> {
-    const normalized = term.trim().toLowerCase();
-    const results: UserSummary[] = MOCK_USERS.filter((u) => u.id !== 'u1')
-      .filter(
-        (u) =>
-          !normalized ||
-          u.username.toLowerCase().includes(normalized) ||
-          u.displayName.toLowerCase().includes(normalized),
-      )
-      .map((u) => ({
-        id: u.id,
-        displayName: u.displayName,
-        username: u.username,
-        avatarUrl: u.avatarUrl,
-        friendshipStatus: this.friendships()[u.id] ?? 'none',
-      }));
-    return mockResponse(results, 350);
-  }
-
-  friendshipStatus(userId: string): FriendshipStatus {
-    return this.friendships()[userId] ?? 'none';
+    return this.http
+      .get<ApiUserSummary[]>(`${this.baseUrl}/friends/search`, { params: { q: term.trim() } })
+      .pipe(
+        map((users) => users.map(toUserSummary)),
+        catchError(toFriendlyError),
+      );
   }
 
   friendsList(): Observable<UserSummary[]> {
-    const friends = MOCK_USERS.filter((u) => this.friendships()[u.id] === 'friends').map((u) => ({
-      id: u.id,
-      displayName: u.displayName,
-      username: u.username,
-      avatarUrl: u.avatarUrl,
-      friendshipStatus: 'friends' as FriendshipStatus,
-    }));
-    return mockResponse(friends);
+    return this.http.get<ApiUserSummary[]>(`${this.baseUrl}/friends`).pipe(
+      map((users) => users.map(toUserSummary)),
+      catchError(toFriendlyError),
+    );
   }
 
-  sendFriendRequest(userId: string): void {
-    this.friendships.update((map) => ({ ...map, [userId]: 'pending-sent' }));
+  pendingRequests(): Observable<UserSummary[]> {
+    return this.http.get<ApiUserSummary[]>(`${this.baseUrl}/friends/requests`).pipe(
+      map((users) => users.map(toUserSummary)),
+      catchError(toFriendlyError),
+    );
   }
 
-  acceptFriendRequest(userId: string): void {
-    this.friendships.update((map) => ({ ...map, [userId]: 'friends' }));
+  sendFriendRequest(userId: string): Observable<UserSummary> {
+    return this.http.post<ApiUserSummary>(`${this.baseUrl}/friends/${userId}`, null).pipe(
+      map(toUserSummary),
+      catchError(toFriendlyError),
+    );
   }
 
-  declineFriendRequest(userId: string): void {
-    this.friendships.update((map) => ({ ...map, [userId]: 'none' }));
+  acceptFriendRequest(userId: string): Observable<UserSummary> {
+    return this.http.post<ApiUserSummary>(`${this.baseUrl}/friends/${userId}/accept`, null).pipe(
+      map(toUserSummary),
+      catchError(toFriendlyError),
+    );
   }
 
-  removeFriend(userId: string): void {
-    this.friendships.update((map) => ({ ...map, [userId]: 'none' }));
-  }
-
-  blockUser(userId: string): void {
-    this.friendships.update((map) => ({ ...map, [userId]: 'blocked' }));
+  /** Recusa um pedido recebido, cancela um enviado ou desfaz a amizade. */
+  removeFriendship(userId: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/friends/${userId}`).pipe(catchError(toFriendlyError));
   }
 }

@@ -93,3 +93,13 @@
     margin-top: var(--space-1);
   }
 }
+
+.feed-item__dish-link {
+  font-weight: 600;
+  color: var(--color-text-primary);
+  text-decoration: underline;
+  text-decoration-color: var(--color-border-strong);
+  text-underline-offset: 3px;
+
+  &:hover { color: var(--color-brand); }
+}

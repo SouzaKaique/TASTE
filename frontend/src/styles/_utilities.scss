@@ -19,7 +19,14 @@
   border-top: 1px solid var(--color-border);
 }
 
-.section-spacing { padding-block: var(--space-7); }
+.section-spacing {
+  padding-block: var(--space-6);
+
+  @media (max-width: 768px) { padding-block: var(--space-5); }
+
+  // A margem do último bloco não deve somar com o espaço da página
+  > :last-child { margin-bottom: 0 !important; }
+}
 
 .container-editorial {
   max-width: 1180px;

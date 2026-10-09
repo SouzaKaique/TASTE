@@ -17,7 +17,11 @@
 
   @if (item().dishName) {
     <div class="feed-item__dish">
-      <strong>{{ item().dishName }}</strong>
+      @if (item().experienceId) {
+        <a [routerLink]="['/app/experiencias', item().experienceId]" class="feed-item__dish-link">{{ item().dishName }}</a>
+      } @else {
+        <strong>{{ item().dishName }}</strong>
+      }
       @if (item().restaurantName) {
         <span> · {{ item().restaurantName }}</span>
       }
@@ -45,12 +49,20 @@
       type="button"
       class="feed-item__action"
       [class.is-active]="item().likedByMe"
+      [attr.aria-pressed]="item().likedByMe"
+      [attr.aria-label]="(item().likedByMe ? 'Descurtir' : 'Curtir') + ' (' + item().likesCount + ' curtidas)'"
       (click)="toggleLike.emit(item().id)"
     >
       <i class="bi" [class.bi-heart-fill]="item().likedByMe" [class.bi-heart]="!item().likedByMe"></i>
       {{ item().likesCount }}
     </button>
-    <button type="button" class="feed-item__action" (click)="showComments.set(!showComments())">
+    <button
+      type="button"
+      class="feed-item__action"
+      [attr.aria-expanded]="showComments()"
+      [attr.aria-label]="'Comentários (' + item().comments.length + ')'"
+      (click)="showComments.set(!showComments())"
+    >
       <i class="bi bi-chat"></i> {{ item().comments.length }}
     </button>
   </footer>
@@ -61,7 +73,7 @@
         <div class="feed-item__comment">
           <app-avatar [src]="comment.userAvatarUrl" [name]="comment.userDisplayName" size="xs"></app-avatar>
           <p><strong>{{ comment.userDisplayName }}</strong> {{ comment.text }}</p>
-          @if (comment.userId === 'u1') {
+          @if (canRemove(comment)) {
             <button
               type="button"
               class="feed-item__comment-remove"
@@ -79,6 +91,8 @@
           type="text"
           class="form-control form-control-sm"
           placeholder="Escreva um comentário..."
+          aria-label="Escreva um comentário"
+          maxlength="500"
           [(ngModel)]="commentDraft"
           name="commentDraft"
         />

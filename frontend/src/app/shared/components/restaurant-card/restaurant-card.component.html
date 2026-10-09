@@ -1,19 +1,18 @@
 <a class="rest-card surface-card surface-card--hover" [routerLink]="['/app/restaurantes', restaurant().id]">
-  <div class="rest-card__media">
-    @if (restaurant().imageUrl) {
-      <img [src]="restaurant().imageUrl" [alt]="restaurant().name" loading="lazy" />
-    } @else {
-      <div class="rest-card__placeholder"><i class="bi bi-shop"></i></div>
-    }
+  <div class="rest-card__top">
+    <span class="rest-card__icon" aria-hidden="true"><i class="bi bi-shop"></i></span>
     @if (restaurant().source === 'manual') {
-      <span class="badge-taste rest-card__badge">Cadastro manual</span>
+      <span class="badge-taste">Cadastro manual</span>
     }
   </div>
   <div class="rest-card__body">
     <h3>{{ restaurant().name }}</h3>
-    <p class="rest-card__location"><i class="bi bi-geo-alt"></i> {{ restaurant().city }}, {{ restaurant().country }}</p>
+    <p class="rest-card__location"><i class="bi bi-geo-alt"></i> {{ restaurant().city }}{{ restaurant().country ? ', ' + restaurant().country : '' }}</p>
     @if (restaurant().cuisineTypes.length) {
       <p class="rest-card__cuisine">{{ restaurant().cuisineTypes.join(' · ') }}</p>
+    }
+    @if (restaurant().highlight) {
+      <p class="rest-card__highlight"><i class="bi bi-award"></i> {{ restaurant().highlight }}</p>
     }
   </div>
 </a>

@@ -13,6 +13,8 @@ public record UserResponse(
         String bio,
         Instant createdAt,
         ProfileVisibility profileVisibility,
-        UserStats stats
+        UserStats stats,
+        /** Situacao da amizade com quem esta vendo; null no proprio perfil. */
+        String friendshipStatus
 ) {
 }

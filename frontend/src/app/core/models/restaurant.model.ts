@@ -1,4 +1,5 @@
-export type RestaurantSource = 'demo-database' | 'manual';
+/** curated = seleção real do TASTE; manual = cadastrado por quem registrou uma experiência. */
+export type RestaurantSource = 'curated' | 'manual';
 
 export interface Restaurant {
   id: string;
@@ -7,8 +8,9 @@ export interface Restaurant {
   country: string;
   address?: string;
   cuisineTypes: string[];
-  imageUrl?: string;
   description?: string;
+  /** Por que o lugar está em destaque (guia, prêmio ou avaliações públicas). */
+  highlight?: string;
   source: RestaurantSource;
   createdByUserId?: string;
 }

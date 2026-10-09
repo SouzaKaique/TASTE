@@ -27,7 +27,7 @@ public class ExperienceController {
 
     @GetMapping("/{id}")
     public ExperienceResponse get(@AuthenticationPrincipal CurrentUser currentUser, @PathVariable Long id) {
-        return experienceService.getOwned(currentUser.userId(), id);
+        return experienceService.getVisible(currentUser.userId(), id);
     }
 
     @PostMapping

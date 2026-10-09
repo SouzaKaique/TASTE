@@ -1,6 +1,6 @@
 .retro-hero {
   background: radial-gradient(circle at top right, var(--taste-wine-700), var(--taste-wine-900) 70%);
-  padding: var(--space-8) 0 var(--space-6);
+  padding: var(--space-6) 0 var(--space-5);
   color: var(--taste-beige-100);
 }
 
@@ -56,7 +56,7 @@
 
 .retro-chart {
   padding: var(--space-5);
-  margin-bottom: var(--space-7);
+  margin-bottom: var(--space-6);
 
   &__bars {
     display: flex;
@@ -98,7 +98,7 @@
 }
 
 .retro-podium {
-  margin-bottom: var(--space-8);
+  margin-bottom: var(--space-7);
   text-align: center;
 
   &__title { margin-bottom: 0.2rem; color: var(--color-heading-on-bg); }

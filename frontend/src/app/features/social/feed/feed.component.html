@@ -11,11 +11,13 @@
 
   @if (loading()) {
     <app-loading-state [count]="3"></app-loading-state>
+  } @else if (error()) {
+    <app-error-state title="Não foi possível carregar o feed" (retry)="load()"></app-error-state>
   } @else if (!items().length) {
     <app-empty-state
       icon="bi-people"
       title="Seu feed está vazio"
-      description="Adicione amigos para ver as experiências gastronômicas deles por aqui."
+      description="Adicione amigos para ver as experiências deles aqui. Suas experiências públicas também aparecem no feed."
     >
       <a routerLink="/app/amigos" class="btn btn-primary mt-3">Buscar amigos</a>
     </app-empty-state>

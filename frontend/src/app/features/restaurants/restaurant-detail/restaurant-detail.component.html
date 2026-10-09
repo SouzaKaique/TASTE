@@ -8,14 +8,12 @@
       <a routerLink="/app/restaurantes" class="back-link"><i class="bi bi-arrow-left"></i> Voltar à busca</a>
 
       <div class="rest-hero">
-        @if (r.imageUrl) {
-          <img [src]="r.imageUrl" [alt]="r.name" class="rest-hero__image" />
+        <p class="eyebrow rest-hero__eyebrow">{{ r.cuisineTypes.join(' · ') || 'Restaurante' }}</p>
+        <h1 class="display-title rest-hero__title">{{ r.name }}</h1>
+        <p class="rest-hero__location"><i class="bi bi-geo-alt"></i> {{ r.city }}, {{ r.country }}</p>
+        @if (r.highlight) {
+          <p class="rest-hero__highlight"><i class="bi bi-award"></i> {{ r.highlight }}</p>
         }
-        <div class="rest-hero__overlay">
-          <p class="eyebrow" style="color: var(--taste-gold-500)">{{ r.cuisineTypes.join(' · ') || 'Restaurante' }}</p>
-          <h1 class="display-title" style="color: var(--taste-beige-100)">{{ r.name }}</h1>
-          <p><i class="bi bi-geo-alt"></i> {{ r.city }}, {{ r.country }}</p>
-        </div>
       </div>
 
       @if (r.description) {
@@ -32,7 +30,7 @@
         </a>
       </div>
 
-      <section class="section-spacing">
+      <section class="rest-section">
         <h2>Minhas experiências neste lugar</h2>
         @if (myExperiences().length) {
           <div class="rest-grid">

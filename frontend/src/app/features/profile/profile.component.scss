@@ -16,7 +16,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   gap: var(--space-3);
-  margin-bottom: var(--space-7);
+  margin-bottom: var(--space-6);
   text-align: center;
 }
 
@@ -31,7 +31,7 @@
 }
 
 .profile-section {
-  margin-bottom: var(--space-7);
+  margin-bottom: var(--space-6);
   h2 { color: var(--color-heading-on-bg); }
 }
 

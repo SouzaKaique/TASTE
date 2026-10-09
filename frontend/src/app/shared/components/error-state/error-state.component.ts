@@ -23,7 +23,7 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
         align-items: center;
         text-align: center;
         gap: var(--space-2);
-        padding: var(--space-7) var(--space-4);
+        padding: var(--space-6) var(--space-4);
         color: var(--color-text-secondary);
         background: var(--color-surface);
         border: 1px solid var(--color-border);

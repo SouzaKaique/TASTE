@@ -7,6 +7,7 @@ import java.util.List;
 public record ExperienceResponse(
         Long id,
         Long userId,
+        AuthorResponse author,
         String dishName,
         String category,
         String cuisineType,

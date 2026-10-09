@@ -29,6 +29,7 @@ export interface ExperienceFilters {
 interface ApiExperience {
   id: number;
   userId: number;
+  author?: { id: number; displayName: string; username: string; avatarUrl: string | null };
   dishName: string;
   category: ExperienceCategory;
   cuisineType: string;
@@ -83,7 +84,15 @@ export class ExperienceService {
     );
   }
 
-  /** Devolve undefined quando a experiência não existe (ou não pertence ao usuário). */
+  /** Experiências de outra pessoa que o usuário logado tem permissão de ver. */
+  listForUser(username: string): Observable<Experience[]> {
+    return this.http.get<ApiExperience[]>(`${environment.apiUrl}/users/${encodeURIComponent(username)}/experiences`).pipe(
+      map((list) => list.map(toExperience)),
+      catchError(toFriendlyError),
+    );
+  }
+
+  /** Devolve undefined quando a experiência não existe ou o usuário não tem permissão de vê-la. */
   getById(id: string): Observable<Experience | undefined> {
     return this.http.get<ApiExperience>(`${this.baseUrl}/${encodeURIComponent(id)}`).pipe(
       map(toExperience),
@@ -157,6 +166,7 @@ function toExperience(api: ApiExperience): Experience {
     ...api,
     id: String(api.id),
     userId: String(api.userId),
+    author: api.author ? { ...api.author, id: String(api.author.id) } : undefined,
     // "YYYY-MM-DD" seria lido pelo JavaScript como meia-noite UTC (dia anterior no Brasil).
     // Meio-dia no horário local mantém o dia certo em qualquer fuso.
     date: `${api.date.slice(0, 10)}T12:00:00`,

@@ -25,9 +25,18 @@ export interface ExperiencePhoto {
   isPrimary: boolean;
 }
 
+/** Autor da experiência (útil quando ela é de um amigo). */
+export interface ExperienceAuthor {
+  id: string;
+  displayName: string;
+  username: string;
+  avatarUrl: string | null;
+}
+
 export interface Experience {
   id: string;
   userId: string;
+  author?: ExperienceAuthor;
   dishName: string;
   category: ExperienceCategory;
   cuisineType: string;
@@ -48,7 +57,7 @@ export interface Experience {
 }
 
 export interface ExperienceDraft
-  extends Omit<Experience, 'id' | 'userId' | 'createdAt' | 'updatedAt' | 'photos'> {
+  extends Omit<Experience, 'id' | 'userId' | 'author' | 'createdAt' | 'updatedAt' | 'photos'> {
   photos: ExperiencePhoto[];
 }
 

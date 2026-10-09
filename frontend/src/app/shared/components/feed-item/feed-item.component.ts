@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component, input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input, output, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { FeedItem } from '../../../core/models';
+import { FeedComment, FeedItem } from '../../../core/models';
+import { AuthService } from '../../../core/services/auth.service';
 import { AvatarComponent } from '../avatar/avatar.component';
 import { StarRatingComponent } from '../star-rating/star-rating.component';
 
@@ -20,7 +21,15 @@ export class FeedItemComponent {
   addComment = output<{ feedItemId: string; text: string }>();
   removeComment = output<{ feedItemId: string; commentId: string }>();
 
+  private readonly auth = inject(AuthService);
+
   protected readonly showComments = signal(false);
+
+  /** Pode apagar quem escreveu o comentário ou o dono da publicação. */
+  protected canRemove(comment: FeedComment): boolean {
+    const me = this.auth.user()?.id;
+    return !!me && (comment.userId === me || this.item().user.id === me);
+  }
   protected commentDraft = '';
 
   protected submitComment(): void {

@@ -1,10 +1,13 @@
 package com.taste.backend.experience;
 
 import com.taste.backend.common.NotFoundException;
+import com.taste.backend.experience.dto.AuthorResponse;
 import com.taste.backend.experience.dto.ExperienceRequest;
 import com.taste.backend.experience.dto.ExperienceResponse;
 import com.taste.backend.experience.dto.OptionalCriteriaResponse;
 import com.taste.backend.experience.dto.PhotoResponse;
+import com.taste.backend.social.ExperienceCommentRepository;
+import com.taste.backend.social.ExperienceLikeRepository;
 import com.taste.backend.user.User;
 import com.taste.backend.user.UserRepository;
 import org.springframework.stereotype.Service;
@@ -18,10 +21,22 @@ public class ExperienceService {
 
     private final ExperienceRepository experienceRepository;
     private final UserRepository userRepository;
+    private final ExperienceAccess experienceAccess;
+    private final ExperienceLikeRepository likeRepository;
+    private final ExperienceCommentRepository commentRepository;
 
-    public ExperienceService(ExperienceRepository experienceRepository, UserRepository userRepository) {
+    public ExperienceService(
+            ExperienceRepository experienceRepository,
+            UserRepository userRepository,
+            ExperienceAccess experienceAccess,
+            ExperienceLikeRepository likeRepository,
+            ExperienceCommentRepository commentRepository
+    ) {
         this.experienceRepository = experienceRepository;
         this.userRepository = userRepository;
+        this.experienceAccess = experienceAccess;
+        this.likeRepository = likeRepository;
+        this.commentRepository = commentRepository;
     }
 
     public List<ExperienceResponse> listForUser(Long userId) {
@@ -30,9 +45,22 @@ public class ExperienceService {
                 .toList();
     }
 
-    public ExperienceResponse getOwned(Long userId, Long experienceId) {
-        Experience experience = findOwned(userId, experienceId);
+    /** Detalhe: o dono ou quem tem permissao pelas regras de visibilidade. */
+    public ExperienceResponse getVisible(Long viewerId, Long experienceId) {
+        Experience experience = experienceRepository.findById(experienceId)
+                .filter(e -> experienceAccess.canView(viewerId, e))
+                .orElseThrow(() -> new NotFoundException("Experiência não encontrada."));
         return toResponse(experience);
+    }
+
+    /** Experiencias de outro usuario que o visitante pode ver (perfil publico). */
+    public List<ExperienceResponse> listVisibleForUser(Long viewerId, String username) {
+        User owner = userRepository.findByUsernameIgnoreCase(username)
+                .orElseThrow(() -> new NotFoundException("Usuário não encontrado."));
+        return experienceRepository.findByUserIdOrderByDateDesc(owner.getId()).stream()
+                .filter(e -> experienceAccess.canView(viewerId, e))
+                .map(this::toResponse)
+                .toList();
     }
 
     public ExperienceResponse create(Long userId, ExperienceRequest request) {
@@ -54,6 +82,8 @@ public class ExperienceService {
 
     public void delete(Long userId, Long experienceId) {
         Experience experience = findOwned(userId, experienceId);
+        likeRepository.deleteByExperienceId(experienceId);
+        commentRepository.deleteByExperienceId(experienceId);
         experienceRepository.delete(experience);
     }
 
@@ -98,6 +128,7 @@ public class ExperienceService {
         return new ExperienceResponse(
                 e.getId(),
                 e.getUser().getId(),
+                AuthorResponse.of(e.getUser()),
                 e.getDishName(),
                 e.getCategory(),
                 e.getCuisineType(),

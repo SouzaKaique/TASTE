@@ -1,3 +1,5 @@
+import { FriendshipStatus } from './social.model';
+
 export type ProfileVisibility = 'public' | 'private';
 
 export interface UserStats {
@@ -18,6 +20,8 @@ export interface User {
   createdAt: string;
   profileVisibility: ProfileVisibility;
   stats: UserStats;
+  /** Situação da amizade com quem está vendo (só em perfis de outras pessoas). */
+  friendshipStatus?: FriendshipStatus | null;
 }
 
 export interface AuthCredentials {

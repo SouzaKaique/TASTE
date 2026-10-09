@@ -106,7 +106,7 @@ export class ExperienceFormComponent implements OnInit {
       city: exp.city,
       country: exp.country,
       cuisineTypes: [exp.cuisineType],
-      source: 'demo-database',
+      source: exp.restaurantId.startsWith('manual-') ? 'manual' : 'curated',
     });
     this.tagsInput.set(exp.tags.join(', '));
     this.photoPreview.set(exp.photos[0]?.url ?? null);

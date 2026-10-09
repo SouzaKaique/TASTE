@@ -1,8 +1,9 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Collection, CollectionPrivacy } from '../models';
 import { MOCK_COLLECTIONS } from '../mock-data/collections.mock';
 import { mockResponse } from './mock-http.util';
+import { AuthService } from './auth.service';
 
 export interface CollectionDraft {
   name: string;
@@ -13,6 +14,7 @@ export interface CollectionDraft {
 
 @Injectable({ providedIn: 'root' })
 export class CollectionService {
+  private readonly auth = inject(AuthService);
   private readonly collections = signal<Collection[]>([...MOCK_COLLECTIONS]);
 
   list(): Observable<Collection[]> {
@@ -26,7 +28,7 @@ export class CollectionService {
   create(draft: CollectionDraft): Observable<Collection> {
     const created: Collection = {
       id: `c-${Date.now()}`,
-      userId: 'u1',
+      userId: this.auth.user()?.id ?? '',
       experienceIds: [],
       createdAt: new Date().toISOString(),
       ...draft,

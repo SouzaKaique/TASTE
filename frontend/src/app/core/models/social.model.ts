@@ -1,4 +1,4 @@
-export type FriendshipStatus = 'none' | 'pending-sent' | 'pending-received' | 'friends' | 'blocked';
+export type FriendshipStatus = 'none' | 'pending-sent' | 'pending-received' | 'friends' | 'blocked' | 'self';
 
 export interface UserSummary {
   id: string;

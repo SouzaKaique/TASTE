@@ -21,8 +21,27 @@
         <a routerLink="/entrar" class="btn btn-ghost btn-lg">Já tenho conta</a>
       </div>
     </div>
-    <div class="hero__media">
-      <img src="https://picsum.photos/seed/taste-hero/700/860" alt="Prato gastronômico em destaque" />
+    <!-- Prévia ilustrativa do app (sem fotos), apenas decorativa -->
+    <div class="hero__preview" aria-hidden="true">
+      <div class="preview-card">
+        <div class="preview-card__badges">
+          <span>Prato principal</span><span>Italiana</span>
+        </div>
+        <p class="preview-card__dish">Risoto de funghi</p>
+        <p class="preview-card__meta">Osteria Bordô · São Paulo</p>
+        <p class="preview-card__stars">★★★★★</p>
+        <p class="preview-card__note">“Cremoso na medida, com um aroma de cogumelos que ficou na memória.”</p>
+        <div class="preview-card__tags"><span>#cremoso</span><span>#jantar</span><span>#repetiria</span></div>
+      </div>
+
+      <div class="preview-top3">
+        <p class="preview-top3__title"><i class="bi bi-stars"></i> Top 3 do ano</p>
+        <ol>
+          <li><b>1º</b> Risoto de funghi</li>
+          <li><b>2º</b> Moqueca capixaba</li>
+          <li><b>3º</b> Torta de limão</li>
+        </ol>
+      </div>
     </div>
   </div>
 </section>
@@ -47,16 +66,26 @@
 <section class="retro-teaser">
   <div class="container-editorial retro-teaser__grid">
     <div>
-      <p class="eyebrow" style="color: var(--taste-gold-500)">O grande diferencial</p>
+      <p class="eyebrow retro-teaser__eyebrow">O grande diferencial</p>
       <h2 style="color: var(--taste-beige-100)">Sua retrospectiva gastronômica anual</h2>
       <p style="color: var(--taste-beige-500)" class="lede">
         Ao final de cada ano, descubra automaticamente o Top 3 das suas melhores experiências — e escolha manualmente os destaques que mais importaram para você.
       </p>
-      <a routerLink="/cadastro" class="btn btn-outline-primary" style="border-color: var(--taste-beige-100); color: var(--taste-beige-100)">
+      <a routerLink="/cadastro" class="btn btn-ghost-on-bg">
         Criar minha retrospectiva
       </a>
     </div>
-    <img src="https://picsum.photos/seed/taste-retro-teaser/640/500" alt="" class="retro-teaser__image" />
+
+    <!-- Pódio ilustrativo do Top 3 (sem fotos) -->
+    <div class="podium-preview" aria-hidden="true">
+      @for (place of podium; track place.rank) {
+        <div class="podium-preview__place" [class]="'podium-preview__place--' + place.rank">
+          <p class="podium-preview__dish">{{ place.dish }}</p>
+          <p class="podium-preview__stars">★★★★★</p>
+          <div class="podium-preview__block"><span>{{ place.rank }}º</span></div>
+        </div>
+      }
+    </div>
   </div>
 </section>
 

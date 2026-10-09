@@ -11,6 +11,13 @@ import { LogoComponent } from '../../shared/components/logo/logo.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LandingComponent {
+  // Ordem visual do pódio: 2º, 1º, 3º
+  protected readonly podium = [
+    { rank: 2, dish: 'Moqueca capixaba' },
+    { rank: 1, dish: 'Risoto de funghi' },
+    { rank: 3, dish: 'Torta de limão' },
+  ];
+
   protected readonly features = [
     {
       icon: 'bi-journal-richtext',

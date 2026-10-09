@@ -1,0 +1,28 @@
+<aside class="auth-aside">
+  <app-logo [showTagline]="true" tone="light"></app-logo>
+
+  <div class="auth-aside__body">
+    <h2 class="display-title auth-aside__title">Boa comida, boas memórias.</h2>
+    <p class="auth-aside__text">Seu diário gastronômico pessoal para registrar, avaliar e reviver cada experiência.</p>
+
+    <ul class="auth-aside__benefits">
+      @for (benefit of benefits; track benefit.icon) {
+        <li>
+          <span class="auth-aside__icon"><i class="bi" [class]="benefit.icon"></i></span>
+          {{ benefit.text }}
+        </li>
+      }
+    </ul>
+  </div>
+
+  <div class="auth-aside__preview" aria-hidden="true">
+    <p class="auth-aside__preview-title"><i class="bi bi-stars"></i> Seu Top 3 de 2026</p>
+    @for (item of preview; track item.rank) {
+      <div class="auth-aside__preview-row">
+        <span class="auth-aside__rank">{{ item.rank }}</span>
+        <span class="auth-aside__dish">{{ item.dish }}<small>{{ item.place }}</small></span>
+        <span class="auth-aside__stars">★★★★★</span>
+      </div>
+    }
+  </div>
+</aside>

@@ -4,6 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { ToastService } from '../../../shared/services/toast.service';
 import { LogoComponent } from '../../../shared/components/logo/logo.component';
+import { AuthAsideComponent } from '../auth-aside/auth-aside.component';
 
 function passwordsMatchValidator(control: AbstractControl): ValidationErrors | null {
   const password = control.get('password')?.value;
@@ -14,7 +15,7 @@ function passwordsMatchValidator(control: AbstractControl): ValidationErrors | n
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, LogoComponent],
+  imports: [ReactiveFormsModule, RouterLink, LogoComponent, AuthAsideComponent],
   templateUrl: './register.component.html',
   styleUrl: '../auth.shared.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -27,18 +28,28 @@ export class RegisterComponent {
 
   protected readonly loading = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
+  protected readonly showPassword = signal(false);
 
   protected readonly form = this.fb.nonNullable.group(
     {
-      displayName: ['', [Validators.required, Validators.minLength(2)]],
+      displayName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(80)]],
       username: ['', [Validators.required, Validators.pattern(/^[a-z0-9._]{3,20}$/)]],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
+      password: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(72)]],
       confirmPassword: ['', Validators.required],
       acceptTerms: [false, Validators.requiredTrue],
     },
     { validators: passwordsMatchValidator },
   );
+
+  /** Username é sempre minúsculo e sem espaços: corrige enquanto a pessoa digita. */
+  protected normalizeUsername(): void {
+    const control = this.form.controls.username;
+    const normalized = control.value.toLowerCase().replace(/\s+/g, '');
+    if (normalized !== control.value) {
+      control.setValue(normalized);
+    }
+  }
 
   protected submit(): void {
     if (this.form.invalid) {
@@ -53,7 +64,7 @@ export class RegisterComponent {
     this.auth.register(payload).subscribe({
       next: () => {
         this.loading.set(false);
-        this.toast.success('Conta criada com sucesso! Bem-vinda ao TASTE.');
+        this.toast.success('Conta criada! Boas-vindas ao TASTE.');
         this.router.navigate(['/app/inicio']);
       },
       error: (err: Error) => {

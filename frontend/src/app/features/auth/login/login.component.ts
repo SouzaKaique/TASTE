@@ -4,11 +4,12 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { ToastService } from '../../../shared/services/toast.service';
 import { LogoComponent } from '../../../shared/components/logo/logo.component';
+import { AuthAsideComponent } from '../auth-aside/auth-aside.component';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, LogoComponent],
+  imports: [ReactiveFormsModule, RouterLink, LogoComponent, AuthAsideComponent],
   templateUrl: './login.component.html',
   styleUrl: '../auth.shared.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -21,10 +22,11 @@ export class LoginComponent {
 
   protected readonly loading = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
+  protected readonly showPassword = signal(false);
 
   protected readonly form = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(4)]],
+    password: ['', Validators.required],
   });
 
   protected submit(): void {
@@ -39,7 +41,7 @@ export class LoginComponent {
     this.auth.login(this.form.getRawValue()).subscribe({
       next: () => {
         this.loading.set(false);
-        this.toast.success('Bem-vinda de volta!');
+        this.toast.success('Que bom te ver de novo!');
         this.router.navigate(['/app/inicio']);
       },
       error: (err: Error) => {

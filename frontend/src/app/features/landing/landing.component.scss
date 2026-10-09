@@ -70,13 +70,91 @@
     .btn-ghost:hover { background: rgba(248, 246, 241, 0.08); }
   }
 
-  &__media img {
+  &__preview {
+    position: relative;
+    max-width: 400px;
     width: 100%;
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-lg);
-    aspect-ratio: 4/5;
-    object-fit: cover;
+    margin-inline: auto;
+    padding: 0 var(--space-6) 5.5rem 0; // espaço para o Top 3 ficar abaixo do relato
+    text-align: left;
+
+    @media (max-width: 480px) { padding: 0 0 var(--space-6); }
   }
+}
+
+// Card de experiência ilustrativo
+.preview-card {
+  padding: var(--space-5);
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  transform: rotate(-2deg);
+
+  &__badges {
+    display: flex;
+    gap: var(--space-2);
+    margin-bottom: var(--space-3);
+
+    span {
+      padding: 0.2rem 0.65rem;
+      border-radius: var(--radius-pill);
+      background: var(--color-brand-soft);
+      color: var(--color-brand);
+      font-size: var(--fs-caption);
+      font-weight: 600;
+    }
+  }
+
+  &__dish { font-family: var(--font-serif); font-size: 1.7rem; font-weight: 600; line-height: 1.1; margin: 0; }
+  &__meta { color: var(--color-text-secondary); font-size: var(--fs-small); margin: 0.3rem 0 0.4rem; }
+  &__stars { color: var(--taste-gold-500); letter-spacing: 0.08em; margin: 0 0 var(--space-3); }
+
+  &__note {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 1.05rem;
+    color: var(--color-text-primary);
+    border-left: 3px solid var(--taste-gold-500);
+    padding-left: var(--space-3);
+    margin-bottom: var(--space-3);
+  }
+
+  &__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    font-size: var(--fs-caption);
+    color: var(--color-text-secondary);
+  }
+}
+
+// Mini Top 3 sobreposto ao card
+.preview-top3 {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 220px;
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  background: var(--taste-wine-700);
+  border: 1px solid var(--color-border-on-bg);
+  box-shadow: var(--shadow-lg);
+  transform: rotate(3deg);
+  color: var(--color-heading-on-bg);
+
+  @media (max-width: 480px) { position: relative; width: auto; margin: calc(-1 * var(--space-4)) var(--space-4) 0; }
+
+  &__title {
+    margin: 0 0 var(--space-2);
+    font-size: var(--fs-caption);
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #dcc29a; // dourado mais claro: contraste AA sobre o vinho
+  }
+
+  ol { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.35rem; font-size: var(--fs-small); }
+  b { color: var(--taste-gold-500); margin-right: 0.35rem; }
 }
 
 .section-heading {
@@ -105,6 +183,8 @@
 
 .retro-teaser {
   background: linear-gradient(135deg, var(--taste-wine-900), var(--taste-wine-700));
+
+  &__eyebrow { color: #dcc29a; }
   padding-block: var(--space-8);
   margin-top: var(--space-8);
 
@@ -117,12 +197,48 @@
     @media (max-width: 900px) { grid-template-columns: 1fr; text-align: center; }
   }
 
-  &__image {
-    width: 100%;
-    border-radius: var(--radius-lg);
-    aspect-ratio: 4/3;
-    object-fit: cover;
-    box-shadow: var(--shadow-lg);
+}
+
+// Pódio ilustrativo do Top 3
+.podium-preview {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: var(--space-3);
+
+  &__place {
+    flex: 1;
+    max-width: 150px;
+    min-width: 0;
+    text-align: center;
+
+    &--1 .podium-preview__block { height: 150px; background: linear-gradient(180deg, var(--taste-gold-500), #8f6d3e); }
+    &--2 .podium-preview__block { height: 110px; }
+    &--3 .podium-preview__block { height: 80px; }
+  }
+
+  &__dish {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-size: 1.1rem;
+    font-weight: 600;
+    line-height: 1.15;
+    color: var(--color-heading-on-bg);
+  }
+
+  &__stars { margin: 0.2rem 0 var(--space-2); font-size: var(--fs-caption); color: var(--taste-gold-500); }
+
+  &__block {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: var(--space-3);
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    background: rgba(248, 246, 241, 0.1);
+    border: 1px solid var(--color-border-on-bg);
+    border-bottom: none;
+
+    span { font-family: var(--font-serif); font-size: 1.8rem; font-weight: 600; color: var(--color-heading-on-bg); }
   }
 }
 

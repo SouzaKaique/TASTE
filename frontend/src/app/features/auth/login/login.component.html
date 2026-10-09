@@ -1,42 +1,63 @@
 <div class="auth-page">
-  <div class="auth-page__panel">
-    <app-logo [showTagline]="true"></app-logo>
-
-    <h1 class="auth-page__title">Bem-vinda de volta</h1>
-    <p class="lede">Boa comida, boas memórias.</p>
-
-    <form [formGroup]="form" (ngSubmit)="submit()" class="auth-page__form" novalidate>
-      @if (errorMessage()) {
-        <div class="alert alert-danger" role="alert">{{ errorMessage() }}</div>
-      }
-
-      <div class="mb-3">
-        <label class="form-label" for="email">E-mail</label>
-        <input id="email" type="email" class="form-control" formControlName="email" autocomplete="email" />
-        @if (form.controls.email.invalid && form.controls.email.touched) {
-          <div class="invalid-feedback d-block">Informe um e-mail válido.</div>
-        }
-      </div>
-
-      <div class="mb-4">
-        <label class="form-label" for="password">Senha</label>
-        <input id="password" type="password" class="form-control" formControlName="password" autocomplete="current-password" />
-        @if (form.controls.password.invalid && form.controls.password.touched) {
-          <div class="invalid-feedback d-block">A senha deve ter ao menos 4 caracteres.</div>
-        }
-      </div>
-
-      <button type="submit" class="btn btn-primary w-100" [class.btn-loading]="loading()" [disabled]="loading()">
-        Entrar
-      </button>
-    </form>
-
-    <p class="auth-page__switch">
-      Ainda não tem conta? <a routerLink="/cadastro">Criar conta</a>
-    </p>
+  <div class="auth-page__aside">
+    <app-auth-aside></app-auth-aside>
   </div>
 
-  <div class="auth-page__cover" role="presentation">
-    <img src="https://picsum.photos/seed/taste-login-cover/900/1200" alt="" />
-  </div>
+  <main class="auth-page__main">
+    <a routerLink="/" class="auth-page__back"><i class="bi bi-arrow-left"></i> Voltar ao início</a>
+
+    <div class="auth-page__panel">
+      <app-logo class="auth-page__logo" [showTagline]="true"></app-logo>
+
+      <h1 class="auth-page__title">Que bom te ver de novo</h1>
+      <p class="auth-page__subtitle">Entre para continuar seu diário gastronômico.</p>
+
+      <form [formGroup]="form" (ngSubmit)="submit()" class="auth-page__form" novalidate>
+        @if (errorMessage()) {
+          <div class="alert alert-danger" role="alert">{{ errorMessage() }}</div>
+        }
+
+        <div class="mb-3">
+          <label class="form-label" for="email">E-mail</label>
+          <input id="email" type="email" class="form-control" formControlName="email" autocomplete="email" inputmode="email" />
+          @if (form.controls.email.invalid && form.controls.email.touched) {
+            <div class="invalid-feedback d-block">Informe um e-mail válido.</div>
+          }
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label" for="password">Senha</label>
+          <div class="password-field">
+            <input
+              id="password"
+              [type]="showPassword() ? 'text' : 'password'"
+              class="form-control"
+              formControlName="password"
+              autocomplete="current-password"
+            />
+            <button
+              type="button"
+              class="password-field__toggle"
+              (click)="showPassword.set(!showPassword())"
+              [attr.aria-label]="showPassword() ? 'Ocultar senha' : 'Mostrar senha'"
+              [attr.aria-pressed]="showPassword()"
+            >
+              <i class="bi" [class.bi-eye]="!showPassword()" [class.bi-eye-slash]="showPassword()"></i>
+            </button>
+          </div>
+          @if (form.controls.password.invalid && form.controls.password.touched) {
+            <div class="invalid-feedback d-block">Informe sua senha.</div>
+          }
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100" [class.btn-loading]="loading()" [disabled]="loading()">
+          Entrar
+        </button>
+      </form>
+
+      <p class="auth-page__switch">
+        Ainda não tem conta? <a routerLink="/cadastro">Criar conta</a>
+      </p>
+    </div>
+  </main>
 </div>

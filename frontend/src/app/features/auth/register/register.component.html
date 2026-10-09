@@ -1,63 +1,117 @@
 <div class="auth-page">
-  <div class="auth-page__panel">
-    <app-logo [showTagline]="true"></app-logo>
+  <div class="auth-page__aside">
+    <app-auth-aside></app-auth-aside>
+  </div>
 
-    <h1 class="auth-page__title">Crie seu perfil gastronômico</h1>
-    <p class="lede">Comece a construir seu diário de sabores.</p>
+  <main class="auth-page__main">
+    <a routerLink="/" class="auth-page__back"><i class="bi bi-arrow-left"></i> Voltar ao início</a>
 
-    <form [formGroup]="form" (ngSubmit)="submit()" class="auth-page__form" novalidate>
-      @if (errorMessage()) {
-        <div class="alert alert-danger" role="alert">{{ errorMessage() }}</div>
-      }
+    <div class="auth-page__panel">
+      <app-logo class="auth-page__logo" [showTagline]="true"></app-logo>
 
-      <div class="mb-3">
-        <label class="form-label" for="displayName">Nome de exibição</label>
-        <input id="displayName" type="text" class="form-control" formControlName="displayName" />
-      </div>
+      <h1 class="auth-page__title">Crie sua conta</h1>
+      <p class="auth-page__subtitle">Comece a construir seu diário de sabores. É gratuito.</p>
 
-      <div class="mb-3">
-        <label class="form-label" for="username">Username</label>
-        <input id="username" type="text" class="form-control" formControlName="username" placeholder="ex: clarasabores" />
-        @if (form.controls.username.invalid && form.controls.username.touched) {
-          <div class="invalid-feedback d-block">Use de 3 a 20 letras minúsculas, números, pontos ou underline.</div>
+      <form [formGroup]="form" (ngSubmit)="submit()" class="auth-page__form" novalidate>
+        @if (errorMessage()) {
+          <div class="alert alert-danger" role="alert">{{ errorMessage() }}</div>
         }
-      </div>
 
-      <div class="mb-3">
-        <label class="form-label" for="email">E-mail</label>
-        <input id="email" type="email" class="form-control" formControlName="email" />
-      </div>
-
-      <div class="row g-3 mb-3">
-        <div class="col-sm-6">
-          <label class="form-label" for="password">Senha</label>
-          <input id="password" type="password" class="form-control" formControlName="password" />
+        <div class="mb-3">
+          <label class="form-label" for="displayName">Nome de exibição</label>
+          <input id="displayName" type="text" class="form-control" formControlName="displayName" autocomplete="name" />
+          @if (form.controls.displayName.invalid && form.controls.displayName.touched) {
+            <div class="invalid-feedback d-block">Informe um nome com pelo menos 2 letras.</div>
+          }
         </div>
-        <div class="col-sm-6">
-          <label class="form-label" for="confirmPassword">Confirmar senha</label>
-          <input id="confirmPassword" type="password" class="form-control" formControlName="confirmPassword" />
+
+        <div class="mb-3">
+          <label class="form-label" for="username">Username</label>
+          <input
+            id="username"
+            type="text"
+            class="form-control"
+            formControlName="username"
+            placeholder="ex: clarasabores"
+            autocomplete="username"
+            autocapitalize="none"
+            spellcheck="false"
+            (input)="normalizeUsername()"
+          />
+          @if (form.controls.username.invalid && form.controls.username.touched) {
+            <div class="invalid-feedback d-block">Use de 3 a 20 letras minúsculas, números, pontos ou underline.</div>
+          } @else {
+            <div class="auth-page__hint">É assim que seus amigos vão te encontrar. Não pode ser alterado depois.</div>
+          }
         </div>
-      </div>
-      @if (form.errors?.['passwordMismatch'] && form.controls.confirmPassword.touched) {
-        <div class="invalid-feedback d-block mb-3">As senhas não coincidem.</div>
-      }
 
-      <div class="form-check mb-4">
-        <input id="acceptTerms" type="checkbox" class="form-check-input" formControlName="acceptTerms" />
-        <label class="form-check-label" for="acceptTerms">Li e aceito os termos de uso.</label>
-      </div>
+        <div class="mb-3">
+          <label class="form-label" for="email">E-mail</label>
+          <input id="email" type="email" class="form-control" formControlName="email" autocomplete="email" inputmode="email" />
+          @if (form.controls.email.invalid && form.controls.email.touched) {
+            <div class="invalid-feedback d-block">Informe um e-mail válido.</div>
+          }
+        </div>
 
-      <button type="submit" class="btn btn-primary w-100" [class.btn-loading]="loading()" [disabled]="loading()">
-        Criar conta
-      </button>
-    </form>
+        <div class="row g-3 mb-3">
+          <div class="col-sm-6">
+            <label class="form-label" for="password">Senha</label>
+            <div class="password-field">
+              <input
+                id="password"
+                [type]="showPassword() ? 'text' : 'password'"
+                class="form-control"
+                formControlName="password"
+                autocomplete="new-password"
+              />
+              <button
+                type="button"
+                class="password-field__toggle"
+                (click)="showPassword.set(!showPassword())"
+                [attr.aria-label]="showPassword() ? 'Ocultar senhas' : 'Mostrar senhas'"
+                [attr.aria-pressed]="showPassword()"
+              >
+                <i class="bi" [class.bi-eye]="!showPassword()" [class.bi-eye-slash]="showPassword()"></i>
+              </button>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <label class="form-label" for="confirmPassword">Confirmar senha</label>
+            <input
+              id="confirmPassword"
+              [type]="showPassword() ? 'text' : 'password'"
+              class="form-control"
+              formControlName="confirmPassword"
+              autocomplete="new-password"
+            />
+          </div>
+          <div class="col-12 mt-1">
+            @if (form.controls.password.invalid && form.controls.password.touched) {
+              <div class="invalid-feedback d-block mt-0">A senha deve ter pelo menos 6 caracteres.</div>
+            } @else if (form.errors?.['passwordMismatch'] && form.controls.confirmPassword.touched) {
+              <div class="invalid-feedback d-block mt-0">As senhas não coincidem.</div>
+            } @else {
+              <div class="auth-page__hint mt-0">Mínimo de 6 caracteres.</div>
+            }
+          </div>
+        </div>
 
-    <p class="auth-page__switch">
-      Já tem conta? <a routerLink="/entrar">Entrar</a>
-    </p>
-  </div>
+        <div class="form-check mb-4">
+          <input id="acceptTerms" type="checkbox" class="form-check-input" formControlName="acceptTerms" />
+          <label class="form-check-label" for="acceptTerms">Li e aceito os termos de uso.</label>
+          @if (form.controls.acceptTerms.invalid && form.controls.acceptTerms.touched) {
+            <div class="invalid-feedback d-block">É preciso aceitar os termos para criar a conta.</div>
+          }
+        </div>
 
-  <div class="auth-page__cover" role="presentation">
-    <img src="https://picsum.photos/seed/taste-register-cover/900/1200" alt="" />
-  </div>
+        <button type="submit" class="btn btn-primary w-100" [class.btn-loading]="loading()" [disabled]="loading()">
+          Criar conta
+        </button>
+      </form>
+
+      <p class="auth-page__switch">
+        Já tem conta? <a routerLink="/entrar">Entrar</a>
+      </p>
+    </div>
+  </main>
 </div>

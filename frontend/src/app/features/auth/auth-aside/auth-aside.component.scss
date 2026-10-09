@@ -1,0 +1,102 @@
+:host { display: block; }
+
+.auth-aside {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  max-width: 460px;
+  color: var(--color-text-on-bg);
+
+  &__title {
+    color: var(--color-heading-on-bg);
+    margin-bottom: var(--space-3);
+  }
+
+  &__text {
+    font-size: 1.05rem;
+    margin-bottom: var(--space-5);
+  }
+
+  &__benefits {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: var(--space-3);
+
+    li {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      color: var(--color-heading-on-bg);
+    }
+  }
+
+  &__icon {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(184, 146, 90, 0.16);
+    color: var(--taste-gold-500);
+  }
+
+  // Cartão ilustrativo em "vidro" sobre o bordô
+  &__preview {
+    // Em telas baixas (notebooks), a prévia sai para não criar rolagem
+    @media (max-height: 800px) { display: none; }
+
+    padding: var(--space-4) var(--space-5);
+    border-radius: var(--radius-lg);
+    background: rgba(248, 246, 241, 0.06);
+    border: 1px solid var(--color-border-on-bg);
+  }
+
+  &__preview-title {
+    margin: 0 0 var(--space-3);
+    font-size: var(--fs-caption);
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-eyebrow-on-bg);
+  }
+
+  &__preview-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding-block: var(--space-2);
+
+    & + & { border-top: 1px solid var(--color-border-on-bg); }
+  }
+
+  &__rank {
+    font-family: var(--font-serif);
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--taste-gold-500);
+    width: 2rem;
+  }
+
+  &__dish {
+    flex: 1;
+    color: var(--color-heading-on-bg);
+    font-weight: 500;
+
+    small {
+      display: block;
+      font-weight: 400;
+      font-size: var(--fs-caption);
+      color: var(--color-text-on-bg);
+    }
+  }
+
+  &__stars {
+    color: var(--taste-gold-500);
+    font-size: var(--fs-small);
+    letter-spacing: 0.05em;
+  }
+}

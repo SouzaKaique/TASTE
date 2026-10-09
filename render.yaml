@@ -8,9 +8,9 @@ services:
     region: virginia
     # Monorepo: so mudancas dentro de backend/ disparam um novo deploy.
     rootDir: backend
-    # Caminhos do Docker sao relativos a raiz do repositorio.
-    dockerfilePath: ./backend/Dockerfile
-    dockerContext: ./backend
+    # Com rootDir definido, o Render resolve os caminhos do Docker a partir de backend/.
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
     healthCheckPath: /actuator/health
     autoDeploy: true
     envVars:

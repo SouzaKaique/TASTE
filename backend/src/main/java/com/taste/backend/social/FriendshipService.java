@@ -2,6 +2,7 @@ package com.taste.backend.social;
 
 import com.taste.backend.common.BadRequestException;
 import com.taste.backend.common.NotFoundException;
+import com.taste.backend.notification.NotificationService;
 import com.taste.backend.social.dto.UserSummaryResponse;
 import com.taste.backend.user.User;
 import com.taste.backend.user.UserRepository;
@@ -29,10 +30,12 @@ public class FriendshipService {
 
     private final FriendshipRepository friendshipRepository;
     private final UserRepository userRepository;
+    private final NotificationService notificationService;
 
-    public FriendshipService(FriendshipRepository friendshipRepository, UserRepository userRepository) {
+    public FriendshipService(FriendshipRepository friendshipRepository, UserRepository userRepository, NotificationService notificationService) {
         this.friendshipRepository = friendshipRepository;
         this.userRepository = userRepository;
+        this.notificationService = notificationService;
     }
 
     // ---- Consultas usadas por outros modulos ----
@@ -100,11 +103,14 @@ public class FriendshipService {
 
         Friendship friendship = friendshipRepository.findBetween(me, otherId).orElse(null);
         if (friendship == null) {
-            friendshipRepository.save(new Friendship(findUser(me), other));
+            User requester = findUser(me);
+            friendshipRepository.save(new Friendship(requester, other));
+            notificationService.friendRequest(requester, other);
             return UserSummaryResponse.of(other, PENDING_SENT);
         }
         if (friendship.getStatus() == Friendship.Status.PENDING && friendship.getAddressee().getId().equals(me)) {
             friendship.setStatus(Friendship.Status.ACCEPTED);
+            notificationService.friendAccepted(friendship.getAddressee(), friendship.getRequester());
         }
         return UserSummaryResponse.of(other, statusFor(me, friendship));
     }
@@ -114,12 +120,14 @@ public class FriendshipService {
                 .filter(f -> f.getStatus() == Friendship.Status.PENDING && f.getAddressee().getId().equals(me))
                 .orElseThrow(() -> new NotFoundException("Solicitação de amizade não encontrada."));
         friendship.setStatus(Friendship.Status.ACCEPTED);
+        notificationService.friendAccepted(friendship.getAddressee(), friendship.getRequester());
         return UserSummaryResponse.of(friendship.getRequester(), FRIENDS);
     }
 
     /** Recusa um pedido recebido, cancela um pedido enviado ou desfaz a amizade. */
     public void remove(Long me, Long otherId) {
         friendshipRepository.findBetween(me, otherId).ifPresent(friendshipRepository::delete);
+        notificationService.friendshipRemoved(me, otherId);
     }
 
     private Map<Long, String> statusMap(Long me) {

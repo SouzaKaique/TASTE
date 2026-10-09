@@ -1,0 +1,43 @@
+<div class="container-narrow section-spacing">
+  <header class="page-header">
+    <p class="eyebrow">Atividade</p>
+    <h1>Notificações</h1>
+  </header>
+
+  @if (loading()) {
+    <app-loading-state [count]="4"></app-loading-state>
+  } @else if (error()) {
+    <app-error-state title="Não foi possível carregar as notificações" (retry)="load()"></app-error-state>
+  } @else if (!items().length) {
+    <app-empty-state
+      icon="bi-bell"
+      title="Nenhuma notificação ainda"
+      description="Quando alguém pedir sua amizade, curtir ou comentar uma experiência, você verá aqui."
+    ></app-empty-state>
+  } @else {
+    <ul class="notification-list surface-card">
+      @for (n of items(); track n.id) {
+        <li>
+          <a class="notification" [class.is-unread]="!n.read" [routerLink]="link(n)">
+            <span class="notification__avatar">
+              <app-avatar [src]="n.actor.avatarUrl" [name]="n.actor.displayName" size="md"></app-avatar>
+              <span class="notification__icon" [class]="'notification__icon--' + n.type" aria-hidden="true">
+                <i class="bi" [class]="icon(n)"></i>
+              </span>
+            </span>
+            <span class="notification__body">
+              <span class="notification__text"><strong>{{ n.actor.displayName }}</strong> {{ message(n) }}</span>
+              @if (n.snippet) {
+                <span class="notification__snippet">“{{ n.snippet }}”</span>
+              }
+              <span class="notification__time">{{ n.createdAt | date: "d 'de' MMM, HH:mm" }}</span>
+            </span>
+            @if (!n.read) {
+              <span class="notification__dot" aria-label="Não lida"></span>
+            }
+          </a>
+        </li>
+      }
+    </ul>
+  }
+</div>

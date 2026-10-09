@@ -14,6 +14,11 @@
         >
           <i class="bi" [class]="item.icon"></i>
           <span>{{ item.label }}</span>
+          @if (item.badge && notifications.unreadCount()) {
+            <span class="app-shell__badge" [attr.aria-label]="notifications.unreadCount() + ' não lidas'">
+              {{ notifications.unreadCount() > 99 ? '99+' : notifications.unreadCount() }}
+            </span>
+          }
         </a>
       }
     </nav>
@@ -39,7 +44,17 @@
   <header class="app-shell__mobile-header">
     <app-logo variant="mark"></app-logo>
     <span class="app-shell__mobile-title">TASTE</span>
-    <a routerLink="/app/perfil" class="app-shell__mobile-avatar">
+    <a
+      routerLink="/app/notificacoes"
+      class="app-shell__mobile-bell"
+      [attr.aria-label]="'Notificações' + (notifications.unreadCount() ? ' (' + notifications.unreadCount() + ' não lidas)' : '')"
+    >
+      <i class="bi bi-bell"></i>
+      @if (notifications.unreadCount()) {
+        <span class="app-shell__badge app-shell__badge--dot">{{ notifications.unreadCount() > 9 ? '9+' : notifications.unreadCount() }}</span>
+      }
+    </a>
+    <a routerLink="/app/perfil" class="app-shell__mobile-avatar" aria-label="Meu perfil">
       <app-avatar [src]="auth.user()?.avatarUrl ?? null" [name]="auth.user()?.displayName ?? ''" size="sm"></app-avatar>
     </a>
   </header>

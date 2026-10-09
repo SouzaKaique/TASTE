@@ -52,13 +52,8 @@ export const routes: Routes = [
         path: 'descobrir',
         loadComponent: () => import('./features/discover/discover.component').then((m) => m.DiscoverComponent),
       },
-      {
-        path: 'restaurantes',
-        loadComponent: () =>
-          import('./features/restaurants/restaurant-search/restaurant-search.component').then(
-            (m) => m.RestaurantSearchComponent,
-          ),
-      },
+      // A busca de restaurantes agora faz parte de "Descobrir"
+      { path: 'restaurantes', pathMatch: 'full', redirectTo: 'descobrir' },
       {
         path: 'restaurantes/:id',
         loadComponent: () =>
@@ -66,9 +61,11 @@ export const routes: Routes = [
             (m) => m.RestaurantDetailComponent,
           ),
       },
+      { path: 'mapa', redirectTo: 'inicio' },
       {
-        path: 'mapa',
-        loadComponent: () => import('./features/map/map.component').then((m) => m.MapComponent),
+        path: 'notificacoes',
+        loadComponent: () =>
+          import('./features/notifications/notifications.component').then((m) => m.NotificationsComponent),
       },
       {
         path: 'social',

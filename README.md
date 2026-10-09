@@ -37,9 +37,8 @@ Este repositório reúne as duas partes da aplicação:
 |---|---|
 | 📓 **Diário gastronômico** | Registro completo de experiências: prato, categoria, culinária, restaurante, cidade, foto, relato pessoal, tags e visibilidade |
 | ⭐ **Avaliação por estrelas** | Nota geral de 1 a 5, com critérios opcionais (sabor, apresentação, textura, criatividade) |
-| 🔍 **Descoberta** | Busca de restaurantes, cadastro manual, página de detalhe com histórico pessoal |
-| 🗺️ **Mapa gastronômico** | Visualização das cidades exploradas, agrupada por experiências registradas |
-| 👥 **Rede social** | Amigos, feed de atividades, curtidas e comentários |
+| 🔍 **Descoberta** | Busca de restaurantes do Brasil todo (OpenStreetMap), destaques curados por cidade, capas com fotos da comunidade |
+| 👥 **Rede social** | Amigos, feed de atividades, curtidas, comentários e notificações |
 | ❤️ **Favoritos e coleções** | Organização pessoal de pratos e restaurantes em listas temáticas |
 | 🏆 **Retrospectiva anual** | Estatísticas do ano, gráfico mensal, Top 3 automático e destaques manuais por categoria |
 | 👤 **Perfil e privacidade** | Perfil público/privado, edição de conta, controle de visibilidade |
@@ -107,6 +106,11 @@ backend/src/main/java/com/taste/backend/
 | `GET` / `POST` | `/api/experiences` | Lista ou cria experiências do usuário |
 | `GET` / `PUT` / `DELETE` | `/api/experiences/{id}` | Detalha, edita ou remove (somente o dono) |
 | `PATCH` | `/api/experiences/{id}/favorite` | Marca ou desmarca como favorita |
+| `GET` / `POST` / `DELETE` | `/api/friends/...` | Busca de pessoas, pedidos e amizades |
+| `GET` | `/api/feed` | Experiências próprias e de amigos, com curtidas e comentários |
+| `GET` / `POST` | `/api/notifications/...` | Notificações e contador de não lidas |
+| `GET` | `/api/places/search?q=` | Busca de restaurantes no OpenStreetMap (Photon) |
+| `GET` | `/api/places/{id}` | Detalhes de um restaurante (Nominatim) |
 
 ## Deploy
 
@@ -117,7 +121,8 @@ backend/src/main/java/com/taste/backend/
 
 Este é um projeto pessoal em fase de demonstração — algumas limitações são intencionais nesta etapa:
 
-- **Módulos ainda demonstrativos**: contas, perfil e experiências são reais e persistidos; restaurantes, amigos, feed e coleções ainda usam dados de demonstração.
+- **Módulos ainda demonstrativos**: contas, experiências, amigos, feed e notificações são reais; coleções ainda usam dados de demonstração.
+- **Busca de restaurantes**: usa dados abertos do OpenStreetMap, que podem não incluir todos os estabelecimentos — por isso o cadastro manual continua disponível.
 - **Fotos**: são reduzidas no navegador e guardadas no próprio banco, uma solução provisória até existir um serviço de armazenamento de arquivos.
 - **Plano gratuito**: o backend no Render "dorme" após 15 minutos sem uso; o primeiro acesso depois disso pode levar cerca de um minuto.
 - **Mapa**: como não há uma chave de API de mapas configurada, a tela exibe uma visualização ilustrativa e claramente identificada como demonstração.
@@ -127,8 +132,9 @@ Este é um projeto pessoal em fase de demonstração — algumas limitações s�
 
 - [x] Backend com persistência real (usuários e experiências)
 - [x] Autenticação real com JWT
-- [ ] Amigos, feed e coleções no backend
-- [ ] Integração com uma API de lugares e um provedor de mapas
+- [x] Amigos, feed e notificações no backend
+- [x] Busca de restaurantes com dados abertos (OpenStreetMap)
+- [ ] Coleções no backend
 - [ ] Upload de imagens em um serviço de armazenamento
 
 ## Licença

@@ -5,30 +5,60 @@
     <app-error-state title="Restaurante não encontrado" [retryable]="false"></app-error-state>
   } @else {
     @if (restaurant(); as r) {
-      <a routerLink="/app/restaurantes" class="back-link"><i class="bi bi-arrow-left"></i> Voltar à busca</a>
+      <a routerLink="/app/descobrir" class="back-link"><i class="bi bi-arrow-left"></i> Voltar para Descobrir</a>
 
       <div class="rest-hero">
-        <p class="eyebrow rest-hero__eyebrow">{{ r.cuisineTypes.join(' · ') || 'Restaurante' }}</p>
-        <h1 class="display-title rest-hero__title">{{ r.name }}</h1>
-        <p class="rest-hero__location"><i class="bi bi-geo-alt"></i> {{ r.city }}, {{ r.country }}</p>
-        @if (r.highlight) {
-          <p class="rest-hero__highlight"><i class="bi bi-award"></i> {{ r.highlight }}</p>
-        }
+        <div class="rest-hero__cover">
+          <app-restaurant-cover [name]="r.name" [photoUrl]="coverUrl()"></app-restaurant-cover>
+        </div>
+        <div class="rest-hero__info">
+          <p class="eyebrow rest-hero__eyebrow">{{ r.cuisineTypes.join(' · ') || 'Restaurante' }}</p>
+          <h1 class="display-title rest-hero__title">{{ r.name }}</h1>
+          <p class="rest-hero__location">
+            <i class="bi bi-geo-alt"></i>
+            {{ r.district ? r.district + ' · ' : '' }}{{ r.city || 'Cidade não informada' }}{{ r.state ? ', ' + r.state : '' }}
+          </p>
+          @if (r.highlight) {
+            <p class="rest-hero__highlight"><i class="bi bi-award"></i> {{ r.highlight }}</p>
+          }
+        </div>
       </div>
 
       @if (r.description) {
         <p class="lede rest-description">{{ r.description }}</p>
       }
 
-      @if (r.address) {
-        <p class="text-secondary-taste"><i class="bi bi-signpost"></i> {{ r.address }}</p>
-      }
+      <ul class="rest-facts">
+        @if (r.address) {
+          <li><i class="bi bi-signpost"></i> {{ r.address }}</li>
+        }
+        @if (r.phone) {
+          <li><i class="bi bi-telephone"></i> <a [href]="'tel:' + r.phone">{{ r.phone }}</a></li>
+        }
+        @if (r.openingHours) {
+          <li><i class="bi bi-clock"></i> {{ r.openingHours }}</li>
+        }
+        @if (websiteUrl(); as site) {
+          <li><i class="bi bi-globe"></i> <a [href]="site" target="_blank" rel="noopener noreferrer">Site oficial</a></li>
+        }
+      </ul>
 
       <div class="rest-cta">
-        <a class="btn btn-primary" routerLink="/app/experiencias/nova">
+        <a class="btn btn-primary" routerLink="/app/experiencias/nova" [queryParams]="{ restaurante: r.id }">
           <i class="bi bi-plus-lg"></i> Registrar experiência aqui
         </a>
+        @if (directionsUrl(); as url) {
+          <a class="btn btn-ghost-on-bg" [href]="url" target="_blank" rel="noopener noreferrer">
+            <i class="bi bi-sign-turn-right"></i> Como chegar
+          </a>
+        }
       </div>
+
+      @if (r.source === 'osm') {
+        <p class="rest-source">
+          Dados do <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> — podem estar incompletos.
+        </p>
+      }
 
       <section class="rest-section">
         <h2>Minhas experiências neste lugar</h2>
@@ -48,7 +78,7 @@
       </section>
 
       @if (favoriteDishes().length) {
-        <section>
+        <section class="rest-section">
           <h2>Pratos favoritos</h2>
           <div class="rest-grid">
             @for (exp of favoriteDishes(); track exp.id) {

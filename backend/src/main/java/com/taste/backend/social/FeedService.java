@@ -5,6 +5,7 @@ import com.taste.backend.common.ForbiddenException;
 import com.taste.backend.experience.Experience;
 import com.taste.backend.experience.ExperienceAccess;
 import com.taste.backend.experience.ExperienceRepository;
+import com.taste.backend.notification.NotificationService;
 import com.taste.backend.social.dto.FeedCommentResponse;
 import com.taste.backend.social.dto.FeedItemResponse;
 import com.taste.backend.user.User;
@@ -29,6 +30,7 @@ public class FeedService {
     private final ExperienceLikeRepository likeRepository;
     private final ExperienceCommentRepository commentRepository;
     private final UserRepository userRepository;
+    private final NotificationService notificationService;
 
     public FeedService(
             ExperienceRepository experienceRepository,
@@ -36,7 +38,8 @@ public class FeedService {
             FriendshipService friendshipService,
             ExperienceLikeRepository likeRepository,
             ExperienceCommentRepository commentRepository,
-            UserRepository userRepository
+            UserRepository userRepository,
+            NotificationService notificationService
     ) {
         this.experienceRepository = experienceRepository;
         this.experienceAccess = experienceAccess;
@@ -44,6 +47,7 @@ public class FeedService {
         this.likeRepository = likeRepository;
         this.commentRepository = commentRepository;
         this.userRepository = userRepository;
+        this.notificationService = notificationService;
     }
 
     /** Experiencias dos amigos e as proprias (nao privadas), das mais recentes para as mais antigas. */
@@ -65,9 +69,16 @@ public class FeedService {
 
     public FeedItemResponse toggleLike(Long me, Long experienceId) {
         Experience experience = findVisible(me, experienceId);
+        User actor = findUser(me);
         likeRepository.findByExperienceIdAndUserId(experienceId, me).ifPresentOrElse(
-                likeRepository::delete,
-                () -> likeRepository.save(new ExperienceLike(experience, findUser(me)))
+                like -> {
+                    likeRepository.delete(like);
+                    notificationService.unliked(actor, experience);
+                },
+                () -> {
+                    likeRepository.save(new ExperienceLike(experience, actor));
+                    notificationService.liked(actor, experience);
+                }
         );
         likeRepository.flush();
         return toItem(me, experience);
@@ -75,7 +86,9 @@ public class FeedService {
 
     public FeedItemResponse addComment(Long me, Long experienceId, String text) {
         Experience experience = findVisible(me, experienceId);
-        commentRepository.save(new ExperienceComment(experience, findUser(me), text.trim()));
+        User actor = findUser(me);
+        commentRepository.save(new ExperienceComment(experience, actor, text.trim()));
+        notificationService.commented(actor, experience, text.trim());
         return toItem(me, experience);
     }
 

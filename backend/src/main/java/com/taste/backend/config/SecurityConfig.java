@@ -43,6 +43,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/actuator/health").permitAll()
+                        // Fotos de experiencias publicas (capas de restaurantes); a regra de acesso fica no controller
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/public/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 // Sem token (ou token invalido) responde 401, para o frontend mandar ao login.

@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { FeedItem } from '../../../core/models';
 import { SocialService } from '../../../core/services/social.service';
 import { ToastService } from '../../../shared/services/toast.service';
+import { ConfirmService } from '../../../shared/services/confirm.service';
 import { FeedItemComponent } from '../../../shared/components/feed-item/feed-item.component';
 import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
 import { ErrorStateComponent } from '../../../shared/components/error-state/error-state.component';
@@ -19,6 +20,7 @@ import { LoadingStateComponent } from '../../../shared/components/loading-state/
 export class FeedComponent {
   private readonly socialService = inject(SocialService);
   private readonly toast = inject(ToastService);
+  private readonly confirmService = inject(ConfirmService);
 
   protected readonly loading = signal(true);
   protected readonly error = signal(false);
@@ -57,9 +59,20 @@ export class FeedComponent {
     });
   }
 
-  protected onRemoveComment({ feedItemId, commentId }: { feedItemId: string; commentId: string }): void {
+  protected async onRemoveComment({ feedItemId, commentId }: { feedItemId: string; commentId: string }): Promise<void> {
+    const confirmed = await this.confirmService.ask({
+      title: 'Excluir comentário',
+      message: 'Tem certeza de que deseja excluir este comentário? Essa ação não pode ser desfeita.',
+      confirmLabel: 'Excluir',
+      danger: true,
+    });
+    if (!confirmed) return;
+
     this.socialService.removeComment(feedItemId, commentId).subscribe({
-      next: (updated) => this.replace(updated),
+      next: (updated) => {
+        this.replace(updated);
+        this.toast.success('Comentário excluído.');
+      },
       error: (err: Error) => this.toast.error(err.message),
     });
   }

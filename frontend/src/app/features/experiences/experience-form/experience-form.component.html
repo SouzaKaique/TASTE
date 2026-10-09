@@ -23,21 +23,29 @@
           <input
             type="text"
             class="form-control"
-            placeholder="Buscar restaurante por nome ou cidade..."
+            placeholder="Buscar restaurante (Brasil todo)..."
+            aria-label="Buscar restaurante"
             [ngModel]="restaurantSearchTerm()"
             (ngModelChange)="restaurantSearchTerm.set($event); searchRestaurants()"
             [ngModelOptions]="{ standalone: true }"
           />
 
-          @if (restaurantResults().length) {
+          @if (searchingRestaurants()) {
+            <p class="restaurant-search__status"><span class="spinner-border spinner-border-sm"></span> Buscando restaurantes...</p>
+          } @else if (restaurantResults().length) {
             <div class="restaurant-search__results">
               @for (r of restaurantResults(); track r.id) {
                 <button type="button" class="restaurant-search__item" (click)="selectRestaurant(r)">
                   <strong>{{ r.name }}</strong>
-                  <span>{{ r.city }}, {{ r.country }}</span>
+                  <span>
+                    {{ r.address ? r.address + ' · ' : '' }}{{ r.city || 'Cidade não informada' }}{{ r.state ? ', ' + r.state : '' }}
+                    @if (r.source === 'curated') { · <em>Destaque TASTE</em> }
+                  </span>
                 </button>
               }
             </div>
+          } @else if (restaurantSearchTerm().trim().length >= 3) {
+            <p class="restaurant-search__status">Nenhum restaurante encontrado. Você pode cadastrar manualmente abaixo.</p>
           }
 
           <button type="button" class="btn btn-ghost btn-sm mt-2" (click)="showManualRestaurantForm.set(!showManualRestaurantForm())">

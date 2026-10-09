@@ -35,9 +35,9 @@ export class LandingComponent {
       description: 'Siga amigos, curta e comente as descobertas de quem você confia.',
     },
     {
-      icon: 'bi-geo-alt',
-      title: 'Mapa de experiências',
-      description: 'Visualize todos os lugares que você já visitou, cidade por cidade.',
+      icon: 'bi-search',
+      title: 'Restaurantes do Brasil todo',
+      description: 'Encontre qualquer restaurante pelo nome e veja destaques reais da sua cidade.',
     },
     {
       icon: 'bi-stars',

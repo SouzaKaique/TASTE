@@ -122,8 +122,44 @@
     color: var(--color-heading-on-bg);
   }
 
-  &__mobile-avatar {
+  &__mobile-bell {
+    position: relative;
     margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    color: var(--color-heading-on-bg);
+    font-size: 1.25rem;
+  }
+
+  &__badge {
+    margin-left: auto;
+    min-width: 22px;
+    height: 22px;
+    padding: 0 0.4rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-pill);
+    background: var(--taste-gold-500);
+    color: var(--taste-wine-900);
+    font-size: 0.72rem;
+    font-weight: 700;
+
+    &--dot {
+      position: absolute;
+      top: 4px;
+      right: 2px;
+      min-width: 18px;
+      height: 18px;
+      padding: 0 0.3rem;
+      font-size: 0.65rem;
+    }
+  }
+
+  &__mobile-avatar {
     // área de toque de 44px em volta do avatar de 32px
     padding: 6px;
     margin-right: -6px;

@@ -1,12 +1,64 @@
 <div class="container-editorial section-spacing">
   <header class="page-header">
     <p class="eyebrow">Explore</p>
-    <h1>Descobrir novos sabores</h1>
-    <p>Restaurantes reais e muito bem avaliados em Assis, Londrina, Curitiba e São Paulo.</p>
+    <h1>Descobrir restaurantes</h1>
+    <p>Busque qualquer restaurante do Brasil ou explore os destaques de Assis, Londrina, Curitiba e São Paulo.</p>
   </header>
+
+  <div class="discover-search surface-card">
+    <i class="bi bi-search" aria-hidden="true"></i>
+    <input
+      type="search"
+      class="form-control"
+      placeholder="Nome do restaurante, cidade ou tipo de comida..."
+      aria-label="Buscar restaurantes"
+      [ngModel]="term()"
+      (ngModelChange)="onTermChange($event)"
+    />
+    @if (term()) {
+      <button type="button" class="discover-search__clear" (click)="clearSearch()" aria-label="Limpar busca">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    }
+  </div>
+
+  <div class="city-filter" role="group" aria-label="Filtrar por cidade">
+    <button type="button" class="city-filter__chip" [class.is-active]="!selectedCity()" (click)="selectCity(null)">Todas</button>
+    @for (city of cities; track city) {
+      <button type="button" class="city-filter__chip" [class.is-active]="selectedCity() === city" (click)="selectCity(city)">
+        {{ city }}
+      </button>
+    }
+  </div>
 
   @if (loading()) {
     <app-loading-state [count]="4"></app-loading-state>
+  } @else if (isSearching()) {
+    <section class="discover-section">
+      <div class="discover-section__header">
+        <h2>Resultados para "{{ term().trim() }}"</h2>
+      </div>
+      @if (searching()) {
+        <app-loading-state [count]="4"></app-loading-state>
+      } @else if (!visibleRestaurants().length) {
+        <app-empty-state
+          icon="bi-shop"
+          title="Nenhum restaurante encontrado"
+          description="Tente outro nome ou cidade. Se não achar, cadastre o lugar manualmente ao registrar uma experiência."
+        >
+          <a routerLink="/app/experiencias/nova" class="btn btn-primary mt-3">Registrar experiência</a>
+        </app-empty-state>
+      } @else {
+        <div class="discover-grid">
+          @for (r of visibleRestaurants(); track r.id) {
+            <app-restaurant-card [restaurant]="r" [coverUrl]="covers()[r.id]"></app-restaurant-card>
+          }
+        </div>
+        @if (term().trim().length < 3) {
+          <p class="discover-note">Digite pelo menos 3 letras para buscar em todo o Brasil.</p>
+        }
+      }
+    </section>
   } @else {
     @if (friendsActivity().length) {
       <section class="discover-section">
@@ -34,29 +86,20 @@
 
     <section class="discover-section">
       <div class="discover-section__header">
-        <h2>Restaurantes em destaque</h2>
-        <a routerLink="/app/restaurantes">Buscar todos</a>
+        <h2>Destaques {{ selectedCity() ? 'em ' + selectedCity() : 'do TASTE' }}</h2>
       </div>
-
-      <div class="city-filter" role="group" aria-label="Filtrar por cidade">
-        <button type="button" class="city-filter__chip" [class.is-active]="!selectedCity()" (click)="selectedCity.set(null)">Todas</button>
-        @for (city of cities; track city) {
-          <button type="button" class="city-filter__chip" [class.is-active]="selectedCity() === city" (click)="selectedCity.set(city)">
-            {{ city }}
-          </button>
-        }
-      </div>
-
       <div class="discover-grid">
         @for (r of visibleRestaurants(); track r.id) {
-          <app-restaurant-card [restaurant]="r"></app-restaurant-card>
+          <app-restaurant-card [restaurant]="r" [coverUrl]="covers()[r.id]"></app-restaurant-card>
         }
       </div>
     </section>
-
-    <p class="discover-note">
-      <i class="bi bi-info-circle"></i>
-      Destaques baseados em guias, prêmios e avaliações públicas (Guia Michelin, Exame Casual, Prazeres da Mesa, Prêmio Bom Gourmet e Tripadvisor). Notas mudam com o tempo — confira antes de visitar.
-    </p>
   }
+
+  <p class="discover-note">
+    <i class="bi bi-info-circle"></i>
+    Busca com dados do <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>.
+    Destaques baseados em guias, prêmios e avaliações públicas (Guia Michelin, Exame Casual, Prazeres da Mesa, Prêmio Bom Gourmet
+    e Tripadvisor). Capas com fotos da comunidade TASTE.
+  </p>
 </div>

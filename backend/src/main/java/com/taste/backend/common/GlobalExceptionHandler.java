@@ -38,6 +38,12 @@ public class GlobalExceptionHandler {
                 .body(ApiError.of(401, "Unauthorized", ex.getMessage()));
     }
 
+    @ExceptionHandler(com.taste.backend.place.PlaceServiceUnavailableException.class)
+    public ResponseEntity<ApiError> handlePlaceUnavailable(RuntimeException ex) {
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+                .body(ApiError.of(503, "Service Unavailable", ex.getMessage()));
+    }
+
     @ExceptionHandler(ForbiddenException.class)
     public ResponseEntity<ApiError> handleForbidden(ForbiddenException ex) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)

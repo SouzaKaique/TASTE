@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
@@ -41,6 +41,9 @@ export class ExperienceFormComponent implements OnInit {
 
   protected readonly restaurantSearchTerm = signal('');
   protected readonly restaurantResults = signal<Restaurant[]>([]);
+  protected readonly searchingRestaurants = signal(false);
+  private restaurantSearchTimer: ReturnType<typeof setTimeout> | undefined;
+  private restaurantSearchSeq = 0;
   protected readonly selectedRestaurant = signal<Restaurant | null>(null);
   protected readonly showManualRestaurantForm = signal(false);
   protected readonly photoPreview = signal<string | null>(null);
@@ -67,7 +70,20 @@ export class ExperienceFormComponent implements OnInit {
     manualRestaurantAddress: [''],
   });
 
+  constructor() {
+    inject(DestroyRef).onDestroy(() => clearTimeout(this.restaurantSearchTimer));
+  }
+
   ngOnInit(): void {
+    // Vindo da página do restaurante: já começa com ele selecionado
+    const restaurantId = this.route.snapshot.queryParamMap.get('restaurante');
+    if (restaurantId) {
+      this.restaurantService.getById(restaurantId).subscribe({
+        next: (restaurant) => restaurant && this.selectRestaurant(restaurant),
+        error: () => undefined,
+      });
+    }
+
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.editingId.set(id);
@@ -112,13 +128,24 @@ export class ExperienceFormComponent implements OnInit {
     this.photoPreview.set(exp.photos[0]?.url ?? null);
   }
 
+  /** Busca local na hora e no Brasil todo (OpenStreetMap) depois de uma pausa na digitação. */
   protected searchRestaurants(): void {
     const term = this.restaurantSearchTerm();
+    clearTimeout(this.restaurantSearchTimer);
     if (!term.trim()) {
       this.restaurantResults.set([]);
+      this.searchingRestaurants.set(false);
       return;
     }
-    this.restaurantService.search({ term }).subscribe((results) => this.restaurantResults.set(results));
+    this.searchingRestaurants.set(true);
+    this.restaurantSearchTimer = setTimeout(() => {
+      const seq = ++this.restaurantSearchSeq;
+      this.restaurantService.search({ term }).subscribe((results) => {
+        if (seq !== this.restaurantSearchSeq) return;
+        this.restaurantResults.set(results.slice(0, 12));
+        this.searchingRestaurants.set(false);
+      });
+    }, 400);
   }
 
   protected selectRestaurant(restaurant: Restaurant): void {

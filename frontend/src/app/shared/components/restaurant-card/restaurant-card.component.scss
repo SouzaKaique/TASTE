@@ -1,33 +1,25 @@
 .rest-card {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
-  padding: var(--space-4);
+  overflow: hidden;
   color: inherit;
   height: 100%;
 
   &:hover { color: inherit; }
 
-  &__top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-2);
+  &__cover {
+    position: relative;
+    aspect-ratio: 16 / 9;
   }
 
-  &__icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: var(--color-brand-soft);
-    color: var(--color-brand);
-    font-size: 1.1rem;
+  &__badge {
+    position: absolute;
+    top: var(--space-2);
+    left: var(--space-2);
   }
 
   &__body {
+    padding: var(--space-4);
     display: flex;
     flex-direction: column;
     gap: var(--space-1);

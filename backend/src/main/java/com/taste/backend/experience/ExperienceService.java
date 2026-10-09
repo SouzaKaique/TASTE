@@ -6,6 +6,7 @@ import com.taste.backend.experience.dto.ExperienceRequest;
 import com.taste.backend.experience.dto.ExperienceResponse;
 import com.taste.backend.experience.dto.OptionalCriteriaResponse;
 import com.taste.backend.experience.dto.PhotoResponse;
+import com.taste.backend.notification.NotificationService;
 import com.taste.backend.social.ExperienceCommentRepository;
 import com.taste.backend.social.ExperienceLikeRepository;
 import com.taste.backend.user.User;
@@ -24,19 +25,22 @@ public class ExperienceService {
     private final ExperienceAccess experienceAccess;
     private final ExperienceLikeRepository likeRepository;
     private final ExperienceCommentRepository commentRepository;
+    private final NotificationService notificationService;
 
     public ExperienceService(
             ExperienceRepository experienceRepository,
             UserRepository userRepository,
             ExperienceAccess experienceAccess,
             ExperienceLikeRepository likeRepository,
-            ExperienceCommentRepository commentRepository
+            ExperienceCommentRepository commentRepository,
+            NotificationService notificationService
     ) {
         this.experienceRepository = experienceRepository;
         this.userRepository = userRepository;
         this.experienceAccess = experienceAccess;
         this.likeRepository = likeRepository;
         this.commentRepository = commentRepository;
+        this.notificationService = notificationService;
     }
 
     public List<ExperienceResponse> listForUser(Long userId) {
@@ -82,6 +86,7 @@ public class ExperienceService {
 
     public void delete(Long userId, Long experienceId) {
         Experience experience = findOwned(userId, experienceId);
+        notificationService.experienceDeleted(experienceId);
         likeRepository.deleteByExperienceId(experienceId);
         commentRepository.deleteByExperienceId(experienceId);
         experienceRepository.delete(experience);

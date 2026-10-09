@@ -22,6 +22,20 @@ public interface ExperienceRepository extends JpaRepository<Experience, Long> {
             """)
     List<Experience> findFeed(@Param("userIds") Collection<Long> userIds, Pageable pageable);
 
+    /**
+     * Candidatas a capa de restaurante: experiencias publicas, com foto, de perfis publicos.
+     * Devolve pares [restaurantId, experienceId], das mais recentes para as mais antigas.
+     */
+    @Query("""
+            select e.restaurantId, e.id from Experience e
+            where e.restaurantId in :restaurantIds
+              and e.visibility = 'public'
+              and e.photoUrl is not null
+              and e.user.profileVisibility = com.taste.backend.user.ProfileVisibility.PUBLIC
+            order by e.createdAt desc
+            """)
+    List<Object[]> findCoverCandidates(@Param("restaurantIds") Collection<String> restaurantIds);
+
     long countByUserId(Long userId);
 
     long countByUserIdAndFavoriteTrue(Long userId);

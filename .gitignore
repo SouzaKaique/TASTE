@@ -16,3 +16,6 @@ target/
 # Sistema operacional
 .DS_Store
 Thumbs.db
+
+# Arquivos de trabalho locais da skill de design
+/.impeccable/

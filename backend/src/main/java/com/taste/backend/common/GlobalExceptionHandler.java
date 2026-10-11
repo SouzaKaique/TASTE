@@ -44,6 +44,13 @@ public class GlobalExceptionHandler {
                 .body(ApiError.of(503, "Service Unavailable", ex.getMessage()));
     }
 
+    @ExceptionHandler(TooManyRequestsException.class)
+    public ResponseEntity<ApiError> handleTooManyRequests(TooManyRequestsException ex) {
+        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+                .header("Retry-After", "900")
+                .body(ApiError.of(429, "Too Many Requests", ex.getMessage()));
+    }
+
     @ExceptionHandler(ForbiddenException.class)
     public ResponseEntity<ApiError> handleForbidden(ForbiddenException ex) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)

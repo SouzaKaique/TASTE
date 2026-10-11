@@ -2,6 +2,8 @@ package com.taste.backend.user;
 
 import com.taste.backend.common.BadRequestException;
 import com.taste.backend.common.NotFoundException;
+import com.taste.backend.common.TooManyRequestsException;
+import com.taste.backend.security.LoginAttemptService;
 import com.taste.backend.experience.ExperienceRepository;
 import com.taste.backend.security.JwtService;
 import com.taste.backend.social.FriendshipService;
@@ -20,13 +22,19 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final FriendshipService friendshipService;
+    private final LoginAttemptService loginAttempts;
 
-    public UserService(UserRepository userRepository, ExperienceRepository experienceRepository, PasswordEncoder passwordEncoder, JwtService jwtService, FriendshipService friendshipService) {
+    /** Hash valido usado quando o e-mail nao existe, para o tempo de resposta nao revelar quais contas existem. */
+    private final String dummyHash;
+
+    public UserService(UserRepository userRepository, ExperienceRepository experienceRepository, PasswordEncoder passwordEncoder, JwtService jwtService, FriendshipService friendshipService, LoginAttemptService loginAttempts) {
         this.userRepository = userRepository;
         this.experienceRepository = experienceRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
         this.friendshipService = friendshipService;
+        this.loginAttempts = loginAttempts;
+        this.dummyHash = passwordEncoder.encode("taste-dummy-password-for-timing");
     }
 
     public AuthResponse register(RegisterRequest request) {
@@ -50,12 +58,18 @@ public class UserService {
     }
 
     public AuthResponse login(LoginRequest request) {
-        User user = userRepository.findByEmailIgnoreCase(request.email())
-                .orElseThrow(() -> new BadCredentialsException("E-mail ou senha inválidos."));
+        if (loginAttempts.isBlocked(request.email())) {
+            throw new TooManyRequestsException("Muitas tentativas de login. Aguarde alguns minutos e tente de novo.");
+        }
 
-        if (!passwordEncoder.matches(request.password(), user.getPasswordHash())) {
+        User user = userRepository.findByEmailIgnoreCase(request.email()).orElse(null);
+        // Confere a senha mesmo quando o e-mail nao existe: mesmo custo nos dois casos
+        boolean valid = passwordEncoder.matches(request.password(), user != null ? user.getPasswordHash() : dummyHash);
+        if (user == null || !valid) {
+            loginAttempts.recordFailure(request.email());
             throw new BadCredentialsException("E-mail ou senha inválidos.");
         }
+        loginAttempts.recordSuccess(request.email());
 
         String token = jwtService.generateToken(user.getId(), user.getEmail());
         return new AuthResponse(token, toResponse(user));

@@ -14,15 +14,22 @@ RUN ./mvnw -q -B -DskipTests package && cp target/*.jar app.jar
 FROM eclipse-temurin:17-jre
 WORKDIR /app
 
-# Usuario sem privilegios de administrador.
-RUN useradd --system --uid 1001 taste
-USER taste
-
-COPY --from=build /app/app.jar app.jar
-
-# Plano gratuito do Render tem 512 MB: limita o uso de memoria do Java.
+# Plano gratuito do Render tem 512 MB e pouca CPU: limita memoria e acelera a partida.
 ENV JAVA_TOOL_OPTIONS="-XX:MaxRAMPercentage=70 -XX:+UseSerialGC -Xss512k -XX:TieredStopAtLevel=1"
+
+# Partida mais rapida com CDS (Class Data Sharing): o jar e extraido e uma
+# execucao de "treino" (banco H2 em memoria, encerra assim que o contexto sobe)
+# grava as classes ja processadas em app.jsa, reaproveitadas a cada inicializacao.
+COPY --from=build /app/app.jar /tmp/app.jar
+RUN java -Djarmode=tools -jar /tmp/app.jar extract --destination /app/application \
+    && rm /tmp/app.jar \
+    && java -XX:ArchiveClassesAtExit=/app/application/app.jsa -Dspring.context.exit=onRefresh \
+         -jar /app/application/app.jar
+
+# Usuario sem privilegios de administrador.
+RUN useradd --system --uid 1001 taste && chown -R taste /app
+USER taste
 
 # O Render informa a porta pela variavel PORT (lida em application.properties).
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-XX:SharedArchiveFile=/app/application/app.jsa", "-Xshare:auto", "-jar", "/app/application/app.jar"]

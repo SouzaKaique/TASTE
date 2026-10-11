@@ -27,4 +27,8 @@ public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
     List<Friendship> findAccepted(@Param("userId") Long userId);
 
     List<Friendship> findByAddresseeIdAndStatusOrderByCreatedAtDesc(Long addresseeId, Friendship.Status status);
+
+    @org.springframework.data.jpa.repository.Modifying
+    @Query("delete from Friendship f where f.requester.id in :userIds or f.addressee.id in :userIds")
+    void deleteInvolvingUsers(@Param("userIds") java.util.Collection<Long> userIds);
 }

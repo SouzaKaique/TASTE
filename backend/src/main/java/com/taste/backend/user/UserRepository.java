@@ -27,6 +27,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
             """)
     List<User> search(@Param("excludeId") Long excludeId, @Param("term") String term, Pageable pageable);
 
+    List<User> findByUsernameStartingWith(String prefix);
+
     /** Sugestoes quando a busca esta vazia: usuarios mais recentes. */
     List<User> findByIdNotOrderByCreatedAtDesc(Long excludeId, Pageable pageable);
 }

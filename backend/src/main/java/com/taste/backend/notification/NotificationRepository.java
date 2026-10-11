@@ -24,6 +24,10 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     int markAllRead(@Param("recipientId") Long recipientId);
 
     @Modifying
+    @Query("delete from Notification n where n.recipient.id in :userIds or n.actor.id in :userIds or n.experience.id in (select e.id from com.taste.backend.experience.Experience e where e.user.id in :userIds)")
+    void deleteInvolvingUsers(@Param("userIds") java.util.Collection<Long> userIds);
+
+    @Modifying
     @Query("delete from Notification n where n.experience.id = :experienceId")
     void deleteByExperienceId(@Param("experienceId") Long experienceId);
 

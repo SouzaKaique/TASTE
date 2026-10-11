@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { ToastContainerComponent } from './shared/components/toast-container/toast-container.component';
 import { ConfirmModalComponent } from './shared/components/confirm-modal/confirm-modal.component';
+import { ServerStatusService } from './core/services/server-status.service';
 
 @Component({
   selector: 'app-root',
@@ -10,4 +11,9 @@ import { ConfirmModalComponent } from './shared/components/confirm-modal/confirm
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
-export class AppComponent {}
+export class AppComponent {
+  constructor() {
+    // Acorda o backend (plano gratuito) enquanto a pessoa ainda está lendo ou digitando
+    inject(ServerStatusService).warmUp();
+  }
+}

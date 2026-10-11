@@ -1,0 +1,20 @@
+# Mantém o backend no Render acordado.
+# No plano gratuito, o serviço dorme depois de 15 minutos sem acesso e o primeiro
+# login seguinte espera quase um minuto. Este job faz um acesso leve a cada 10 minutos.
+# (O GitHub pode atrasar execuções agendadas em alguns minutos; é esperado.)
+name: Manter backend acordado
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Acessar /actuator/health
+        run: curl --silent --show-error --fail --retry 3 --retry-delay 20 --max-time 90 https://taste-backend-dgn4.onrender.com/actuator/health

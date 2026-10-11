@@ -47,6 +47,7 @@ export class ExperienceFormComponent implements OnInit {
   protected readonly selectedRestaurant = signal<Restaurant | null>(null);
   protected readonly showManualRestaurantForm = signal(false);
   protected readonly photoPreview = signal<string | null>(null);
+  // Relato e tags saíram do formulário (registro rápido); na edição, os valores antigos são mantidos
   protected readonly tagsInput = signal('');
   protected readonly showAdvancedCriteria = signal(false);
 

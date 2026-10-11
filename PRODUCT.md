@@ -14,7 +14,9 @@ Qualquer pessoa no Brasil que come fora e quer guardar e compartilhar o que come
 
 ## Product Purpose
 
-TASTE é um diário gastronômico social: cada pessoa registra suas experiências (prato, restaurante, cidade, nota de 1 a 5, foto, relato, tags) e as compartilha com amigos, que podem curtir e comentar. É um **produto real**, feito para ser usado no dia a dia e crescer — não apenas uma peça de portfólio.
+TASTE é um diário gastronômico social: cada pessoa registra suas experiências (prato, restaurante, cidade, nota de 1 a 5 e foto opcional) e as compartilha com amigos, que podem curtir e comentar. É um **produto real**, feito para ser usado no dia a dia e crescer — não apenas uma peça de portfólio.
+
+A referência é um **"Instagram gastronômico"**: registrar um prato tem que ser rápido (sem relato nem tags no formulário), o feed de amigos é o centro e as interações são leves e fluidas, com animações suaves. *(Pedido do usuário em 2026-10-10.)*
 
 Sucesso significa pessoas voltando para registrar refeições e, principalmente, descobrindo onde comer pelas indicações de quem elas conhecem.
 

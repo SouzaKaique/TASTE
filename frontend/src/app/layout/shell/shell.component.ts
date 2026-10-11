@@ -33,10 +33,9 @@ export class ShellComponent {
 
   protected readonly navItems: NavItem[] = [
     { label: 'Início', icon: 'bi-house', route: '/app/inicio' },
-    { label: 'Feed', icon: 'bi-card-list', route: '/app/social' },
-    { label: 'Meu diário', icon: 'bi-journal-richtext', route: '/app/experiencias' },
+    { label: 'Minhas experiências', icon: 'bi-journal-richtext', route: '/app/experiencias' },
     { label: 'Descobrir', icon: 'bi-compass', route: '/app/descobrir' },
-    { label: 'Amigos', icon: 'bi-people', route: '/app/amigos' },
+    { label: 'Amigos / Feed', icon: 'bi-people', route: '/app/social' },
     { label: 'Notificações', icon: 'bi-bell', route: '/app/notificacoes', badge: true },
     { label: 'Retrospectiva', icon: 'bi-stars', route: '/app/retrospectiva' },
     { label: 'Favoritos', icon: 'bi-heart', route: '/app/favoritos' },

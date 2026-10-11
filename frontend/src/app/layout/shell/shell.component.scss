@@ -1,30 +1,27 @@
-// Shell: trilho de feltro escuro com filete de latão; a navegação é escrita
-// em letras de quadro e o item ativo é uma letra branca encaixada.
 .app-shell {
   min-height: 100vh;
-  background: var(--felt);
+  background: var(--color-bg);
 
   &__sidebar {
     position: fixed;
     top: 0; left: 0; bottom: 0;
     width: var(--sidebar-width);
-    background: var(--felt-deep);
-    border-right: 2px solid var(--brass-deep);
+    background: var(--taste-wine-900);
+    border-right: 1px solid var(--color-border-on-bg);
     display: flex;
     flex-direction: column;
-    padding: var(--space-6) var(--space-4) var(--space-5);
+    padding: var(--space-5) var(--space-4);
     z-index: 20;
-    overflow-y: auto;
 
     @media (max-width: 991px) { display: none; }
   }
 
-  &__brand { padding: 0 var(--space-2); margin-bottom: var(--space-6); }
+  &__brand { padding: 0 var(--space-2) var(--space-5); }
 
   &__nav {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 0.15rem;
     flex: 1;
   }
 
@@ -32,36 +29,37 @@
     display: flex;
     align-items: center;
     gap: var(--space-3);
-    min-height: var(--rail);
-    padding: 0 var(--space-3);
-    border-radius: var(--radius-sm);
-    color: var(--letter-dim);
-    font: 600 0.75rem var(--font-sans);
-    letter-spacing: var(--board-tracking);
-    text-transform: uppercase;
-    transition: background-color var(--dur-fast) var(--ease-standard), color var(--dur-fast) var(--ease-standard);
+    padding: 0.65rem var(--space-3);
+    border-radius: var(--radius-md);
+    color: var(--color-text-on-bg);
+    font-weight: 500;
+    font-size: var(--fs-small);
+    transition: background var(--dur-fast) var(--ease-standard), color var(--dur-fast) var(--ease-standard);
 
-    i { font-size: 1rem; width: 18px; text-align: center; }
+    i { font-size: 1.05rem; width: 20px; text-align: center; }
 
-    &:hover { background: var(--felt); color: var(--letter); }
+    &:hover { background: rgba(248, 246, 241, 0.06); color: var(--color-heading-on-bg); }
 
     &.is-active {
-      background: var(--letter);
-      color: var(--felt-deep);
-
-      .app-shell__badge { background: var(--felt-deep); color: var(--letter); }
+      background: rgba(184, 146, 90, 0.16);
+      color: var(--color-eyebrow-on-bg);
+      font-weight: 600;
     }
   }
 
   &__cta {
-    margin-top: var(--space-5);
+    margin-top: var(--space-4);
     width: 100%;
+    justify-content: center;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
   }
 
   &__footer {
     margin-top: var(--space-5);
     padding-top: var(--space-4);
-    border-top: 1px solid var(--color-border);
+    border-top: 1px solid var(--color-border-on-bg);
     display: flex;
     align-items: center;
     gap: var(--space-2);
@@ -71,10 +69,10 @@
     display: flex;
     align-items: center;
     gap: var(--space-2);
-    color: var(--letter);
+    color: var(--color-heading-on-bg);
     flex: 1;
     min-width: 0;
-    &:hover { color: var(--letter); }
+    &:hover { color: var(--color-heading-on-bg); }
   }
 
   &__profile-name {
@@ -84,28 +82,22 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    color: var(--letter);
+    color: var(--color-heading-on-bg);
   }
 
   &__profile-username {
     margin: 0;
     font-size: var(--fs-caption);
-    color: var(--letter-dim);
+    color: var(--color-text-on-bg);
   }
 
   &__logout {
-    width: 40px;
-    height: 40px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
     background: none;
     border: none;
-    border-radius: var(--radius-sm);
-    color: var(--letter-dim);
+    color: var(--color-text-on-bg);
     font-size: 1.1rem;
     cursor: pointer;
-    &:hover { color: var(--hot); background: var(--felt); }
+    &:hover { color: var(--taste-danger); }
   }
 
   &__mobile-header {
@@ -114,8 +106,8 @@
     gap: var(--space-2);
     height: var(--header-height-mobile);
     padding-inline: var(--space-4);
-    background: var(--felt-deep);
-    border-bottom: 2px solid var(--brass-deep);
+    background: var(--taste-wine-900);
+    border-bottom: 1px solid var(--color-border-on-bg);
     position: sticky;
     top: 0;
     z-index: 15;
@@ -124,9 +116,10 @@
   }
 
   &__mobile-title {
-    font: 700 0.875rem var(--font-sans);
-    letter-spacing: 0.3em;
-    color: var(--letter);
+    font-family: var(--font-serif);
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: var(--color-heading-on-bg);
   }
 
   &__mobile-bell {
@@ -137,34 +130,32 @@
     justify-content: center;
     width: 44px;
     height: 44px;
-    color: var(--letter);
+    color: var(--color-heading-on-bg);
     font-size: 1.25rem;
   }
 
-  // Contador: pequena etiqueta de latão
   &__badge {
     margin-left: auto;
     min-width: 22px;
-    height: 20px;
-    padding: 0 0.35rem;
+    height: 22px;
+    padding: 0 0.4rem;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border-radius: var(--radius-sm);
-    background: var(--brass);
-    color: var(--felt-deep);
-    font: 700 0.6875rem var(--font-sans);
-    font-variant-numeric: tabular-nums;
-    letter-spacing: 0;
+    border-radius: var(--radius-pill);
+    background: var(--taste-gold-500);
+    color: var(--taste-wine-900);
+    font-size: 0.72rem;
+    font-weight: 700;
 
     &--dot {
       position: absolute;
-      top: 5px;
-      right: 3px;
+      top: 4px;
+      right: 2px;
       min-width: 18px;
-      height: 17px;
-      padding: 0 0.25rem;
-      font-size: 0.625rem;
+      height: 18px;
+      padding: 0 0.3rem;
+      font-size: 0.65rem;
     }
   }
 

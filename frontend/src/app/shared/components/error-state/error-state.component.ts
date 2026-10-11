@@ -25,10 +25,10 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
         gap: var(--space-2);
         padding: var(--space-6) var(--space-4);
         color: var(--color-text-secondary);
-        background: var(--felt-deep);
+        background: var(--color-surface);
         border: 1px solid var(--color-border);
-        border-top: 3px solid var(--hot);
         border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-sm);
       }
       .error-state i { font-size: 2rem; color: var(--taste-danger, #a13d3d); }
       .error-state h3 { margin: 0; color: var(--color-text-primary); }

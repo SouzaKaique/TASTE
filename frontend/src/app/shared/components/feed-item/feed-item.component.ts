@@ -1,15 +1,16 @@
 import { ChangeDetectionStrategy, Component, inject, input, output, signal } from '@angular/core';
-import { DatePipe, DecimalPipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { FeedComment, FeedItem } from '../../../core/models';
 import { AuthService } from '../../../core/services/auth.service';
 import { AvatarComponent } from '../avatar/avatar.component';
+import { StarRatingComponent } from '../star-rating/star-rating.component';
 
 @Component({
   selector: 'app-feed-item',
   standalone: true,
-  imports: [DatePipe, DecimalPipe, RouterLink, FormsModule, AvatarComponent],
+  imports: [DatePipe, RouterLink, FormsModule, AvatarComponent, StarRatingComponent],
   templateUrl: './feed-item.component.html',
   styleUrl: './feed-item.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

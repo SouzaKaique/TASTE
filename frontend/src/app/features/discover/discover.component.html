@@ -1,10 +1,11 @@
 <div class="container-editorial section-spacing">
   <header class="page-header">
+    <p class="eyebrow">Explore</p>
     <h1>Descobrir restaurantes</h1>
     <p>Busque qualquer restaurante do Brasil ou explore os destaques de Assis, Londrina, Curitiba e São Paulo.</p>
   </header>
 
-  <div class="discover-search cartela">
+  <div class="discover-search surface-card">
     <i class="bi bi-search" aria-hidden="true"></i>
     <input
       type="search"
@@ -48,7 +49,7 @@
           <a routerLink="/app/experiencias/nova" class="btn btn-primary mt-3">Registrar experiência</a>
         </app-empty-state>
       } @else {
-        <div class="discover-lines board-top">
+        <div class="discover-grid">
           @for (r of visibleRestaurants(); track r.id) {
             <app-restaurant-card [restaurant]="r" [coverUrl]="covers()[r.id]"></app-restaurant-card>
           }
@@ -65,17 +66,18 @@
           <h2>Popular entre amigos</h2>
           <a routerLink="/app/social">Ver feed</a>
         </div>
-        <div class="discover-activity board-top">
+        <div class="discover-activity">
           @for (item of friendsActivity(); track item.id) {
-            <a class="discover-activity__item" [routerLink]="['/app/experiencias', item.experienceId]">
-              <span class="discover-activity__text">
-                <span class="board-label">{{ item.user.displayName }}</span>
-                <span class="discover-activity__dish">{{ item.dishName }}</span>
-                <span class="discover-activity__where">{{ item.restaurantName }}</span>
-              </span>
-              @if (item.rating) {
-                <span class="score-tag score-tag--sm">{{ item.rating | number: '1.1-1' }}</span>
+            <a class="discover-activity__item surface-card surface-card--hover" [routerLink]="['/app/experiencias', item.experienceId]">
+              @if (item.photoUrl) {
+                <img [src]="item.photoUrl" [alt]="item.dishName ?? ''" />
+              } @else {
+                <span class="discover-activity__icon" aria-hidden="true"><i class="bi bi-journal-richtext"></i></span>
               }
+              <div>
+                <p class="discover-activity__name">{{ item.user.displayName }}</p>
+                <p class="discover-activity__dish">{{ item.dishName }} · {{ item.restaurantName }}</p>
+              </div>
             </a>
           }
         </div>
@@ -86,7 +88,7 @@
       <div class="discover-section__header">
         <h2>Destaques {{ selectedCity() ? 'em ' + selectedCity() : 'do TASTE' }}</h2>
       </div>
-      <div class="discover-lines board-top">
+      <div class="discover-grid">
         @for (r of visibleRestaurants(); track r.id) {
           <app-restaurant-card [restaurant]="r" [coverUrl]="covers()[r.id]"></app-restaurant-card>
         }

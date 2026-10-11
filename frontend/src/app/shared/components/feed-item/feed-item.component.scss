@@ -1,106 +1,74 @@
-// Linha de quadro: avatar, o prato em letras grandes e a nota na etiqueta de latão à direita.
-:host { display: block; }
+.feed-item {
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
 
-.entry {
-  display: grid;
-  grid-template-columns: 40px minmax(0, 1fr) auto;
-  column-gap: var(--space-4);
-  padding: var(--space-5) 0 var(--space-5);
-  border-bottom: 1px solid var(--felt-groove);
-
-  @media (max-width: 480px) {
-    grid-template-columns: 32px minmax(0, 1fr) auto;
-    column-gap: var(--space-3);
+  &__author {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    color: inherit;
+    &:hover { color: inherit; }
   }
 
-  &__avatar { padding-top: 2px; }
+  &__name { margin: 0; font-weight: 600; }
+  &__activity { font-weight: 400; color: var(--color-text-secondary); }
+  &__time { margin: 0; font-size: var(--fs-caption); color: var(--color-text-secondary); }
 
-  &__body { min-width: 0; }
-
-  &__who {
-    margin: 0 0 var(--space-1);
-    color: var(--letter-dim);
-
-    a { color: var(--letter); &:hover { text-decoration: underline; } }
-  }
-
-  &__when { color: var(--letter-faint); letter-spacing: 0.08em; }
+  &__text { margin: 0; color: var(--color-text-primary); }
 
   &__dish {
-    display: block;
-    margin: 0;
-    color: var(--letter);
-
-    &:hover { color: #ffffff; text-decoration: underline; text-decoration-thickness: 1px; }
-  }
-
-  &__where {
-    margin: var(--space-1) 0 0;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.3rem;
     font-size: var(--fs-small);
-    color: var(--letter-dim);
+    color: var(--color-text-secondary);
   }
 
-  &__note {
-    margin: var(--space-3) 0 0;
-    font: italic 500 1.25rem/1.4 var(--font-serif);
-    color: var(--letter);
-    max-width: 58ch;
+  &__collection {
+    margin: 0;
+    font-size: var(--fs-small);
+    color: var(--color-brand);
   }
 
-  &__photo {
-    display: block;
-    margin-top: var(--space-4);
-    max-width: 520px;
+  &__media {
     border-radius: var(--radius-md);
     overflow: hidden;
-    border: 1px solid var(--color-border);
+    aspect-ratio: 16/10;
 
-    img { width: 100%; max-height: 320px; object-fit: cover; }
+    img { width: 100%; height: 100%; object-fit: cover; }
   }
 
-  &__actions {
+  &__footer {
     display: flex;
-    flex-wrap: nowrap;
     gap: var(--space-4);
-    margin-top: var(--space-3);
-  }
-
-  // No celular, ícone e número bastam (o nome completo fica no aria-label)
-  &__word {
-    @media (max-width: 480px) { display: none; }
+    border-top: 1px solid var(--color-border);
+    padding-top: var(--space-3);
   }
 
   &__action {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    min-height: var(--rail);
-    padding: 0 0.25rem;
-    margin-left: -0.25rem;
     background: none;
     border: none;
-    border-radius: var(--radius-sm);
-    color: var(--letter-dim);
-    font: 600 0.75rem var(--font-sans);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    color: var(--color-text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: var(--fs-small);
     cursor: pointer;
+    min-height: 40px; // área de toque confortável
+    padding: 0 0.35rem;
 
-    i { font-size: 1rem; }
-
-    &:hover { color: var(--letter); }
-
-    &.is-active { color: var(--hot); }
+    &.is-active { color: var(--taste-wine-800); }
   }
 
   &__comments {
     display: flex;
     flex-direction: column;
-    gap: var(--space-3);
-    margin-top: var(--space-2);
-    padding: var(--space-4);
-    border-radius: var(--radius-md);
-    background: var(--felt-deep);
+    gap: var(--space-2);
+    border-top: 1px dashed var(--color-border);
+    padding-top: var(--space-3);
   }
 
   &__comment {
@@ -108,40 +76,30 @@
     align-items: flex-start;
     gap: var(--space-2);
     font-size: var(--fs-small);
-    color: var(--letter-dim);
 
-    p { margin: 0; flex: 1; line-height: 1.45; }
-    strong { color: var(--letter); }
+    p { margin: 0; flex: 1; }
   }
 
   &__comment-remove {
-    width: 32px;
-    height: 32px;
-    margin: -6px -6px 0 0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
     background: none;
     border: none;
-    border-radius: var(--radius-sm);
-    color: var(--letter-faint);
+    color: var(--taste-ink-300);
     cursor: pointer;
-
-    &:hover { color: var(--hot); background: var(--felt); }
   }
 
   &__comment-form {
     display: flex;
     gap: var(--space-2);
-
-    .form-control { min-height: 40px; }
+    margin-top: var(--space-1);
   }
+}
 
-  &__score {
-    padding-top: var(--space-5);
+.feed-item__dish-link {
+  font-weight: 600;
+  color: var(--color-text-primary);
+  text-decoration: underline;
+  text-decoration-color: var(--color-border-strong);
+  text-underline-offset: 3px;
 
-    @media (max-width: 480px) {
-      .score-tag { min-width: 52px; font-size: 1.125rem; padding: 0.25rem 0.45rem; border-width: 1.5px; }
-    }
-  }
+  &:hover { color: var(--color-brand); }
 }

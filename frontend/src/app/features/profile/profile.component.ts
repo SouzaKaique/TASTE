@@ -8,7 +8,7 @@ import { SocialService } from '../../core/services/social.service';
 import { Collection, Experience, User } from '../../core/models';
 import { ToastService } from '../../shared/services/toast.service';
 import { AvatarComponent } from '../../shared/components/avatar/avatar.component';
-import { ExperienceLineComponent } from '../../shared/components/experience-line/experience-line.component';
+import { ExperienceCardComponent } from '../../shared/components/experience-card/experience-card.component';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
 import { ErrorStateComponent } from '../../shared/components/error-state/error-state.component';
 import { LoadingStateComponent } from '../../shared/components/loading-state/loading-state.component';
@@ -16,7 +16,7 @@ import { LoadingStateComponent } from '../../shared/components/loading-state/loa
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [RouterLink, AvatarComponent, ExperienceLineComponent, EmptyStateComponent, ErrorStateComponent, LoadingStateComponent],
+  imports: [RouterLink, AvatarComponent, ExperienceCardComponent, EmptyStateComponent, ErrorStateComponent, LoadingStateComponent],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

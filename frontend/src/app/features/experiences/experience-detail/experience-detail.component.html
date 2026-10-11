@@ -15,13 +15,14 @@
         <a routerLink="/app/social" class="back-link"><i class="bi bi-arrow-left"></i> Voltar ao feed</a>
       }
 
-      <!-- Sem foto, o nome do prato lidera a página em coluna única -->
-      <article class="detail-page" [class.detail-page--text]="!exp.photos[0]">
-        @if (exp.photos[0]) {
-          <div class="detail-page__media">
+      <article class="detail-page">
+        <div class="detail-page__media" [class.detail-page__media--empty]="!exp.photos[0]">
+          @if (exp.photos[0]) {
             <img [src]="exp.photos[0].url" [alt]="exp.dishName" />
-          </div>
-        }
+          } @else {
+            <div class="detail-page__media-placeholder"><i class="bi bi-camera"></i></div>
+          }
+        </div>
 
         <div class="detail-page__body">
           <div class="detail-page__badges">
@@ -30,10 +31,7 @@
             <span class="badge-taste"><i class="bi bi-eye"></i> {{ visibilityLabels[exp.visibility] }}</span>
           </div>
 
-          <div class="detail-page__title-row">
-            <h1 class="dish dish--lg detail-page__title">{{ exp.dishName }}</h1>
-            <span class="score-tag detail-page__score" [attr.aria-label]="'Nota ' + exp.rating + ' de 5'">{{ exp.rating | number: '1.1-1' }}<small>de 5</small></span>
-          </div>
+          <h1 class="display-title">{{ exp.dishName }}</h1>
 
           @if (!isOwner() && exp.author) {
             <a [routerLink]="['/app/perfil', exp.author.username]" class="detail-page__author">
@@ -42,28 +40,28 @@
             </a>
           }
 
+          <app-star-rating [readonly]="true" size="lg" [rating]="exp.rating"></app-star-rating>
+
           <p class="detail-page__meta">
-            @if (exp.restaurantId) {
-              <a class="detail-page__place" [routerLink]="['/app/restaurantes', exp.restaurantId]">{{ exp.restaurantName }}</a>
-            } @else {
-              <span class="detail-page__place">{{ exp.restaurantName }}</span>
-            }
-            <span class="detail-page__dot">·</span> {{ exp.city }}{{ exp.country ? ', ' + exp.country : '' }}
-            <span class="detail-page__dot">·</span> {{ exp.date | date: "d 'de' MMMM 'de' y" }}
+            <i class="bi bi-shop"></i> {{ exp.restaurantName }}
+            <span class="detail-page__dot">·</span>
+            <i class="bi bi-geo-alt"></i> {{ exp.city }}, {{ exp.country }}
+            <span class="detail-page__dot">·</span>
+            <i class="bi bi-calendar3"></i> {{ exp.date | date: "d 'de' MMMM 'de' y" }}
           </p>
 
           @if (exp.notes) {
-            <p class="detail-page__notes lede">“{{ exp.notes }}”</p>
+            <p class="detail-page__notes lede">"{{ exp.notes }}"</p>
           }
 
           @if (exp.optionalCriteria) {
-            <ul class="detail-page__criteria board" aria-label="Critérios">
-              @if (exp.optionalCriteria.flavor) { <li class="board-line"><span class="board-line__rank"></span><span class="board-line__text">Sabor</span><span class="board-line__value">{{ exp.optionalCriteria.flavor }} de 5</span></li> }
-              @if (exp.optionalCriteria.presentation) { <li class="board-line"><span class="board-line__rank"></span><span class="board-line__text">Apresentação</span><span class="board-line__value">{{ exp.optionalCriteria.presentation }} de 5</span></li> }
-              @if (exp.optionalCriteria.texture) { <li class="board-line"><span class="board-line__rank"></span><span class="board-line__text">Textura</span><span class="board-line__value">{{ exp.optionalCriteria.texture }} de 5</span></li> }
-              @if (exp.optionalCriteria.creativity) { <li class="board-line"><span class="board-line__rank"></span><span class="board-line__text">Criatividade</span><span class="board-line__value">{{ exp.optionalCriteria.creativity }} de 5</span></li> }
-              @if (exp.optionalCriteria.experience) { <li class="board-line"><span class="board-line__rank"></span><span class="board-line__text">Experiência</span><span class="board-line__value">{{ exp.optionalCriteria.experience }} de 5</span></li> }
-            </ul>
+            <div class="detail-page__criteria">
+              @if (exp.optionalCriteria.flavor) { <span>Sabor <strong>{{ exp.optionalCriteria.flavor }}/5</strong></span> }
+              @if (exp.optionalCriteria.presentation) { <span>Apresentação <strong>{{ exp.optionalCriteria.presentation }}/5</strong></span> }
+              @if (exp.optionalCriteria.texture) { <span>Textura <strong>{{ exp.optionalCriteria.texture }}/5</strong></span> }
+              @if (exp.optionalCriteria.creativity) { <span>Criatividade <strong>{{ exp.optionalCriteria.creativity }}/5</strong></span> }
+              @if (exp.optionalCriteria.experience) { <span>Experiência <strong>{{ exp.optionalCriteria.experience }}/5</strong></span> }
+            </div>
           }
 
           @if (exp.tags.length) {

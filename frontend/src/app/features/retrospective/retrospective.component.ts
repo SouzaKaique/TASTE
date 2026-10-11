@@ -5,14 +5,14 @@ import { HIGHLIGHT_CATEGORY_LABELS, HighlightCategory, RetrospectiveData } from 
 import { RetrospectiveService } from '../../core/services/retrospective.service';
 import { ExperienceService } from '../../core/services/experience.service';
 import { Experience } from '../../core/models';
-import { DecimalPipe } from '@angular/common';
+import { StarRatingComponent } from '../../shared/components/star-rating/star-rating.component';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
 import { LoadingStateComponent } from '../../shared/components/loading-state/loading-state.component';
 
 @Component({
   selector: 'app-retrospective',
   standalone: true,
-  imports: [FormsModule, RouterLink, DecimalPipe, EmptyStateComponent, LoadingStateComponent],
+  imports: [FormsModule, RouterLink, StarRatingComponent, EmptyStateComponent, LoadingStateComponent],
   templateUrl: './retrospective.component.html',
   styleUrl: './retrospective.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -33,6 +33,7 @@ export class RetrospectiveComponent {
     Math.max(1, ...(this.data()?.stats.experiencesByMonth.map((m) => m.count) ?? [1])),
   );
 
+  protected readonly podiumOrder = [1, 0, 2];
 
   constructor() {
     this.retrospectiveService.availableYears().subscribe((years) => {

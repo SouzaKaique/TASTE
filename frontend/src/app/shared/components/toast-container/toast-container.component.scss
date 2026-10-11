@@ -19,9 +19,8 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  background: var(--paper);
-  color: var(--ink);
-  border: 2px solid var(--brass);
+  background: var(--color-surface);
+  color: var(--color-text-primary);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-lg);
   padding: var(--space-3) var(--space-4);
@@ -30,18 +29,15 @@
 
   i { font-size: 1.1rem; }
 
-  &--success i { color: #3f7351; }
-  &--error i { color: #a13d3d; }
-  &--info i { color: var(--brass-ink); }
+  &--success i { color: var(--taste-success); }
+  &--error i { color: var(--taste-danger); }
+  &--info i { color: var(--color-brand); }
 
   &__close {
     margin-left: auto;
     background: none;
     border: none;
-    width: 32px;
-    height: 32px;
-    border-radius: var(--radius-sm);
-    color: var(--ink-soft);
+    color: var(--color-text-secondary);
     cursor: pointer;
   }
 }

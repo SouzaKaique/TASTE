@@ -1,5 +1,6 @@
 <div class="container-editorial section-spacing form-page">
   <header class="page-header">
+    <p class="eyebrow">{{ isEditMode() ? 'Editar registro' : 'Novo registro' }}</p>
     <h1>{{ isEditMode() ? 'Editar experiência' : 'Registrar experiência' }}</h1>
     <p class="text-secondary-taste">Conte sobre o que você comeu — leva menos de um minuto.</p>
   </header>
@@ -149,12 +150,12 @@
       }
     </section>
 
-    <!-- Foto e relato -->
+    <!-- Foto e visibilidade -->
     <section class="form-section surface-card">
-      <h2 class="form-section__title"><span>3</span> Fotografia e relato</h2>
+      <h2 class="form-section__title"><span>3</span> Foto (opcional)</h2>
 
       <div class="mb-4">
-        <label class="form-label">Fotografia principal</label>
+        
         @if (photoPreview()) {
           <div class="photo-preview">
             <img [src]="photoPreview()" alt="Prévia da fotografia" />
@@ -169,30 +170,6 @@
             <input type="file" accept="image/*" (change)="onPhotoSelected($event)" hidden />
           </label>
         }
-      </div>
-
-      <div class="mb-3">
-        <label class="form-label" for="notes">Relato pessoal</label>
-        <textarea
-          id="notes"
-          class="form-control"
-          rows="4"
-          formControlName="notes"
-          placeholder="Foi uma das melhores sobremesas que experimentei durante a viagem..."
-        ></textarea>
-      </div>
-
-      <div class="mb-3">
-        <label class="form-label" for="tags">Tags (separadas por vírgula)</label>
-        <input
-          id="tags"
-          type="text"
-          class="form-control"
-          placeholder="ex: romântico, descoberta, para-compartilhar"
-          [ngModel]="tagsInput()"
-          (ngModelChange)="tagsInput.set($event)"
-          [ngModelOptions]="{ standalone: true }"
-        />
       </div>
 
       <div class="row g-3">

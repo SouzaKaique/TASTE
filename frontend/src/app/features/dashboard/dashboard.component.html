@@ -1,90 +1,89 @@
-<div class="home">
-  <section class="home-main">
-    <header class="home-head">
-      <h1>{{ greeting() }}, {{ user()?.displayName?.split(' ')?.[0] }}.</h1>
-      <div class="home-head__actions">
-        <a routerLink="/app/experiencias/nova" class="btn btn-primary"><i class="bi bi-plus-lg" aria-hidden="true"></i> Registrar prato</a>
-        <a routerLink="/app/social" class="btn btn-ghost-on-bg">Ver o feed</a>
+<div class="container-editorial section-spacing">
+  <header class="dashboard-header">
+    <p class="eyebrow on-bg-eyebrow">{{ greeting() }}</p>
+    <h1 class="on-bg-heading">Olá, {{ user()?.displayName?.split(' ')?.[0] }}. Vamos descobrir o próximo sabor?</h1>
+  </header>
+
+  @if (loading()) {
+    <app-loading-state [count]="4"></app-loading-state>
+  } @else {
+    <section class="dashboard-stats">
+      <div class="stat-card surface-card">
+        <span class="stat-card__value">{{ stats().total }}</span>
+        <span class="stat-card__label">Experiências</span>
       </div>
-    </header>
+      <div class="stat-card surface-card">
+        <span class="stat-card__value">{{ stats().restaurants }}</span>
+        <span class="stat-card__label">Restaurantes</span>
+      </div>
+      <div class="stat-card surface-card">
+        <span class="stat-card__value">{{ stats().cities }}</span>
+        <span class="stat-card__label">Cidades exploradas</span>
+      </div>
+      <div class="stat-card surface-card">
+        <span class="stat-card__value">{{ stats().averageRating || '—' }}</span>
+        <span class="stat-card__label">Nota média</span>
+      </div>
+      <div class="stat-card surface-card">
+        <span class="stat-card__value">{{ stats().favorites }}</span>
+        <span class="stat-card__label">Favoritos</span>
+      </div>
+      <div class="stat-card surface-card">
+        <span class="stat-card__value">{{ stats().topCuisine ?? '—' }}</span>
+        <span class="stat-card__label">Culinária mais registrada</span>
+      </div>
+    </section>
 
-    @if (loading()) {
-      <app-loading-state [count]="3"></app-loading-state>
-    } @else {
-      @if (bestRecent(); as best) {
-        <a class="plaque" [routerLink]="['/app/experiencias', best.id]">
-          <div class="plaque__text">
-            <p class="dish dish--lg plaque__dish">{{ best.dishName }}</p>
-            <p class="plaque__where">{{ best.restaurantName }} · {{ best.city }}</p>
-            <p class="plaque__caption">Sua nota mais alta até agora</p>
-          </div>
-          <span class="score-tag plaque__score">{{ best.rating | number: '1.1-1' }}<small>de 5</small></span>
-        </a>
-      }
+    <section class="dashboard-shortcuts">
+      <a routerLink="/app/experiencias/nova" class="shortcut-card surface-card surface-card--hover">
+        <i class="bi bi-plus-circle"></i><span>Registrar experiência</span>
+      </a>
+      <a routerLink="/app/descobrir" class="shortcut-card surface-card surface-card--hover">
+        <i class="bi bi-shop"></i><span>Descobrir restaurantes</span>
+      </a>
+      <a routerLink="/app/retrospectiva" class="shortcut-card surface-card surface-card--hover">
+        <i class="bi bi-stars"></i><span>Ver retrospectiva</span>
+      </a>
+      <a routerLink="/app/amigos" class="shortcut-card surface-card surface-card--hover">
+        <i class="bi bi-person-plus"></i><span>Encontrar amigos</span>
+      </a>
+    </section>
 
-      <section class="home-section">
-        <div class="home-section__head">
-          <h2>Últimas do seu diário</h2>
-          <a routerLink="/app/experiencias" class="link-on-bg">Ver o diário</a>
+    @if (bestRecent(); as best) {
+      <section class="dashboard-highlight">
+        <div class="dashboard-highlight__text">
+          <p class="eyebrow">Destaque pessoal</p>
+          <h2>{{ best.dishName }}</h2>
+          <p class="text-secondary-taste">{{ best.restaurantName }} · {{ best.city }}</p>
+          <a class="btn btn-ghost-on-bg" [routerLink]="['/app/experiencias', best.id]">Ver detalhes</a>
         </div>
-
-        @if (recentExperiences().length) {
-          <div class="home-lines board-top">
-            @for (exp of recentExperiences(); track exp.id) {
-              <app-experience-line class="slot-in" [experience]="exp"></app-experience-line>
-            }
-          </div>
-        } @else {
-          <app-empty-state
-            icon="bi-journal-plus"
-            title="Seu diário ainda está em branco"
-            description="Registre o próximo prato que você comer fora. Leva menos de um minuto."
-          >
-            <a routerLink="/app/experiencias/nova" class="btn btn-primary mt-3">Registrar prato</a>
-          </app-empty-state>
+        @if (best.photos[0]) {
+          <img [src]="best.photos[0].url" [alt]="best.dishName" class="dashboard-highlight__image" />
         }
       </section>
     }
-  </section>
 
-  <aside class="home-side" aria-label="Resumo e amigos">
-    <section class="side-block">
-      <h2>Seu quadro</h2>
-      <ul class="board tally">
-        <li class="board-line"><span class="board-line__rank"><i class="bi bi-journal-richtext" aria-hidden="true"></i></span><span class="board-line__text">Experiências</span><span class="board-line__value tally__value">{{ stats().total }}</span></li>
-        <li class="board-line"><span class="board-line__rank"><i class="bi bi-shop" aria-hidden="true"></i></span><span class="board-line__text">Restaurantes</span><span class="board-line__value tally__value">{{ stats().restaurants }}</span></li>
-        <li class="board-line"><span class="board-line__rank"><i class="bi bi-geo-alt" aria-hidden="true"></i></span><span class="board-line__text">Cidades</span><span class="board-line__value tally__value">{{ stats().cities }}</span></li>
-        <li class="board-line"><span class="board-line__rank"><i class="bi bi-star" aria-hidden="true"></i></span><span class="board-line__text">Nota média</span><span class="board-line__value tally__value">{{ stats().averageRating ? (stats().averageRating | number: '1.1-1') : '—' }}</span></li>
-        <li class="board-line"><span class="board-line__rank"><i class="bi bi-heart" aria-hidden="true"></i></span><span class="board-line__text">Favoritos</span><span class="board-line__value tally__value">{{ stats().favorites }}</span></li>
-        <li class="board-line"><span class="board-line__rank"><i class="bi bi-fire" aria-hidden="true"></i></span><span class="board-line__text">Culinária do ano</span><span class="board-line__value tally__value tally__value--text">{{ stats().topCuisine ?? '—' }}</span></li>
-      </ul>
-      <a routerLink="/app/retrospectiva" class="side-link">Abrir a retrospectiva <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
-    </section>
+    <section class="dashboard-recent">
+      <div class="dashboard-recent__header">
+        <h2 class="on-bg-heading">Últimas experiências</h2>
+        <a routerLink="/app/experiencias" class="link-on-bg">Ver todas</a>
+      </div>
 
-    <section class="side-block">
-      <h2>Da turma</h2>
-      @if (friendsActivity().length) {
-        <ul class="friend-lines">
-          @for (item of friendsActivity(); track item.id) {
-            <li>
-              <a class="friend-line" [routerLink]="['/app/experiencias', item.experienceId]">
-                <span class="friend-line__text">
-                  <span class="board-label">{{ item.user.displayName }}</span>
-                  <span class="friend-line__dish">{{ item.dishName }}</span>
-                  <span class="friend-line__where">{{ item.restaurantName }}</span>
-                </span>
-                @if (item.rating) {
-                  <span class="score-tag score-tag--sm">{{ item.rating | number: '1.1-1' }}</span>
-                }
-              </a>
-            </li>
+      @if (recentExperiences().length) {
+        <div class="dashboard-recent__grid">
+          @for (exp of recentExperiences(); track exp.id) {
+            <app-experience-card [experience]="exp"></app-experience-card>
           }
-        </ul>
-        <a routerLink="/app/social" class="side-link">Ver tudo no feed <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+        </div>
       } @else {
-        <p class="side-block__empty">Quando seus amigos registrarem pratos, as indicações aparecem aqui.</p>
-        <a routerLink="/app/amigos" class="side-link">Encontrar amigos <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+        <app-empty-state
+          icon="bi-journal-plus"
+          title="Você ainda não registrou nenhuma experiência"
+          description="Que tal adicionar sua primeira descoberta gastronômica?"
+        >
+          <a routerLink="/app/experiencias/nova" class="btn btn-primary mt-3">Registrar experiência</a>
+        </app-empty-state>
       }
     </section>
-  </aside>
+  }
 </div>

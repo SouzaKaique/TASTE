@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { DatePipe, DecimalPipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { ExperienceService } from '../../../core/services/experience.service';
 import { ConfirmService } from '../../../shared/services/confirm.service';
 import { ToastService } from '../../../shared/services/toast.service';
@@ -14,19 +14,21 @@ import {
 import { ExperienceCardComponent } from '../../../shared/components/experience-card/experience-card.component';
 import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
 import { LoadingStateComponent } from '../../../shared/components/loading-state/loading-state.component';
+import { StarRatingComponent } from '../../../shared/components/star-rating/star-rating.component';
 
 type ViewMode = 'grid' | 'list' | 'timeline';
 
 @Component({
   selector: 'app-experience-list',
   standalone: true,
-  imports: [DecimalPipe, 
+  imports: [
     FormsModule,
     RouterLink,
     DatePipe,
     ExperienceCardComponent,
     EmptyStateComponent,
     LoadingStateComponent,
+    StarRatingComponent,
   ],
   templateUrl: './experience-list.component.html',
   styleUrl: './experience-list.component.scss',
@@ -43,7 +45,7 @@ export class ExperienceListComponent {
 
   protected readonly loading = signal(true);
   protected readonly experiences = signal<Experience[]>([]);
-  protected readonly viewMode = signal<ViewMode>('list');
+  protected readonly viewMode = signal<ViewMode>('grid');
 
   protected readonly filters = signal({
     year: '' as string | number,

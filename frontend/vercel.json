@@ -3,8 +3,18 @@
   "outputDirectory": "dist/taste-app/browser",
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/((?!.*\.(?:js|css|map|ico|png|jpg|jpeg|svg|webp|woff2?|txt|json)$).*)",
       "destination": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/index.html",
+      "headers": [{ "key": "Cache-Control", "value": "no-cache" }]
+    },
+    {
+      "source": "/((?!.*\.).*)",
+      "headers": [{ "key": "Cache-Control", "value": "no-cache" }]
     }
   ]
 }

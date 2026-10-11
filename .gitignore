@@ -18,7 +18,4 @@ target/
 Thumbs.db
 
 # Arquivos de trabalho locais da skill de design
-/.impeccable/*
-!/.impeccable/design.json
-!/.impeccable/surfaces/
-!/.impeccable/config.json
+/.impeccable/

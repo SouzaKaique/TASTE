@@ -1,23 +1,17 @@
-// Utilitários do quadro de feltro
+// Utilitários pequenos e reaproveitáveis
 
-// Painel de feltro escuro (listas, blocos de conteúdo). Formulários usam .cartela.
 .surface-card {
-  background-color: var(--felt-deep);
+  background-color: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
-  transition: border-color var(--dur-medium) var(--ease-standard),
-              background-color var(--dur-medium) var(--ease-standard);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--dur-medium) var(--ease-standard),
+              transform var(--dur-medium) var(--ease-standard);
 }
 
 .surface-card--hover:hover {
-  border-color: var(--brass-deep);
-  background-color: #33111b;
-}
-
-// Cartela usada como bloco (quando também precisa de forma e respiro)
-.cartela-panel {
-  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
 }
 
 .divider-soft {
@@ -35,9 +29,9 @@
 }
 
 .container-narrow {
-  max-width: 680px;
+  max-width: 640px;
   margin-inline: auto;
-  padding-inline: var(--space-6);
+  padding-inline: var(--space-5);
 
   @media (max-width: 480px) { padding-inline: var(--space-4); }
 }
@@ -45,13 +39,13 @@
 .container-editorial {
   max-width: 1180px;
   margin-inline: auto;
-  padding-inline: var(--space-6);
+  padding-inline: var(--space-5);
 
   @media (max-width: 480px) { padding-inline: var(--space-4); }
 }
 
 .skeleton {
-  background: linear-gradient(90deg, var(--felt-deep) 25%, var(--felt-raised) 50%, var(--felt-deep) 75%);
+  background: linear-gradient(90deg, var(--color-surface-alt) 25%, var(--color-border) 50%, var(--color-surface-alt) 75%);
   background-size: 200% 100%;
   animation: taste-skeleton 1.4s ease-in-out infinite;
   border-radius: var(--radius-sm);
@@ -76,15 +70,16 @@
   overflow: hidden;
 }
 
-// Cabeçalho de página: título do quadro e, quando preciso, uma linha de apoio
+// Cabeçalhos de página ficam diretamente sobre o fundo bordô
+// (fora de cards), então precisam de texto claro.
 .page-header {
-  margin-bottom: var(--space-6);
-
-  h1 { color: var(--color-heading-on-bg); margin: 0; }
-  p { color: var(--color-text-on-bg); margin: var(--space-2) 0 0; max-width: 60ch; }
+  h1, h2 { color: var(--color-heading-on-bg); }
+  .eyebrow { color: var(--color-eyebrow-on-bg); }
+  p:not(.eyebrow) { color: var(--color-text-on-bg); }
 }
 
 .on-bg-heading { color: var(--color-heading-on-bg) !important; }
+.on-bg-eyebrow { color: var(--color-eyebrow-on-bg) !important; }
 .on-bg-text { color: var(--color-text-on-bg) !important; }
 
 .back-link-on-bg,
@@ -92,118 +87,13 @@
   color: var(--color-text-on-bg);
   display: inline-block;
   padding-block: 0.6rem; // área de toque maior sem mudar o visual
-  &:hover { color: var(--letter); }
+  &:hover { color: var(--color-eyebrow-on-bg); }
 }
 
 .btn-ghost-on-bg {
   background: transparent;
-  border: 1px solid var(--color-border-strong);
-  color: var(--letter);
+  border: 1px solid var(--color-border-on-bg);
+  color: var(--color-heading-on-bg);
 
-  &:hover { background: rgba(244, 239, 230, 0.08); color: var(--letter); border-color: var(--letter-dim); }
+  &:hover { background: rgba(248, 246, 241, 0.08); color: var(--color-heading-on-bg); }
 }
-
-// Etiqueta de nota: o "preço" da linha de quadro, em latão, alinhada à direita
-.score-tag {
-  display: inline-flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-width: 68px;
-  padding: 0.35rem 0.6rem 0.3rem;
-  border: 2px solid var(--brass);
-  border-radius: var(--radius-md);
-  color: var(--letter);
-  font: 700 1.5rem/1 var(--font-sans);
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -0.01em;
-
-  small {
-    margin-top: 4px;
-    font-size: 0.5625rem;
-    font-weight: 700;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--brass);
-  }
-}
-
-.score-tag--sm {
-  min-width: 52px;
-  font-size: 1.125rem;
-  padding: 0.25rem 0.45rem;
-  border-width: 1.5px;
-}
-
-// Linha numerada de quadro (rankings): número, texto, valor à direita
-.board-line {
-  display: grid;
-  grid-template-columns: 1.75rem minmax(0, 1fr) auto;
-  align-items: end;
-  gap: var(--space-3);
-  min-height: var(--rail);
-  padding-bottom: 0.55rem;
-
-  &__rank {
-    font: 700 0.875rem var(--font-sans);
-    color: var(--brass);
-    font-variant-numeric: tabular-nums;
-  }
-
-  &__text {
-    font: 600 0.8125rem var(--font-sans);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--color-text-primary);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  &__value {
-    font: 600 0.75rem var(--font-sans);
-    color: var(--color-text-secondary);
-    font-variant-numeric: tabular-nums;
-    white-space: nowrap;
-  }
-}
-
-// Faixa de contagem: números lado a lado numa única faixa de quadro
-.tally-strip {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  border-top: 2px solid var(--brass-deep);
-  border-bottom: 1px solid var(--felt-groove);
-
-  > * {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    padding: var(--space-4) var(--space-4) var(--space-4) 0;
-  }
-
-  > * + * { padding-left: var(--space-4); border-left: 1px solid var(--felt-groove); }
-
-  > * > strong,
-  > * > :first-child {
-    font: 700 1.625rem/1 var(--font-sans);
-    font-variant-numeric: tabular-nums;
-    color: var(--letter);
-  }
-
-  > * > span:last-child {
-    font: 600 0.6875rem var(--font-sans);
-    letter-spacing: var(--board-tracking);
-    text-transform: uppercase;
-    color: var(--letter-dim);
-  }
-
-  @media (max-width: 480px) {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    > * + * { border-left: none; padding-left: 0; }
-    > *:nth-child(even) { padding-left: var(--space-4); border-left: 1px solid var(--felt-groove); }
-  }
-}
-
-// Início de uma lista de linhas do quadro: régua de latão no topo
-.board-top { border-top: 2px solid var(--brass-deep); }

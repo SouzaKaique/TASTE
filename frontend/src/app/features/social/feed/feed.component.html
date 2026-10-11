@@ -1,86 +1,36 @@
-<div class="feed-page">
-  <section class="feed-main">
-    <header class="feed-head">
-      <h1>O que seus amigos comeram</h1>
-      <a routerLink="/app/amigos" class="btn btn-ghost-on-bg">
-        <i class="bi bi-person-plus" aria-hidden="true"></i> Encontrar amigos
-      </a>
-    </header>
+<div class="container-narrow section-spacing">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Comunidade</p>
+      <h1>Feed social</h1>
+    </div>
+    <a routerLink="/app/amigos" class="btn btn-ghost-on-bg">
+      <i class="bi bi-person-plus"></i> Buscar amigos
+    </a>
+  </header>
 
-    @if (items().length) {
-      <div class="feed-filters" role="group" aria-label="Filtrar o feed">
-        @for (f of filters; track f.id) {
-          <button type="button" class="feed-filters__tab" [class.is-active]="filter() === f.id" [attr.aria-pressed]="filter() === f.id" (click)="filter.set(f.id)">
-            {{ f.label }}
-          </button>
-        }
-      </div>
-    }
-
-    @if (loading()) {
-      <app-loading-state [count]="3"></app-loading-state>
-    } @else if (error()) {
-      <app-error-state title="Não foi possível carregar o feed" (retry)="load()"></app-error-state>
-    } @else if (!items().length) {
-      <app-empty-state
-        icon="bi-people"
-        title="Seu feed ainda está vazio"
-        description="Adicione amigos para ver o que eles andam comendo. Suas experiências públicas também aparecem aqui."
-      >
-        <a routerLink="/app/amigos" class="btn btn-primary mt-3">Encontrar amigos</a>
-      </app-empty-state>
-    } @else {
-      <div class="feed-list">
-        @for (item of visibleItems(); track item.id) {
-          <app-feed-item
-            class="slot-in"
-            [item]="item"
-            (toggleLike)="onToggleLike($event)"
-            (addComment)="onAddComment($event)"
-            (removeComment)="onRemoveComment($event)"
-          ></app-feed-item>
-        } @empty {
-          <p class="feed-list__none">Nada com esse filtro por enquanto.</p>
-        }
-      </div>
-    }
-  </section>
-
-  <aside class="feed-side" aria-label="Indicações e pedidos">
-    @if (pending().length) {
-      <section class="side-block">
-        <h2>Pedidos de amizade</h2>
-        @for (user of pending(); track user.id) {
-          <div class="request">
-            <a class="request__who" [routerLink]="['/app/perfil', user.username]">
-              <app-avatar [src]="user.avatarUrl" [name]="user.displayName" size="sm"></app-avatar>
-              <span><strong>{{ user.displayName }}</strong> quer ser seu amigo no TASTE.</span>
-            </a>
-            <div class="request__actions">
-              <button type="button" class="btn btn-primary btn-sm" (click)="accept(user.id)">Aceitar</button>
-              <button type="button" class="btn btn-ghost-on-bg btn-sm" (click)="decline(user.id)">Recusar</button>
-            </div>
-          </div>
-        }
-      </section>
-    }
-
-    <section class="side-block">
-      <h2>Indicados pela turma</h2>
-      <p class="side-block__sub">Lugares mais bem avaliados pelos seus amigos nos últimos 30 dias.</p>
-      @if (recommended().length) {
-        <ol class="board ranking">
-          @for (r of recommended(); track r.key; let i = $index) {
-            <li class="board-line" [class.board-line--strong]="r.friends > 1">
-              <span class="board-line__rank">{{ i + 1 }}</span>
-              <span class="board-line__text" [title]="r.restaurant + ' · ' + r.city">{{ r.restaurant }}</span>
-              <span class="board-line__value">{{ r.friends }} {{ r.friends === 1 ? 'amigo' : 'amigos' }}</span>
-            </li>
-          }
-        </ol>
-      } @else {
-        <p class="side-block__empty">Quando seus amigos registrarem pratos com nota 4 ou mais, os lugares aparecem aqui.</p>
+  @if (loading()) {
+    <app-loading-state [count]="3"></app-loading-state>
+  } @else if (error()) {
+    <app-error-state title="Não foi possível carregar o feed" (retry)="load()"></app-error-state>
+  } @else if (!items().length) {
+    <app-empty-state
+      icon="bi-people"
+      title="Seu feed está vazio"
+      description="Adicione amigos para ver as experiências deles aqui. Suas experiências públicas também aparecem no feed."
+    >
+      <a routerLink="/app/amigos" class="btn btn-primary mt-3">Buscar amigos</a>
+    </app-empty-state>
+  } @else {
+    <div class="feed-list">
+      @for (item of items(); track item.id) {
+        <app-feed-item
+          [item]="item"
+          (toggleLike)="onToggleLike($event)"
+          (addComment)="onAddComment($event)"
+          (removeComment)="onRemoveComment($event)"
+        ></app-feed-item>
       }
-    </section>
-  </aside>
+    </div>
+  }
 </div>

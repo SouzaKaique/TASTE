@@ -1,0 +1,105 @@
+// Movimento: pequenas animações de interação, curtas e suaves.
+// Tudo é desligado para quem pede menos movimento no sistema.
+
+:root {
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes taste-rise {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes taste-pop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.35); }
+  100% { transform: scale(1); }
+}
+
+@keyframes taste-dialog-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.97); }
+  to { opacity: 1; transform: none; }
+}
+
+// Troca de página: o conteúdo some e o novo entra subindo um pouco
+.app-shell__content { view-transition-name: page; }
+
+::view-transition-old(page) {
+  animation: 140ms var(--ease-standard) both taste-page-out;
+}
+
+::view-transition-new(page) {
+  animation: 280ms var(--ease-out-soft) both taste-page-in;
+}
+
+// O resto da tela (menu, barra inferior) fica parado
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+}
+
+@keyframes taste-page-out { to { opacity: 0; } }
+@keyframes taste-page-in { from { opacity: 0; transform: translateY(8px); } }
+
+// Botões afundam levemente ao toque
+.btn {
+  transition: transform var(--dur-fast) var(--ease-out-soft),
+              box-shadow var(--dur-fast) var(--ease-standard),
+              background-color var(--dur-fast) var(--ease-standard),
+              color var(--dur-fast) var(--ease-standard),
+              border-color var(--dur-fast) var(--ease-standard);
+
+  &:active:not(:disabled) { transform: scale(0.97); }
+}
+
+// Cards e itens de lista entram em cascata ao carregar
+app-feed-item,
+app-experience-card,
+app-restaurant-card,
+.notification-list > * {
+  display: block;
+  animation: taste-rise 420ms var(--ease-out-soft) both;
+
+  @for $i from 1 through 8 {
+    &:nth-child(#{$i}) { animation-delay: #{($i - 1) * 45}ms; }
+  }
+}
+
+// Cards levantam no hover com sombra mais macia
+.surface-card--hover {
+  transition: box-shadow 260ms var(--ease-out-soft), transform 260ms var(--ease-out-soft);
+}
+
+// Coração "pula" ao curtir
+.bi-heart-fill {
+  display: inline-block;
+  animation: taste-pop 380ms var(--ease-spring);
+}
+
+// Campos ganham a borda de foco com suavidade
+.form-control,
+.form-select {
+  transition: border-color var(--dur-medium) var(--ease-standard),
+              box-shadow var(--dur-medium) var(--ease-standard);
+}
+
+// Imagens aparecem com um fade curto
+img[loading='lazy'] {
+  animation: taste-rise 360ms var(--ease-out-soft) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+    transition-duration: 1ms !important;
+  }
+
+  ::view-transition-old(page),
+  ::view-transition-new(page) {
+    animation: none;
+  }
+}

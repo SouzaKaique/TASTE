@@ -1,25 +1,23 @@
-// Reset e comportamentos globais — o feltro é o chão do site
+// Reset e comportamentos globais
 
 * { box-sizing: border-box; }
 
 html {
   scroll-behavior: smooth;
-  color-scheme: dark;
 }
 
 body {
   overflow-wrap: break-word;
-  background-color: var(--felt);
+  background-color: var(--color-bg);
   color: var(--color-text-primary);
   font-size: var(--fs-body);
   -webkit-font-smoothing: antialiased;
-  caret-color: var(--brass);
+  transition: background-color var(--dur-medium) var(--ease-standard);
 }
 
 a {
   color: var(--color-brand);
   text-decoration: none;
-  text-underline-offset: 3px;
 
   &:hover { color: var(--color-brand-strong); }
 }
@@ -30,13 +28,13 @@ img {
 }
 
 ::selection {
-  background: var(--brass);
-  color: var(--felt-deep);
+  background: var(--taste-wine-500);
+  color: var(--taste-beige-100);
 }
 
-// Foco visível: anel de latão, coerente nos dois contextos
+// Foco visível e acessível em toda a aplicação
 :focus-visible {
-  outline: 2px solid var(--brass);
+  outline: 2px solid var(--taste-wine-500);
   outline-offset: 2px;
   border-radius: var(--radius-sm);
 }
@@ -51,41 +49,8 @@ img {
   border: 0;
 }
 
-// Barra de rolagem no tom do feltro
+// Scrollbar discreta
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--brass-deep) transparent;
-}
-
-// Quadro com trilhos: o sulco a cada 40px é a grade onde as linhas encaixam.
-// Use em listas cujas linhas têm altura múltipla de --rail.
-.board {
-  background-image: repeating-linear-gradient(
-    180deg,
-    transparent 0 calc(var(--rail) - 1px),
-    var(--felt-groove) calc(var(--rail) - 1px) var(--rail)
-  );
-}
-
-// Movimento de assinatura: a linha encaixa no trilho (uma vez, ao carregar)
-@keyframes board-slot {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: none; }
-}
-
-.slot-in {
-  animation: board-slot var(--dur-slow) var(--ease-out-expo) both;
-
-  @for $i from 1 through 8 {
-    &:nth-child(#{$i}) { animation-delay: #{($i - 1) * 45}ms; }
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-delay: 0ms !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
+  scrollbar-color: var(--taste-wine-300) transparent;
 }

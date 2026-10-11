@@ -11,51 +11,64 @@
 <section class="hero">
   <div class="container-editorial hero__grid">
     <div class="hero__text">
+      <p class="eyebrow">Seu diário gastronômico pessoal</p>
       <h1 class="display-title">Boa comida, boas memórias.</h1>
-      <p class="hero__lede">
-        Veja o que seus amigos andam comendo, guarde cada prato que você provou e descubra onde ir pela indicação de quem você confia.
+      <p class="lede">
+        Registre cada prato, avalie experiências e descubra, no fim do ano, quais foram os três sabores que mais marcaram sua jornada.
       </p>
       <div class="hero__cta">
-        <a routerLink="/cadastro" class="btn btn-primary btn-lg">Criar conta grátis</a>
-        <a routerLink="/entrar" class="btn btn-ghost-on-bg btn-lg">Já tenho conta</a>
+        <a routerLink="/cadastro" class="btn btn-primary btn-lg">Começar gratuitamente</a>
+        <a routerLink="/entrar" class="btn btn-ghost btn-lg">Já tenho conta</a>
       </div>
     </div>
-
-    <!-- Prévia ilustrativa do feed (conteúdo de exemplo, sem fotos) -->
-    <figure class="hero__board" aria-label="Exemplo ilustrativo do feed de amigos">
-      <figcaption class="hero__board-caption board-label">Exemplo ilustrativo</figcaption>
-      @for (line of previewLines; track line.dish) {
-        <div class="board-entry">
-          <span class="board-entry__who board-label">{{ line.friend }}</span>
-          <span class="board-entry__dish">{{ line.dish }}</span>
-          <span class="board-entry__where">{{ line.place }}</span>
-          <span class="score-tag score-tag--sm board-entry__score">{{ line.score }}</span>
+    <!-- Prévia ilustrativa do app (sem fotos), apenas decorativa -->
+    <div class="hero__preview" aria-hidden="true">
+      <div class="preview-card">
+        <div class="preview-card__badges">
+          <span>Prato principal</span><span>Italiana</span>
         </div>
-      }
-    </figure>
+        <p class="preview-card__dish">Risoto de funghi</p>
+        <p class="preview-card__meta">Osteria Bordô · São Paulo</p>
+        <p class="preview-card__stars">★★★★★</p>
+        <p class="preview-card__note">“Cremoso na medida, com um aroma de cogumelos que ficou na memória.”</p>
+        <div class="preview-card__tags"><span>#cremoso</span><span>#jantar</span><span>#repetiria</span></div>
+      </div>
+
+      <div class="preview-top3">
+        <p class="preview-top3__title"><i class="bi bi-stars"></i> Top 3 do ano</p>
+        <ol>
+          <li><b>1º</b> Risoto de funghi</li>
+          <li><b>2º</b> Moqueca capixaba</li>
+          <li><b>3º</b> Torta de limão</li>
+        </ol>
+      </div>
+    </div>
   </div>
 </section>
 
-<section class="container-editorial section-spacing how">
-  <h2 class="how__title">Como funciona</h2>
-  <ol class="how__steps">
-    @for (step of steps; track step.title; let i = $index) {
-      <li class="how__step">
-        <span class="how__rank">{{ i + 1 }}</span>
-        <div>
-          <h3>{{ step.title }}</h3>
-          <p>{{ step.text }}</p>
-        </div>
-      </li>
+<section class="container-editorial section-spacing">
+  <div class="section-heading">
+    <p class="eyebrow">Tudo em um só lugar</p>
+    <h2>Uma plataforma para viver e reviver a gastronomia</h2>
+  </div>
+
+  <div class="feature-grid">
+    @for (feature of features; track feature.title) {
+      <div class="feature-card surface-card">
+        <i class="bi" [class]="feature.icon"></i>
+        <h3>{{ feature.title }}</h3>
+        <p>{{ feature.description }}</p>
+      </div>
     }
-  </ol>
+  </div>
 </section>
 
 <section class="retro-teaser">
   <div class="container-editorial retro-teaser__grid">
     <div>
-      <h2 class="retro-teaser__title">E no fim do ano, o seu Top 3</h2>
-      <p class="lede retro-teaser__text">
+      <p class="eyebrow retro-teaser__eyebrow">O grande diferencial</p>
+      <h2 style="color: var(--taste-beige-100)">Sua retrospectiva gastronômica anual</h2>
+      <p style="color: var(--taste-beige-500)" class="lede">
         Ao final de cada ano, descubra automaticamente o Top 3 das suas melhores experiências — e escolha manualmente os destaques que mais importaram para você.
       </p>
       <a routerLink="/cadastro" class="btn btn-ghost-on-bg">
@@ -68,7 +81,7 @@
       @for (place of podium; track place.rank) {
         <div class="podium-preview__place" [class]="'podium-preview__place--' + place.rank">
           <p class="podium-preview__dish">{{ place.dish }}</p>
-          <p class="podium-preview__score">5,0</p>
+          <p class="podium-preview__stars">★★★★★</p>
           <div class="podium-preview__block"><span>{{ place.rank }}º</span></div>
         </div>
       }

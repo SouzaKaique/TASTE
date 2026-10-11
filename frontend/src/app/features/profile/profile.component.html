@@ -34,7 +34,7 @@
         }
       </header>
 
-      <section class="profile-stats tally-strip">
+      <section class="profile-stats">
         <div class="profile-stat"><strong>{{ user.stats.totalExperiences }}</strong><span>Experiências</span></div>
         <div class="profile-stat"><strong>{{ user.stats.totalRestaurants }}</strong><span>Restaurantes</span></div>
         <div class="profile-stat"><strong>{{ user.stats.totalCities }}</strong><span>Cidades</span></div>
@@ -51,9 +51,9 @@
         <section class="profile-section">
           <h2>{{ isOwnProfile() ? 'Suas experiências' : 'Experiências' }}</h2>
           @if (experiences().length) {
-            <div class="board-top">
+            <div class="grid">
               @for (exp of experiences().slice(0, 8); track exp.id) {
-                <app-experience-line class="slot-in" [experience]="exp"></app-experience-line>
+                <app-experience-card [experience]="exp" [compact]="true"></app-experience-card>
               }
             </div>
           } @else {

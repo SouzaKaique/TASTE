@@ -5,59 +5,98 @@
   flex-direction: column;
   gap: var(--space-6);
   max-width: 460px;
-  color: var(--letter-dim);
+  color: var(--color-text-on-bg);
 
   &__title {
-    color: var(--letter);
+    color: var(--color-heading-on-bg);
     margin-bottom: var(--space-3);
   }
 
   &__text {
     font-size: 1.05rem;
-    line-height: 1.55;
+    margin-bottom: var(--space-5);
+  }
+
+  &__benefits {
+    list-style: none;
+    padding: 0;
     margin: 0;
-  }
-
-  // Prévia do feed como quadro com moldura de latão (igual à página inicial)
-  &__board {
-    // Em telas baixas (notebooks), a prévia sai para não criar rolagem
-    @media (max-height: 760px) { display: none; }
-
-    margin: 0;
-    padding: var(--space-4) var(--space-5) var(--space-2);
-    border: 2px solid var(--brass-deep);
-    border-radius: var(--radius-lg);
-    background: var(--felt);
-  }
-
-  &__caption {
-    margin-bottom: var(--space-2);
-    color: var(--brass);
-  }
-
-  &__line {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: center;
-    gap: var(--space-4);
-    padding-block: var(--space-3);
-    border-top: 1px solid var(--felt-groove);
+    gap: var(--space-3);
+
+    li {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      color: var(--color-heading-on-bg);
+    }
   }
 
-  &__line-text {
+  &__icon {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(184, 146, 90, 0.16);
+    color: var(--taste-gold-500);
+  }
+
+  // Cartão ilustrativo em "vidro" sobre o bordô
+  &__preview {
+    // Em telas baixas (notebooks), a prévia sai para não criar rolagem
+    @media (max-height: 800px) { display: none; }
+
+    padding: var(--space-4) var(--space-5);
+    border-radius: var(--radius-lg);
+    background: rgba(248, 246, 241, 0.06);
+    border: 1px solid var(--color-border-on-bg);
+  }
+
+  &__preview-title {
+    margin: 0 0 var(--space-3);
+    font-size: var(--fs-caption);
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-eyebrow-on-bg);
+  }
+
+  &__preview-row {
     display: flex;
-    flex-direction: column;
-    gap: 2px;
-    min-width: 0;
+    align-items: center;
+    gap: var(--space-3);
+    padding-block: var(--space-2);
+
+    & + & { border-top: 1px solid var(--color-border-on-bg); }
+  }
+
+  &__rank {
+    font-family: var(--font-serif);
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--taste-gold-500);
+    width: 2rem;
   }
 
   &__dish {
-    font: 600 var(--dish-sm)/1.2 var(--font-serif);
-    color: var(--letter);
+    flex: 1;
+    color: var(--color-heading-on-bg);
+    font-weight: 500;
+
+    small {
+      display: block;
+      font-weight: 400;
+      font-size: var(--fs-caption);
+      color: var(--color-text-on-bg);
+    }
   }
 
-  &__place {
+  &__stars {
+    color: var(--taste-gold-500);
     font-size: var(--fs-small);
-    color: var(--letter-dim);
+    letter-spacing: 0.05em;
   }
 }

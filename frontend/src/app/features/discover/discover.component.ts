@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, effect, inject, signal } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { FeedItem, Restaurant } from '../../core/models';
@@ -12,7 +11,7 @@ import { EmptyStateComponent } from '../../shared/components/empty-state/empty-s
 @Component({
   selector: 'app-discover',
   standalone: true,
-  imports: [FormsModule, RouterLink, DecimalPipe, RestaurantCardComponent, LoadingStateComponent, EmptyStateComponent],
+  imports: [FormsModule, RouterLink, RestaurantCardComponent, LoadingStateComponent, EmptyStateComponent],
   templateUrl: './discover.component.html',
   styleUrl: './discover.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

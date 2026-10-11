@@ -8,7 +8,7 @@ import { ConfirmService } from '../../services/confirm.service';
     @if (confirmService.state(); as state) {
       <div class="confirm-backdrop" (click)="confirmService.resolve(false)">
         <div
-          class="confirm-dialog cartela"
+          class="confirm-dialog"
           role="alertdialog"
           aria-modal="true"
           [attr.aria-label]="state.title"

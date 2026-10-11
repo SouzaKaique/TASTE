@@ -1,18 +1,16 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { ExperienceService } from '../../core/services/experience.service';
-import { SocialService } from '../../core/services/social.service';
-import { Experience, FeedItem } from '../../core/models';
-import { ExperienceLineComponent } from '../../shared/components/experience-line/experience-line.component';
+import { Experience } from '../../core/models';
+import { ExperienceCardComponent } from '../../shared/components/experience-card/experience-card.component';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
 import { LoadingStateComponent } from '../../shared/components/loading-state/loading-state.component';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [DecimalPipe, RouterLink, ExperienceLineComponent, EmptyStateComponent, LoadingStateComponent],
+  imports: [RouterLink, ExperienceCardComponent, EmptyStateComponent, LoadingStateComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -20,12 +18,10 @@ import { LoadingStateComponent } from '../../shared/components/loading-state/loa
 export class DashboardComponent {
   private readonly auth = inject(AuthService);
   private readonly experienceService = inject(ExperienceService);
-  private readonly socialService = inject(SocialService);
 
   protected readonly user = this.auth.user;
   protected readonly loading = signal(true);
   protected readonly experiences = signal<Experience[]>([]);
-  protected readonly friendsActivity = signal<FeedItem[]>([]);
 
   protected readonly stats = computed(() => {
     const list = this.experiences();
@@ -53,7 +49,7 @@ export class DashboardComponent {
   });
 
   protected readonly recentExperiences = computed(() =>
-    [...this.experiences()].sort((a, b) => +new Date(b.date) - +new Date(a.date)).slice(0, 3),
+    [...this.experiences()].sort((a, b) => +new Date(b.date) - +new Date(a.date)).slice(0, 4),
   );
 
   protected readonly bestRecent = computed(() =>
@@ -61,17 +57,9 @@ export class DashboardComponent {
   );
 
   constructor() {
-    this.experienceService.list().subscribe({
-      next: (list) => {
-        this.experiences.set(list);
-        this.loading.set(false);
-      },
-      error: () => this.loading.set(false),
-    });
-    // O social é o centro do produto: as últimas indicações da turma também ficam no Início
-    this.socialService.getFeed().subscribe({
-      next: (feed) => this.friendsActivity.set(feed.filter((i) => i.user.friendshipStatus === 'friends').slice(0, 4)),
-      error: () => undefined,
+    this.experienceService.list().subscribe((list) => {
+      this.experiences.set(list);
+      this.loading.set(false);
     });
   }
 

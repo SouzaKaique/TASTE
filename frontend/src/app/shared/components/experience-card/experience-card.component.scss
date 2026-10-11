@@ -1,106 +1,88 @@
-.exp-card {
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  color: inherit;
-  height: 100%;
+// Cartão de experiência: foto (ou capa ilustrada do restaurante) e uma linha de quadro embaixo
+:host { display: block; height: 100%; }
 
-  &:hover { color: inherit; }
+.exp-card {
+  position: relative;
+  height: 100%;
+  background: var(--felt-deep);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: border-color var(--dur-medium) var(--ease-standard);
+
+  &:hover { border-color: var(--brass-deep); }
+
+  &__link {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    color: inherit;
+
+    &:hover { color: inherit; }
+    &:hover .exp-card__title { text-decoration: underline; text-decoration-thickness: 1px; }
+  }
 
   &__media {
-    position: relative;
-    aspect-ratio: 4 / 3;
-    background: var(--color-surface-alt);
+    aspect-ratio: 16 / 10;
+    background: var(--felt-raised);
     overflow: hidden;
 
     img { width: 100%; height: 100%; object-fit: cover; }
   }
 
-  &__media-placeholder {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    color: var(--taste-ink-300);
-    font-size: 2rem;
-  }
-
-  &__favorite {
-    position: absolute;
-    top: var(--space-3);
-    right: var(--space-3);
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-
-    @media (pointer: coarse), (max-width: 768px) {
-      width: 40px;
-      height: 40px;
-    }
-
-    border: none;
-    background: rgba(248, 246, 241, 0.9);
-    color: var(--taste-ink-700);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform var(--dur-fast) var(--ease-standard);
-
-    &.is-active { color: var(--taste-wine-800); }
-    &:hover { transform: scale(1.08); }
-  }
-
-  &__category {
-    position: absolute;
-    left: var(--space-3);
-    bottom: var(--space-3);
-    background: rgba(248, 246, 241, 0.92);
-  }
-
   &__body {
     display: flex;
     flex-direction: column;
-    gap: var(--space-2);
+    gap: var(--space-1);
     padding: var(--space-4);
     flex: 1;
   }
 
-  &__header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: var(--space-2);
-  }
+  &__category { margin: 0; color: var(--brass); }
 
-  &__title {
-    font-size: 1.05rem;
-    margin: 0;
-  }
+  &__title { margin: 0; }
 
   &__meta {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 0.3rem;
+    margin: 0;
     font-size: var(--fs-small);
     color: var(--color-text-secondary);
-    margin: 0;
   }
 
-  &__dot { opacity: 0.5; }
-
-  &__date {
-    font-size: var(--fs-caption);
-    color: var(--color-text-secondary);
-    margin: 0;
+  &__foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    margin-top: auto;
+    padding-top: var(--space-3);
   }
+
+  &__date { color: var(--letter-faint); letter-spacing: 0.08em; }
 
   &__tags {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-1);
-    margin-top: auto;
     padding-top: var(--space-2);
+  }
+
+  &__favorite {
+    position: absolute;
+    top: var(--space-2);
+    right: var(--space-2);
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    background: rgba(43, 13, 22, 0.82);
+    color: var(--letter);
+    transition: color var(--dur-fast) var(--ease-standard), background-color var(--dur-fast) var(--ease-standard);
+
+    &.is-active { color: var(--hot); }
+    &:hover { background: var(--felt-deep); }
   }
 
   &--compact &__body { padding: var(--space-3); }

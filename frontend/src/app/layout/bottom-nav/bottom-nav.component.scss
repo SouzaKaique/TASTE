@@ -1,3 +1,5 @@
+// Navegação inferior (celular): faixa de feltro escuro com filete de latão.
+// O botão de registrar é a peça de latão do quadro.
 .bottom-nav {
   display: none;
 
@@ -6,8 +8,8 @@
     position: fixed;
     bottom: 0; left: 0; right: 0;
     height: var(--bottomnav-height);
-    background: var(--taste-wine-900);
-    border-top: 1px solid var(--color-border-on-bg);
+    background: var(--felt-deep);
+    border-top: 2px solid var(--brass-deep);
     z-index: 30;
     padding-bottom: env(safe-area-inset-bottom);
   }
@@ -19,18 +21,28 @@
     align-items: center;
     justify-content: center;
     gap: 0.2rem;
-    color: var(--color-text-on-bg);
-    font-size: 0.65rem;
-    font-weight: 500;
+    color: var(--letter-dim);
+    font: 600 0.625rem var(--font-sans);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
 
-    i { font-size: 1.25rem; }
+    // Todos os ícones na mesma caixa de 36px, para os rótulos ficarem na mesma linha
+    i { height: 36px; display: grid; place-items: center; font-size: 1.2rem; }
 
-    &.is-active { color: var(--color-eyebrow-on-bg); }
+    &.is-active { color: var(--letter); }
 
-    &--cta i {
-      font-size: 2.2rem;
-      color: var(--color-eyebrow-on-bg);
-      margin-top: -1.4rem;
+    &.is-active:not(.bottom-nav__link--cta) i {
+      color: var(--brass);
+    }
+
+    &--cta {
+      i {
+        width: 44px;
+        border-radius: var(--radius-md);
+        background: var(--brass);
+        color: var(--felt-deep);
+        font-size: 1.25rem;
+      }
     }
   }
 }

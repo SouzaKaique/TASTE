@@ -1,46 +1,42 @@
-.rest-card {
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  color: inherit;
-  height: 100%;
+:host { display: block; }
 
-  &:hover { color: inherit; }
+// Restaurante como linha do quadro; a capa só aparece quando existe uma foto real
+.rest-line {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-4);
+  min-height: calc(var(--rail) * 3);
+  padding-block: var(--space-3);
+  border-bottom: 1px solid var(--felt-groove);
+  color: var(--letter);
 
-  &__cover {
-    position: relative;
-    aspect-ratio: 16 / 9;
+  &:has(.rest-line__photo) { grid-template-columns: 80px minmax(0, 1fr) auto; }
+
+  &:hover { color: var(--letter); }
+  &:hover .rest-line__name { text-decoration: underline; text-decoration-thickness: 1px; }
+  &:hover .rest-line__go { color: var(--brass); transform: translateX(3px); }
+
+  &__photo {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--brass-deep);
   }
 
-  &__badge {
-    position: absolute;
-    top: var(--space-2);
-    left: var(--space-2);
+  &__main { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  &__cuisine { color: var(--letter-faint); }
+  &__where { font-size: var(--fs-small); color: var(--letter-dim); }
+  &__highlight { font-size: var(--fs-small); font-style: italic; color: var(--brass); }
+
+  &__go {
+    color: var(--letter-faint);
+    transition: transform var(--dur-fast) var(--ease-standard), color var(--dur-fast) var(--ease-standard);
   }
 
-  &__body {
-    padding: var(--space-4);
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-1);
-  }
-
-  h3 { font-size: 1.1rem; margin: 0; }
-
-  &__location, &__cuisine {
-    font-size: var(--fs-small);
-    color: var(--color-text-secondary);
-    margin: 0;
-  }
-
-  &__highlight {
-    display: flex;
-    gap: 0.35rem;
-    margin: var(--space-2) 0 0;
-    font-size: var(--fs-caption);
-    font-weight: 600;
-    color: #7a5c2e; // dourado escuro: contraste AA sobre branco
-
-    i { color: var(--taste-gold-500); }
+  @media (max-width: 480px) {
+    &:has(.rest-line__photo) { grid-template-columns: 56px minmax(0, 1fr) auto; }
+    &__photo { width: 56px; height: 56px; }
   }
 }

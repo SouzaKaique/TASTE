@@ -6,7 +6,7 @@
   <main class="auth-page__main">
     <a routerLink="/" class="auth-page__back"><i class="bi bi-arrow-left"></i> Voltar ao início</a>
 
-    <div class="auth-page__panel">
+    <div class="auth-page__panel cartela">
       <app-logo class="auth-page__logo" [showTagline]="true"></app-logo>
 
       <h1 class="auth-page__title">Crie sua conta</h1>
@@ -104,6 +104,12 @@
           }
         </div>
 
+        @if (serverStatus.waking()) {
+          <p class="auth-page__waking" role="status">
+            <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+            Acordando o servidor… no primeiro acesso do dia isso pode levar até 1 minuto.
+          </p>
+        }
         <button type="submit" class="btn btn-primary w-100" [class.btn-loading]="loading()" [disabled]="loading()">
           Criar conta
         </button>

@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
+import { ServerStatusService } from '../../../core/services/server-status.service';
 import { ToastService } from '../../../shared/services/toast.service';
 import { LogoComponent } from '../../../shared/components/logo/logo.component';
 import { AuthAsideComponent } from '../auth-aside/auth-aside.component';
@@ -17,6 +18,7 @@ import { AuthAsideComponent } from '../auth-aside/auth-aside.component';
 export class LoginComponent {
   private readonly fb = inject(FormBuilder);
   private readonly auth = inject(AuthService);
+  protected readonly serverStatus = inject(ServerStatusService);
   private readonly router = inject(Router);
   private readonly toast = inject(ToastService);
 
@@ -38,7 +40,7 @@ export class LoginComponent {
     this.loading.set(true);
     this.errorMessage.set(null);
 
-    this.auth.login(this.form.getRawValue()).subscribe({
+    this.auth.login(this.form.getRawValue()).pipe(this.serverStatus.watch()).subscribe({
       next: () => {
         this.loading.set(false);
         this.toast.success('Que bom te ver de novo!');

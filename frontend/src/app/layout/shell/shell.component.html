@@ -12,7 +12,7 @@
           [routerLinkActiveOptions]="{ exact: false }"
           class="app-shell__nav-link"
         >
-          <i class="bi" [class]="item.icon"></i>
+          <i class="bi" [class]="item.icon" aria-hidden="true"></i>
           <span>{{ item.label }}</span>
           @if (item.badge && notifications.unreadCount()) {
             <span class="app-shell__badge" [attr.aria-label]="notifications.unreadCount() + ' não lidas'">
@@ -24,7 +24,7 @@
     </nav>
 
     <a class="btn btn-primary app-shell__cta" routerLink="/app/experiencias/nova">
-      <i class="bi bi-plus-lg"></i> Registrar experiência
+      <i class="bi bi-plus-lg" aria-hidden="true"></i> Registrar prato
     </a>
 
     <div class="app-shell__footer">

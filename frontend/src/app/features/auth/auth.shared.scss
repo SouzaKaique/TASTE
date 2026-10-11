@@ -15,8 +15,8 @@
     align-items: center;
     justify-content: center;
     padding: var(--space-6);
-    background: linear-gradient(160deg, var(--taste-wine-800), var(--taste-wine-900) 70%);
-    border-right: 1px solid var(--color-border-on-bg);
+    background: var(--felt-deep);
+    border-right: 2px solid var(--brass-deep);
 
     @media (max-width: 991px) { display: none; }
   }
@@ -36,9 +36,9 @@
     gap: 0.4rem;
     padding-block: 0.6rem; // área de toque
     font-size: var(--fs-small);
-    color: var(--color-text-on-bg);
+    color: var(--letter-dim);
 
-    &:hover { color: var(--color-heading-on-bg); }
+    &:hover { color: var(--letter); }
   }
 
   // margin-block: auto centraliza o cartão na vertical quando sobra espaço,
@@ -48,8 +48,8 @@
     max-width: 440px;
     margin: auto;
     padding: var(--space-6);
-    background: var(--color-surface);
     border-radius: var(--radius-lg);
+    border: 2px solid var(--brass);
     box-shadow: var(--shadow-lg);
 
     @media (max-width: 480px) {
@@ -116,4 +116,20 @@
     &:hover { color: var(--color-text-primary); }
     &:focus-visible { outline: 2px solid var(--taste-wine-500); }
   }
+}
+
+// Aviso de servidor acordando (plano gratuito do backend)
+.auth-page__waking {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-alt);
+  color: var(--color-text-primary);
+  font-size: var(--fs-small);
+  line-height: 1.4;
+
+  .spinner-border { flex-shrink: 0; margin-top: 2px; }
 }

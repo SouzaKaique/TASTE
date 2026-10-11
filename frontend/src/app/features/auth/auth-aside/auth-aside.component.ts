@@ -11,16 +11,10 @@ import { LogoComponent } from '../../../shared/components/logo/logo.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AuthAsideComponent {
-  protected readonly benefits = [
-    { icon: 'bi-journal-richtext', text: 'Registre pratos com foto, nota e um relato pessoal' },
-    { icon: 'bi-star-fill', text: 'Avalie cada experiência de 1 a 5 estrelas' },
-    { icon: 'bi-trophy', text: 'Descubra o seu Top 3 na retrospectiva do ano' },
-  ];
-
-  // Prévia ilustrativa do Top 3 (dados fictícios, apenas decorativos)
-  protected readonly preview = [
-    { rank: '1º', dish: 'Risoto de funghi', place: 'São Paulo' },
-    { rank: '2º', dish: 'Moqueca capixaba', place: 'Vitória' },
-    { rank: '3º', dish: 'Torta de limão', place: 'Rio de Janeiro' },
+  // Conteúdo de exemplo, rotulado como ilustrativo na tela
+  protected readonly previewLines = [
+    { friend: 'Marina · há 2 h', dish: 'Pad thai de camarão', place: 'Bangkok Garden · Londrina', score: '5,0' },
+    { friend: 'Rafael · ontem', dish: 'Menu degustação', place: 'Manu · Curitiba', score: '4,5' },
+    { friend: 'Júlia · 3 dias', dish: 'Esfiha de carne', place: 'Ponto da Esfiha · Assis', score: '4,0' },
   ];
 }

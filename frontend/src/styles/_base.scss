@@ -1,23 +1,25 @@
-// Reset e comportamentos globais
+// Reset e comportamentos globais — o feltro é o chão do site
 
 * { box-sizing: border-box; }
 
 html {
   scroll-behavior: smooth;
+  color-scheme: dark;
 }
 
 body {
   overflow-wrap: break-word;
-  background-color: var(--color-bg);
+  background-color: var(--felt);
   color: var(--color-text-primary);
   font-size: var(--fs-body);
   -webkit-font-smoothing: antialiased;
-  transition: background-color var(--dur-medium) var(--ease-standard);
+  caret-color: var(--brass);
 }
 
 a {
   color: var(--color-brand);
   text-decoration: none;
+  text-underline-offset: 3px;
 
   &:hover { color: var(--color-brand-strong); }
 }
@@ -28,13 +30,13 @@ img {
 }
 
 ::selection {
-  background: var(--taste-wine-500);
-  color: var(--taste-beige-100);
+  background: var(--brass);
+  color: var(--felt-deep);
 }
 
-// Foco visível e acessível em toda a aplicação
+// Foco visível: anel de latão, coerente nos dois contextos
 :focus-visible {
-  outline: 2px solid var(--taste-wine-500);
+  outline: 2px solid var(--brass);
   outline-offset: 2px;
   border-radius: var(--radius-sm);
 }
@@ -49,8 +51,41 @@ img {
   border: 0;
 }
 
-// Scrollbar discreta
+// Barra de rolagem no tom do feltro
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--taste-wine-300) transparent;
+  scrollbar-color: var(--brass-deep) transparent;
+}
+
+// Quadro com trilhos: o sulco a cada 40px é a grade onde as linhas encaixam.
+// Use em listas cujas linhas têm altura múltipla de --rail.
+.board {
+  background-image: repeating-linear-gradient(
+    180deg,
+    transparent 0 calc(var(--rail) - 1px),
+    var(--felt-groove) calc(var(--rail) - 1px) var(--rail)
+  );
+}
+
+// Movimento de assinatura: a linha encaixa no trilho (uma vez, ao carregar)
+@keyframes board-slot {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+.slot-in {
+  animation: board-slot var(--dur-slow) var(--ease-out-expo) both;
+
+  @for $i from 1 through 8 {
+    &:nth-child(#{$i}) { animation-delay: #{($i - 1) * 45}ms; }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

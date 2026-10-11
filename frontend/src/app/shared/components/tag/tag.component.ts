@@ -9,19 +9,20 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
       .tag {
         display: inline-flex;
         align-items: center;
-        padding: 0.28rem 0.65rem;
-        font-size: var(--fs-caption);
-        font-weight: 600;
-        letter-spacing: 0.02em;
-        border-radius: var(--radius-pill);
-        background: var(--color-surface-alt);
+        min-height: 26px;
+        padding: 0.2rem 0.55rem;
+        font-size: 0.6875rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--color-border-strong);
+        background: transparent;
         color: var(--color-text-secondary);
         white-space: nowrap;
       }
-      .tag--soft {
-        background: var(--color-brand-soft);
-        color: var(--color-brand-strong);
-      }
+      .tag::before { content: '#'; margin-right: 0.15em; color: var(--brass); }
+      .tag--soft { color: var(--color-text-primary); }
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,

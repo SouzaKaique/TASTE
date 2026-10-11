@@ -8,8 +8,8 @@
       <a routerLink="/app/favoritos" class="back-link"><i class="bi bi-arrow-left"></i> Voltar a favoritos</a>
 
       <header class="page-header">
-        <p class="eyebrow">Coleção {{ col.privacy === 'private' ? '· privada' : '· pública' }}</p>
         <h1>{{ col.name }}</h1>
+        <p class="board-label">Coleção {{ col.privacy === 'private' ? 'privada' : 'pública' }}</p>
         @if (col.description) {
           <p class="text-secondary-taste">{{ col.description }}</p>
         }

@@ -1,0 +1,37 @@
+:host { display: block; }
+
+// Altura presa ao trilho: três linhas de 40px (data, prato, lugar)
+.line {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-4);
+  min-height: calc(var(--rail) * 3);
+  padding-block: var(--space-3);
+  border-bottom: 1px solid var(--felt-groove);
+  color: var(--letter);
+
+  &:has(.line__photo) { grid-template-columns: 80px minmax(0, 1fr) auto; }
+
+  &:hover { color: var(--letter); }
+  &:hover .line__dish { text-decoration: underline; text-decoration-thickness: 1px; }
+
+  &__photo {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--brass-deep);
+  }
+
+  &__main { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  &__date { color: var(--letter-faint); i { color: var(--hot); } }
+  &__dish { color: var(--letter); }
+  &__where { font-size: var(--fs-small); color: var(--letter-dim); }
+
+  @media (max-width: 480px) {
+    &:has(.line__photo) { grid-template-columns: 56px minmax(0, 1fr) auto; }
+    &__photo { width: 56px; height: 56px; }
+    .score-tag { min-width: 52px; font-size: 1.125rem; }
+  }
+}

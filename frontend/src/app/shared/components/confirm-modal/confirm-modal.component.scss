@@ -1,7 +1,7 @@
 .confirm-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(36, 21, 25, 0.45);
+  background: rgba(20, 4, 9, 0.62);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -11,14 +11,14 @@
 }
 
 .confirm-dialog {
-  background: var(--color-surface);
   border-radius: var(--radius-lg);
+  border: 2px solid var(--brass);
   box-shadow: var(--shadow-lg);
   padding: var(--space-6);
   max-width: 400px;
   width: 100%;
 
-  h3 { margin-bottom: var(--space-2); }
+  h3 { margin-bottom: var(--space-2); font-size: 1.625rem; }
   p { color: var(--color-text-secondary); margin-bottom: var(--space-5); }
 
   &__actions {
@@ -29,9 +29,11 @@
 }
 
 .btn-danger {
-  background-color: var(--taste-danger);
-  border-color: var(--taste-danger);
-  color: #fff;
+  background-color: #a13d3d;
+  border-color: #a13d3d;
+  color: var(--letter);
+
+  &:hover, &:focus-visible { background-color: #8a2f2f; border-color: #8a2f2f; color: var(--letter); }
 }
 
 @keyframes taste-fade-in {

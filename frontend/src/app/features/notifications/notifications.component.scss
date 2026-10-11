@@ -18,7 +18,11 @@
 
   &:hover { background: var(--color-surface-alt); color: var(--color-text-primary); }
 
-  &.is-unread { background: var(--color-brand-soft); }
+  &.is-unread {
+    background: var(--felt-raised);
+
+    .notification__text { color: #ffffff; }
+  }
 
   &__avatar {
     position: relative;
@@ -37,11 +41,11 @@
     border-radius: 50%;
     border: 2px solid var(--color-surface);
     font-size: 0.65rem;
-    color: #fff;
-    background: var(--taste-wine-700);
+    color: var(--felt-deep);
+    background: var(--brass);
 
-    &--like { background: var(--taste-danger); }
-    &--comment { background: var(--taste-wine-500); }
+    &--like { background: var(--hot); }
+    &--comment { background: var(--letter-dim); }
     &--friend-accepted { background: var(--taste-success); }
   }
 
@@ -74,6 +78,6 @@
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    background: var(--taste-wine-700);
+    background: var(--brass);
   }
 }

@@ -1,0 +1,168 @@
+{
+  "schemaVersion": 2,
+  "title": "TASTE — Quadro de feltro",
+  "generatedAt": "2026-10-10T12:00:00.000Z",
+  "source": "DESIGN.md",
+  "extensions": {
+    "colorMeta": {
+      "felt": { "role": "Fundo", "displayName": "Feltro", "canonical": "#3d1521", "description": "Feltro bordô, o chão do site (--felt, --color-bg).", "tonalRamp": ["#2b0d16", "#33111b", "#3d1521", "#4a1c2a", "#521c2c", "#6c2b3c", "#8a4051", "#b97a89", "#ecd9de"] },
+      "felt-deep": { "role": "Superfície", "displayName": "Feltro escuro", "canonical": "#2b0d16", "description": "Trilho, colunas laterais, painéis e plaqueta; tinta sobre latão." },
+      "felt-raised": { "role": "Superfície ativa", "displayName": "Feltro destacado", "canonical": "#4a1c2a", "description": "Linha ativa e brilho do skeleton." },
+      "felt-groove": { "role": "Divisor", "displayName": "Sulco", "canonical": "rgba(0, 0, 0, 0.26)", "description": "Divisor de 1px entre linhas e sulcos do .board." },
+      "letter": { "role": "Texto principal", "displayName": "Letra", "canonical": "#f4efe6", "description": "Letra branca encaixada; também o fundo do item ativo." },
+      "letter-dim": { "role": "Texto secundário", "displayName": "Letra bege", "canonical": "#e6cdb6", "description": "Texto secundário, nunca cinza." },
+      "letter-faint": { "role": "Metadado", "displayName": "Letra discreta", "canonical": "#c9a99b", "description": "Datas e metadados de terceira ordem." },
+      "letter-bright": { "role": "Destaque de texto", "displayName": "Letra acesa", "canonical": "#ffffff", "description": "Hover de nome de prato, .board-line--strong, notificação não lida." },
+      "brass": { "role": "Destaque", "displayName": "Latão", "canonical": "#c9a15c", "description": "Etiqueta de nota, ação principal, numeração, foco, moldura de diálogo e aviso.", "tonalRamp": ["#7a5a26", "#8a6a3a", "#c9a15c", "#d8b16c"] },
+      "brass-hover": { "role": "Destaque (hover)", "displayName": "Latão claro", "canonical": "#d8b16c", "description": "Hover e foco do .btn-primary." },
+      "brass-deep": { "role": "Filete", "displayName": "Latão fundo", "canonical": "#8a6a3a", "description": "Régua .board-top, filetes de coluna, plaqueta, miniaturas." },
+      "brass-ink": { "role": "Destaque na cartela", "displayName": "Latão-tinta", "canonical": "#7a5a26", "description": "Latão legível sobre a cartela clara." },
+      "hot": { "role": "Atenção", "displayName": "Quente", "canonical": "#ef7a62", "description": "Curtida ativa, favorito, erro sobre o feltro." },
+      "paper": { "role": "Cartela", "displayName": "Cartela", "canonical": "#fbf7f0", "description": "Fundo de campos, diálogos e avisos.", "tonalRamp": ["#fffdf9", "#fbf7f0", "#f1e7da"] },
+      "paper-alt": { "role": "Cartela alternativa", "displayName": "Cartela alternativa", "canonical": "#f1e7da", "description": "Campo desabilitado, superfície alternativa na cartela." },
+      "ink": { "role": "Texto na cartela", "displayName": "Tinta", "canonical": "#2a1218", "description": "Bordô quase preto, não neutro." },
+      "ink-soft": { "role": "Texto secundário na cartela", "displayName": "Tinta suave", "canonical": "#6b4651", "description": "Texto secundário sobre a cartela." },
+      "danger-ink": { "role": "Erro na cartela", "displayName": "Erro sobre cartela", "canonical": "#a13d3d", "description": "Ação destrutiva do diálogo, ícone de erro do aviso, validação na cartela." },
+      "danger-ink-hover": { "role": "Erro na cartela (hover)", "displayName": "Erro sobre cartela, hover", "canonical": "#8a2f2f" },
+      "success-ink": { "role": "Sucesso na cartela", "displayName": "Sucesso sobre cartela", "canonical": "#3f7351", "description": "Ícone de sucesso do aviso." },
+      "success": { "role": "Sucesso", "displayName": "Sucesso", "canonical": "#7fb08f", "description": "Sucesso sobre o feltro." }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Título do restaurante e chamada da landing (.display-title)." },
+      "h1": { "displayName": "Título de página", "purpose": "h1 de página no topo da coluna central." },
+      "h2": { "displayName": "Título de bloco", "purpose": "h2 de seções e blocos laterais." },
+      "h3": { "displayName": "Título menor", "purpose": "h3; diálogos usam 1.625rem." },
+      "dish-lg": { "displayName": "Prato grande", "purpose": "Detalhe da experiência, plaqueta da home, 1º lugar do Top 3." },
+      "dish-md": { "displayName": "Prato médio", "purpose": "Feed e listas." },
+      "dish-sm": { "displayName": "Prato pequeno", "purpose": "Rankings e cartões compactos." },
+      "note": { "displayName": "Relato", "style": "italic", "purpose": "Relato entre aspas no feed; .lede em 1.3rem." },
+      "body": { "displayName": "Corpo", "purpose": "Texto de interface." },
+      "small": { "displayName": "Pequeno", "purpose": "Lugar, cidade, comentários." },
+      "board-label": { "displayName": "Rótulo de quadro", "purpose": "Metadados em caixa alta espaçada (quem, quando, culinária, contagens) e navegação." },
+      "button": { "displayName": "Botão", "purpose": "Botões em caixa alta, 0.08em." },
+      "score": { "displayName": "Nota", "purpose": "Número da .score-tag, tabular, com vírgula decimal." },
+      "score-sm": { "displayName": "Nota compacta", "purpose": ".score-tag--sm e celular." }
+    },
+    "shadows": [
+      { "name": "shadow-sm", "value": "0 1px 2px rgba(12, 2, 6, 0.3)", "purpose": "Reservada." },
+      { "name": "shadow-md", "value": "0 6px 16px rgba(12, 2, 6, 0.32)", "purpose": ".cartela-panel e menus suspensos." },
+      { "name": "shadow-lg", "value": "0 18px 40px rgba(12, 2, 6, 0.42)", "purpose": "Diálogo de confirmação, modal e avisos." }
+    ],
+    "motion": {
+      "ease-standard": "cubic-bezier(0.2, 0, 0, 1)",
+      "ease-out-expo": "cubic-bezier(0.16, 1, 0.3, 1)",
+      "dur-fast": "140ms",
+      "dur-medium": "240ms",
+      "dur-slow": "420ms",
+      "signature": "board-slot: de opacity 0 e translateY(8px) ao repouso, 420ms ease-out-expo, atraso de 45ms por linha até a 8ª, uma vez ao carregar (.slot-in). Desligado em prefers-reduced-motion."
+    },
+    "layout": {
+      "rail": "40px",
+      "sidebar-width": "248px",
+      "side-column": "360px",
+      "bottomnav-height": "64px",
+      "header-height-mobile": "56px",
+      "container-narrow": "680px",
+      "container-editorial": "1180px"
+    }
+  },
+  "components": [
+    {
+      "kind": "score",
+      "name": "Etiqueta de nota",
+      "description": "A nota como preço do quadro: borda 2px latão, número tabular com vírgula decimal, sempre à direita da linha.",
+      "html": "<div class=\"tst-felt\"><span class=\"score-tag\" aria-label=\"Nota 4,5 de 5\">4,5<small>de 5</small></span> <span class=\"score-tag score-tag--sm\">3,0</span></div>",
+      "css": ".tst-felt{background:#3d1521;padding:20px;display:flex;gap:16px;align-items:center}.score-tag{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;min-width:68px;padding:.35rem .6rem .3rem;border:2px solid #c9a15c;border-radius:4px;color:#f4efe6;font:700 1.5rem/1 Inter,sans-serif;font-variant-numeric:tabular-nums}.score-tag small{margin-top:4px;font-size:.5625rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#c9a15c}.score-tag--sm{min-width:52px;font-size:1.125rem;padding:.25rem .45rem;border-width:1.5px}"
+    },
+    {
+      "kind": "list",
+      "name": "Linha de experiência",
+      "description": "Linha de quadro de três trilhos: rótulo, prato em Cormorant, lugar; sulco de 1px embaixo; etiqueta de nota à direita. Miniatura só com foto real.",
+      "html": "<div class=\"tst-felt\"><a class=\"line\"><span class=\"main\"><span class=\"lbl\">10 de out. 2026</span><span class=\"dish\">Ramen tonkotsu</span><span class=\"where\">Kanoe · São Paulo</span></span><span class=\"score-tag\">5,0<small>de 5</small></span></a></div>",
+      "css": ".tst-felt{background:#3d1521;padding:0 20px}.line{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:1rem;min-height:120px;padding-block:.75rem;border-bottom:1px solid rgba(0,0,0,.26);color:#f4efe6;text-decoration:none}.main{display:flex;flex-direction:column;gap:2px}.lbl{font:600 .75rem Inter,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#c9a99b}.dish{font:600 clamp(1.625rem,2.4vw,2.125rem)/1.12 'Cormorant Garamond',Georgia,serif;color:#f4efe6}.where{font:400 .875rem Inter,sans-serif;color:#e6cdb6}.score-tag{display:inline-flex;flex-direction:column;align-items:center;min-width:68px;padding:.35rem .6rem .3rem;border:2px solid #c9a15c;border-radius:4px;color:#f4efe6;font:700 1.5rem/1 Inter,sans-serif;font-variant-numeric:tabular-nums}.score-tag small{margin-top:4px;font-size:.5625rem;letter-spacing:.16em;text-transform:uppercase;color:#c9a15c}"
+    },
+    {
+      "kind": "list",
+      "name": "Ranking numerado sobre .board",
+      "description": "Lista de altura fixa (40px por linha) sobre o fundo com sulcos; número latão, texto caixa alta, valor tabular à direita.",
+      "html": "<div class=\"tst-side\"><ol class=\"board\"><li class=\"bl\"><span class=\"r\">1</span><span class=\"t\">Bangkok Garden</span><span class=\"v\">3 amigos</span></li><li class=\"bl\"><span class=\"r\">2</span><span class=\"t\">Pizzaria Verita</span><span class=\"v\">1 amigo</span></li><li class=\"bl\"><span class=\"r\">3</span><span class=\"t\">Ichigo Ichie</span><span class=\"v\">1 amigo</span></li></ol></div>",
+      "css": ".tst-side{background:#2b0d16;padding:20px}.board{list-style:none;margin:0;padding:0;background-image:repeating-linear-gradient(180deg,transparent 0 39px,rgba(0,0,0,.26) 39px 40px)}.bl{display:grid;grid-template-columns:1.75rem minmax(0,1fr) auto;align-items:end;gap:.75rem;height:40px;box-sizing:border-box;padding-bottom:.55rem}.r{font:700 .875rem Inter,sans-serif;color:#c9a15c}.t{font:600 .8125rem Inter,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#f4efe6}.v{font:600 .75rem Inter,sans-serif;color:#e6cdb6}"
+    },
+    {
+      "kind": "button",
+      "name": "Botões",
+      "description": "Principal: peça de latão com texto em feltro escuro. Secundário: contorno de letra. Caixa alta, 40px.",
+      "html": "<div class=\"tst-felt\"><button class=\"btn-p\">Registrar prato</button> <button class=\"btn-o\">Encontrar amigos</button></div>",
+      "css": ".tst-felt{background:#3d1521;padding:20px;display:flex;gap:12px}.btn-p,.btn-o{font:700 .8125rem Inter,sans-serif;letter-spacing:.08em;text-transform:uppercase;min-height:40px;padding:.6rem 1.15rem;border-radius:4px;cursor:pointer}.btn-p{background:#c9a15c;border:1px solid #c9a15c;color:#2b0d16}.btn-p:hover{background:#d8b16c;border-color:#d8b16c}.btn-o{background:transparent;border:1px solid rgba(244,239,230,.28);color:#f4efe6}"
+    },
+    {
+      "kind": "dialog",
+      "name": "Diálogo em cartela",
+      "description": "Cartela clara com moldura inteira de 2px latão, raio 6px, sombra grande; ação destrutiva em vermelho de tinta.",
+      "html": "<div class=\"tst-felt\"><div class=\"dlg\"><h3>Excluir experiência?</h3><p>Esta ação não pode ser desfeita.</p><div class=\"act\"><button class=\"o\">Cancelar</button><button class=\"d\">Excluir</button></div></div></div>",
+      "css": ".tst-felt{background:#3d1521;padding:24px}.dlg{background:#fbf7f0;color:#2a1218;border:2px solid #c9a15c;border-radius:6px;box-shadow:0 18px 40px rgba(12,2,6,.42);padding:2.5rem;max-width:400px}.dlg h3{margin:0 0 .5rem;font:600 1.625rem 'Cormorant Garamond',Georgia,serif}.dlg p{color:#6b4651;font:400 1rem Inter,sans-serif;margin:0 0 1.25rem}.act{display:flex;justify-content:flex-end;gap:.75rem}.act button{font:700 .8125rem Inter,sans-serif;letter-spacing:.08em;text-transform:uppercase;min-height:40px;padding:.6rem 1.15rem;border-radius:4px}.o{background:transparent;border:1px solid rgba(61,21,33,.28);color:#2a1218}.d{background:#a13d3d;border:1px solid #a13d3d;color:#f4efe6}"
+    },
+    {
+      "kind": "navigation",
+      "name": "Item de navegação do trilho",
+      "description": "Inter caixa alta espaçada; ativo como letra branca encaixada; badge latão.",
+      "html": "<nav class=\"rail\"><a class=\"it\">Início</a><a class=\"it on\">Feed</a><a class=\"it\">Notificações <span class=\"bd\">3</span></a></nav>",
+      "css": ".rail{background:#2b0d16;border-right:2px solid #8a6a3a;padding:16px;width:248px;display:flex;flex-direction:column;gap:2px}.it{display:flex;align-items:center;min-height:40px;padding:0 .75rem;border-radius:4px;font:600 .75rem Inter,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#e6cdb6}.it:hover{background:#3d1521;color:#f4efe6}.it.on{background:#f4efe6;color:#2b0d16}.bd{margin-left:auto;min-width:22px;height:20px;display:inline-flex;align-items:center;justify-content:center;border-radius:3px;background:#c9a15c;color:#2b0d16;font:700 .6875rem Inter,sans-serif}"
+    },
+    {
+      "kind": "panel",
+      "name": "Quadro ilustrativo",
+      "description": "Moldura inteira 2px latão fundo, sempre com a legenda visível \"Exemplo ilustrativo\".",
+      "html": "<figure class=\"fr\" aria-label=\"Exemplo ilustrativo do feed de amigos\"><figcaption class=\"lbl\">Exemplo ilustrativo</figcaption><div class=\"row\"><span><span class=\"lbl\">Marina</span><br><span class=\"dish\">Pad thai de camarão</span></span><span class=\"st\">5,0</span></div></figure>",
+      "css": ".fr{margin:0;background:#3d1521;border:2px solid #8a6a3a;border-radius:6px;padding:20px;max-width:420px}.lbl{font:600 .75rem Inter,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#e6cdb6}.row{display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(0,0,0,.26);margin-top:12px;padding-top:12px}.dish{font:600 1.375rem/1.2 'Cormorant Garamond',Georgia,serif;color:#f4efe6}.st{min-width:52px;text-align:center;padding:.25rem .45rem;border:1.5px solid #c9a15c;border-radius:4px;color:#f4efe6;font:700 1.125rem/1 Inter,sans-serif}"
+    }
+  ],
+  "narrative": {
+    "northStar": "O quadro de feltro da padaria",
+    "overview": "Feltro bordô como chão, letras brancas e bege encaixadas, latão para notas, ação principal, numeração e molduras. Cada prato e cada indicação entram como uma linha no trilho de 40px, com a nota à direita como o preço. Formulários, diálogos e avisos usam a .cartela clara, que redefine os mesmos papéis.",
+    "keyCharacteristics": [
+      "Feltro bordô dominante, nenhum cinza neutro.",
+      "Latão só para nota, ação principal, numeração, foco e moldura.",
+      "Prato só em Cormorant, em três tamanhos fixos; metadados em Inter caixa alta espaçada.",
+      "Listas como linhas de quadro, não grades de cartões.",
+      "Grade vertical de 40px.",
+      "Um único movimento: a linha encaixa no trilho ao carregar."
+    ],
+    "rules": [
+      { "name": "The No Neutral Grey Rule", "section": "colors", "body": "Todo texto secundário usa --letter-dim ou --letter-faint sobre o feltro, ou --ink-soft sobre a cartela. Cinza neutro não existe no sistema." },
+      { "name": "The Brass Means Value Rule", "section": "colors", "body": "Latão marca nota, ação principal, numeração, foco e moldura; não é cor decorativa." },
+      { "name": "The Role Variables Rule", "section": "colors", "body": "Componentes leem papéis (--color-*), não materiais, para funcionar dentro e fora da .cartela. Aliases --taste-* são só compatibilidade." },
+      { "name": "The Three Dish Sizes Rule", "section": "typography", "body": "Nome do prato sempre .dish com --lg, --md ou --sm; nunca tamanho solto, nunca em Inter." },
+      { "name": "The Board Label Rule", "section": "typography", "body": "Metadados em .board-label (Inter caixa alta, 0.14em), acompanhando a linha; nunca como sobretítulo acima de títulos." },
+      { "name": "The Comma Score Rule", "section": "typography", "body": "Nota sempre na .score-tag, uma casa decimal com vírgula (\"4,5\") via LOCALE_ID pt-BR, algarismos tabulares. Nunca estrelas como exibição." },
+      { "name": "The Board Line Rule", "section": "layout", "body": "Listas são linhas: conteúdo à esquerda, sulco de 1px embaixo, etiqueta ou seta à direita, sob a régua .board-top." },
+      { "name": "The Groove Placement Rule", "section": "layout", "body": "O fundo .board só vai sob listas de altura fixa em múltiplos de 40px (ranking do feed, critérios do detalhe, contagens da home). Sob texto de altura livre (feed, diário) o sulco aparece só como divisor de 1px." },
+      { "name": "The Real Photo Only Rule", "section": "layout", "body": "Miniatura ou capa só com foto real; sem foto a coluna fecha. Nada de degradê ou inicial como substituto em superfícies principais." },
+      { "name": "The Flat Felt Rule", "section": "elevation", "body": "Linhas, painéis e colunas sem sombra; sombra só em diálogo, menu e aviso." },
+      { "name": "The Full Brass Frame Rule", "section": "shapes", "body": "Painéis e molduras com borda de latão de 2px em volta toda; nunca faixa de destaque de um lado só. O filete entre colunas inteiras é estrutura, não faixa." }
+    ],
+    "dos": [
+      "Escrever o prato com .dish em um dos três tamanhos e metadados com .board-label.",
+      "Mostrar a nota na .score-tag à direita, com vírgula decimal e aria-label \"Nota X de 5\".",
+      "Montar listas como linhas de quadro sob .board-top.",
+      "Usar .board só sob listas de altura fixa em múltiplos de 40px.",
+      "Pôr formulários, diálogos e avisos na .cartela.",
+      "Rotular toda prévia sintética como \"Exemplo ilustrativo\".",
+      "Escrever em pt-BR com linguagem neutra em gênero.",
+      "Manter alvos de 40px ou mais e foco latão de 2px.",
+      "Respeitar prefers-reduced-motion."
+    ],
+    "donts": [
+      "Exibir nota com estrelas ou ponto decimal.",
+      "Montar grades de cartões iguais ou parede de fotos em superfícies principais.",
+      "Usar degradê ou inicial como substituto de foto em superfícies principais.",
+      "Aplicar .board sob texto de altura livre.",
+      "Usar faixa de destaque de um lado só em cartões ou painéis.",
+      "Usar cinza neutro.",
+      "Usar logos ou fotos oficiais de restaurantes, ou fotos decorativas nas páginas de entrada.",
+      "Inventar depoimentos, métricas ou imprensa.",
+      "Colocar sobretítulos acima de títulos.",
+      "Animar além do encaixe único .slot-in."
+    ]
+  }
+}

@@ -3,26 +3,21 @@
 
   <div class="auth-aside__body">
     <h2 class="display-title auth-aside__title">Boa comida, boas memórias.</h2>
-    <p class="auth-aside__text">Seu diário gastronômico pessoal para registrar, avaliar e reviver cada experiência.</p>
-
-    <ul class="auth-aside__benefits">
-      @for (benefit of benefits; track benefit.icon) {
-        <li>
-          <span class="auth-aside__icon"><i class="bi" [class]="benefit.icon"></i></span>
-          {{ benefit.text }}
-        </li>
-      }
-    </ul>
+    <p class="auth-aside__text">Veja o que seus amigos andam comendo, guarde cada prato que você provou e descubra onde ir pela indicação de quem você confia.</p>
   </div>
 
-  <div class="auth-aside__preview" aria-hidden="true">
-    <p class="auth-aside__preview-title"><i class="bi bi-stars"></i> Seu Top 3 de 2026</p>
-    @for (item of preview; track item.rank) {
-      <div class="auth-aside__preview-row">
-        <span class="auth-aside__rank">{{ item.rank }}</span>
-        <span class="auth-aside__dish">{{ item.dish }}<small>{{ item.place }}</small></span>
-        <span class="auth-aside__stars">★★★★★</span>
+  <!-- Prévia ilustrativa do feed (conteúdo de exemplo) -->
+  <figure class="auth-aside__board" aria-label="Exemplo ilustrativo do feed de amigos">
+    <figcaption class="auth-aside__caption board-label">Exemplo ilustrativo</figcaption>
+    @for (line of previewLines; track line.dish) {
+      <div class="auth-aside__line">
+        <span class="auth-aside__line-text">
+          <span class="board-label">{{ line.friend }}</span>
+          <span class="auth-aside__dish">{{ line.dish }}</span>
+          <span class="auth-aside__place">{{ line.place }}</span>
+        </span>
+        <span class="score-tag score-tag--sm">{{ line.score }}</span>
       </div>
     }
-  </div>
+  </figure>
 </aside>

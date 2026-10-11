@@ -7,13 +7,15 @@
     @if (restaurant(); as r) {
       <a routerLink="/app/descobrir" class="back-link"><i class="bi bi-arrow-left"></i> Voltar para Descobrir</a>
 
-      <div class="rest-hero">
-        <div class="rest-hero__cover">
-          <app-restaurant-cover [name]="r.name" [photoUrl]="coverUrl()"></app-restaurant-cover>
-        </div>
+      <div class="rest-hero" [class.rest-hero--text]="!coverUrl()">
+        @if (coverUrl()) {
+          <div class="rest-hero__cover">
+            <app-restaurant-cover [name]="r.name" [photoUrl]="coverUrl()"></app-restaurant-cover>
+          </div>
+        }
         <div class="rest-hero__info">
-          <p class="eyebrow rest-hero__eyebrow">{{ r.cuisineTypes.join(' · ') || 'Restaurante' }}</p>
           <h1 class="display-title rest-hero__title">{{ r.name }}</h1>
+          <p class="board-label rest-hero__cuisine">{{ r.cuisineTypes.join(' · ') || 'Restaurante' }}</p>
           <p class="rest-hero__location">
             <i class="bi bi-geo-alt"></i>
             {{ r.district ? r.district + ' · ' : '' }}{{ r.city || 'Cidade não informada' }}{{ r.state ? ', ' + r.state : '' }}

@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
+import { ServerStatusService } from '../../../core/services/server-status.service';
 import { ToastService } from '../../../shared/services/toast.service';
 import { LogoComponent } from '../../../shared/components/logo/logo.component';
 import { AuthAsideComponent } from '../auth-aside/auth-aside.component';
@@ -23,6 +24,7 @@ function passwordsMatchValidator(control: AbstractControl): ValidationErrors | n
 export class RegisterComponent {
   private readonly fb = inject(FormBuilder);
   private readonly auth = inject(AuthService);
+  protected readonly serverStatus = inject(ServerStatusService);
   private readonly router = inject(Router);
   private readonly toast = inject(ToastService);
 
@@ -61,7 +63,7 @@ export class RegisterComponent {
     this.errorMessage.set(null);
     const { confirmPassword, acceptTerms, ...payload } = this.form.getRawValue();
 
-    this.auth.register(payload).subscribe({
+    this.auth.register(payload).pipe(this.serverStatus.watch()).subscribe({
       next: () => {
         this.loading.set(false);
         this.toast.success('Conta criada! Boas-vindas ao TASTE.');

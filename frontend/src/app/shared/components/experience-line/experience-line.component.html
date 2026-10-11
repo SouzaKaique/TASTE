@@ -1,0 +1,11 @@
+<a class="line" [routerLink]="['/app/experiencias', experience().id]">
+  @if (experience().photos[0]) {
+    <img class="line__photo" [src]="experience().photos[0].url" alt="" loading="lazy" />
+  }
+  <span class="line__main">
+    <span class="line__date board-label">{{ experience().date | date: "d 'de' MMM y" }}@if (experience().isFavorite) { · <i class="bi bi-heart-fill" aria-label="Favorita"></i> }</span>
+    <span class="line__dish dish dish--md">{{ experience().dishName }}</span>
+    <span class="line__where">{{ experience().restaurantName }} · {{ experience().city }}</span>
+  </span>
+  <span class="score-tag" [attr.aria-label]="'Nota ' + experience().rating + ' de 5'">{{ experience().rating | number: '1.1-1' }}<small>de 5</small></span>
+</a>

@@ -21,17 +21,16 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
         gap: var(--space-2);
         padding: var(--space-6) var(--space-4);
         color: var(--color-text-secondary);
-        background: var(--color-surface);
-        border: 1px solid var(--color-border);
+        background: var(--felt-deep);
+        border: 1px dashed var(--color-border-strong);
         border-radius: var(--radius-lg);
-        box-shadow: var(--shadow-sm);
       }
       .empty-state i {
-        font-size: 2.25rem;
-        color: var(--color-brand);
+        font-size: 2rem;
+        color: var(--brass);
         margin-bottom: var(--space-2);
       }
-      .empty-state h3 { margin: 0; color: var(--color-text-primary); }
+      .empty-state h3 { margin: 0; font-size: 1.625rem; color: var(--color-text-primary); }
       .empty-state p { max-width: 32ch; margin: 0; }
     `,
   ],

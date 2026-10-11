@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { DatePipe } from '@angular/common';
+import { DatePipe, DecimalPipe } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { EXPERIENCE_CATEGORY_LABELS, Experience } from '../../../core/models';
 import { ExperienceService } from '../../../core/services/experience.service';
@@ -7,7 +7,6 @@ import { AuthService } from '../../../core/services/auth.service';
 import { AvatarComponent } from '../../../shared/components/avatar/avatar.component';
 import { ConfirmService } from '../../../shared/services/confirm.service';
 import { ToastService } from '../../../shared/services/toast.service';
-import { StarRatingComponent } from '../../../shared/components/star-rating/star-rating.component';
 import { TagComponent } from '../../../shared/components/tag/tag.component';
 import { LoadingStateComponent } from '../../../shared/components/loading-state/loading-state.component';
 import { ErrorStateComponent } from '../../../shared/components/error-state/error-state.component';
@@ -21,7 +20,7 @@ const VISIBILITY_LABELS: Record<string, string> = {
 @Component({
   selector: 'app-experience-detail',
   standalone: true,
-  imports: [DatePipe, RouterLink, AvatarComponent, StarRatingComponent, TagComponent, LoadingStateComponent, ErrorStateComponent],
+  imports: [DatePipe, DecimalPipe, RouterLink, AvatarComponent, TagComponent, LoadingStateComponent, ErrorStateComponent],
   templateUrl: './experience-detail.component.html',
   styleUrl: './experience-detail.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

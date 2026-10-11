@@ -1,49 +1,62 @@
 // =============================================================
-// Sobrescreve os componentes Bootstrap que usamos com a
-// identidade visual do TASTE — sem depender de gradientes ou
-// cores saturadas.
+// Componentes Bootstrap no vocabulário do quadro de feltro:
+// botões como peças de letreiro, campos como fichas claras.
 // =============================================================
 
 .btn {
   font-family: var(--font-sans);
-  font-weight: 600;
-  font-size: var(--fs-small);
-  padding: 0.65rem 1.4rem;
-  border-radius: var(--radius-pill);
+  font-weight: 700;
+  font-size: 0.8125rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  min-height: 40px;
+  padding: 0.6rem 1.15rem;
+  border-radius: var(--radius-md);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
   transition: transform var(--dur-fast) var(--ease-standard),
-              box-shadow var(--dur-fast) var(--ease-standard),
-              background-color var(--dur-fast) var(--ease-standard);
-  letter-spacing: 0.01em;
+              background-color var(--dur-fast) var(--ease-standard),
+              border-color var(--dur-fast) var(--ease-standard),
+              color var(--dur-fast) var(--ease-standard);
 
-  &:active { transform: scale(0.98); }
+  &:active { transform: translateY(1px); }
 }
 
+.btn-sm { min-height: 34px; padding: 0.4rem 0.8rem; font-size: 0.75rem; }
+.btn-lg { min-height: 48px; padding: 0.8rem 1.5rem; font-size: 0.875rem; }
+
+// Ação principal: peça de latão
 .btn-primary {
-  background-color: var(--color-brand);
-  border-color: var(--color-brand);
-  color: var(--color-text-inverse);
+  background-color: var(--brass);
+  border: 1px solid var(--brass);
+  color: var(--felt-deep);
 
-  &:hover, &:focus {
-    background-color: var(--color-brand-strong);
-    border-color: var(--color-brand-strong);
-    color: var(--color-text-inverse);
-    box-shadow: var(--shadow-md);
+  &:hover, &:focus-visible {
+    background-color: #d8b16c;
+    border-color: #d8b16c;
+    color: var(--felt-deep);
   }
 
-  &:disabled {
-    background-color: var(--taste-ink-300);
-    border-color: var(--taste-ink-300);
+  &:disabled, &.disabled {
+    background-color: var(--brass-deep);
+    border-color: var(--brass-deep);
+    color: rgba(43, 13, 22, 0.75);
+    opacity: 1;
   }
 }
 
+// Secundária: contorno de letra (sobre o feltro) ou de tinta (sobre a cartela)
 .btn-outline-primary {
-  color: var(--color-brand);
-  border-color: var(--color-brand);
+  background: transparent;
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border-strong);
 
-  &:hover, &:focus {
-    background-color: var(--color-brand);
-    border-color: var(--color-brand);
-    color: var(--color-text-inverse);
+  &:hover, &:focus-visible {
+    background: var(--color-brand-soft);
+    border-color: var(--color-text-primary);
+    color: var(--color-text-primary);
   }
 }
 
@@ -52,7 +65,7 @@
   border: 1px solid transparent;
   color: var(--color-text-secondary);
 
-  &:hover { color: var(--color-brand); background: var(--color-brand-soft); }
+  &:hover { color: var(--color-text-primary); background: var(--color-brand-soft); }
 }
 
 .btn-loading {
@@ -68,9 +81,8 @@
     width: 16px;
     height: 16px;
     border-radius: 50%;
-    border: 2px solid currentColor;
+    border: 2px solid var(--felt-deep);
     border-top-color: transparent;
-    color: var(--color-text-inverse);
     animation: taste-spin 0.7s linear infinite;
   }
 }
@@ -79,20 +91,29 @@
   to { transform: rotate(360deg); }
 }
 
+// Campos: ficha clara em qualquer contexto, tinta bordô
 .form-control, .form-select {
   border-radius: var(--radius-md);
-  border-color: var(--color-border-strong);
-  background-color: var(--color-surface);
-  color: var(--color-text-primary);
-  padding: 0.65rem 0.9rem;
+  border: 1px solid rgba(61, 21, 33, 0.24);
+  background-color: var(--paper);
+  color: var(--ink);
+  min-height: 44px;
+  padding: 0.6rem 0.85rem;
   font-size: var(--fs-body);
 
   &:focus {
-    border-color: var(--taste-wine-500);
-    box-shadow: 0 0 0 0.2rem rgba(138, 64, 81, 0.15);
+    border-color: var(--brass-ink);
+    background-color: #fffdf9;
+    color: var(--ink);
+    box-shadow: 0 0 0 3px rgba(201, 161, 92, 0.45);
   }
 
-  &::placeholder { color: var(--taste-ink-300); }
+  &::placeholder { color: #8c6a72; }
+
+  &:disabled {
+    background-color: var(--paper-alt);
+    color: var(--ink-soft);
+  }
 }
 
 .form-label {
@@ -102,35 +123,57 @@
   margin-bottom: var(--space-2);
 }
 
+.form-text { color: var(--color-text-secondary); }
+
+.form-check-input {
+  border-color: rgba(61, 21, 33, 0.4);
+  background-color: var(--paper);
+
+  &:checked { background-color: var(--brass-ink); border-color: var(--brass-ink); }
+  &:focus { box-shadow: 0 0 0 3px rgba(201, 161, 92, 0.45); border-color: var(--brass-ink); }
+}
+
 .invalid-feedback {
   font-size: var(--fs-caption);
+  color: var(--taste-danger);
+}
+
+.cartela .invalid-feedback { color: #a13d3d; }
+
+.alert-danger {
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(161, 61, 61, 0.35);
+  background: #fbe9e4;
+  color: #7c2424;
 }
 
 .card {
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
 }
 
 .modal-content {
-  background-color: var(--color-surface);
   border-radius: var(--radius-lg);
   border: none;
   box-shadow: var(--shadow-lg);
 }
 
+// Selo (categoria, culinária, visibilidade): letra encaixada pequena
 .badge-taste {
   display: inline-flex;
   align-items: center;
   gap: 0.3rem;
-  padding: 0.3rem 0.7rem;
-  border-radius: var(--radius-pill);
-  background-color: var(--color-brand-soft);
-  color: var(--color-brand-strong);
-  font-size: var(--fs-caption);
-  font-weight: 600;
-  letter-spacing: 0.02em;
+  min-height: 26px;
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border-strong);
+  background-color: transparent;
+  color: var(--color-text-primary);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 
 .dropdown-menu {
@@ -144,8 +187,5 @@
   font-weight: 500;
 }
 
-.toast {
-  border-radius: var(--radius-md);
-  border: none;
-  box-shadow: var(--shadow-lg);
-}
+.spinner-border { color: var(--brass); }
+.cartela .spinner-border { color: var(--brass-ink); }

@@ -1,14 +1,143 @@
-.page-header {
+// Feed: o quadro principal ao centro e um painel de feltro escuro à direita
+.feed-page {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  min-height: 100vh;
+
+  @media (max-width: 1199px) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.feed-main {
+  width: 100%;
+  max-width: 760px;
+  margin-inline: auto;
+  padding: var(--space-6) var(--space-6) var(--space-6);
+
+  @media (max-width: 480px) { padding: var(--space-5) var(--space-4); }
+}
+
+.feed-head {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  gap: var(--space-3);
-  margin-bottom: var(--space-5);
   flex-wrap: wrap;
+  gap: var(--space-3);
+  padding-bottom: var(--space-5);
+  border-bottom: 2px solid var(--brass-deep);
+
+  h1 { margin: 0; color: var(--letter); }
 }
 
 .feed-list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+
+  &__none { margin: var(--space-5) 0; color: var(--letter-dim); }
+}
+
+// Filtros como peças de letra encaixadas no quadro
+.feed-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding-block: var(--space-3);
+  border-bottom: 1px solid var(--felt-groove);
+
+  &__tab {
+    min-height: 36px;
+    padding: 0 var(--space-3);
+    background: transparent;
+    border: 1.5px solid rgba(244, 239, 230, 0.24);
+    border-radius: var(--radius-sm);
+    color: var(--letter-dim);
+    font: 600 0.75rem var(--font-sans);
+    letter-spacing: var(--board-tracking);
+    text-transform: uppercase;
+    transition: border-color var(--dur-fast) var(--ease-standard), color var(--dur-fast) var(--ease-standard);
+
+    &:hover { color: var(--letter); border-color: var(--brass-deep); }
+
+    &.is-active {
+      background: var(--letter);
+      border-color: var(--letter);
+      color: var(--felt-deep);
+    }
+  }
+}
+
+.feed-side {
+  background: var(--felt-deep);
+  border-left: 2px solid var(--brass-deep);
+  padding: var(--space-6) var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+
+  @media (max-width: 1199px) {
+    border-left: none;
+    border-top: 2px solid var(--brass-deep);
+    padding: var(--space-5) var(--space-6);
+
+    // No celular/tablet, o painel vem depois das experiências
+    .side-block__sub { display: none; }
+  }
+
+  @media (max-width: 480px) { padding: var(--space-5) var(--space-4); }
+}
+
+.side-block {
+  h2 {
+    margin: 0 0 var(--space-1);
+    font-size: 1.625rem;
+    color: var(--letter);
+  }
+
+  &__sub {
+    margin: 0 0 var(--space-3);
+    font-size: var(--fs-small);
+    line-height: 1.45;
+    color: var(--letter-dim);
+  }
+
+  &__empty {
+    margin: var(--space-2) 0 0;
+    font-size: var(--fs-small);
+    line-height: 1.5;
+    color: var(--letter-dim);
+  }
+}
+
+.ranking {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+// Régua de importância: lugar indicado por mais de um amigo ganha peso
+.board-line--strong .board-line__text { color: #ffffff; }
+.board-line--strong .board-line__value { color: var(--brass); }
+
+.request {
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-border);
+
+  &__who {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    color: var(--letter-dim);
+    font-size: var(--fs-small);
+    line-height: 1.4;
+
+    strong { color: var(--letter); }
+    &:hover strong { text-decoration: underline; }
+  }
+
+  &__actions {
+    display: flex;
+    gap: var(--space-2);
+    margin-top: var(--space-3);
+  }
 }

@@ -1,14 +1,14 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
-import { DatePipe } from '@angular/common';
+import { DatePipe, DecimalPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { EXPERIENCE_CATEGORY_LABELS, Experience } from '../../../core/models';
-import { StarRatingComponent } from '../star-rating/star-rating.component';
+import { RestaurantCoverComponent } from '../restaurant-cover/restaurant-cover.component';
 import { TagComponent } from '../tag/tag.component';
 
 @Component({
   selector: 'app-experience-card',
   standalone: true,
-  imports: [RouterLink, DatePipe, StarRatingComponent, TagComponent],
+  imports: [RouterLink, DatePipe, DecimalPipe, RestaurantCoverComponent, TagComponent],
   templateUrl: './experience-card.component.html',
   styleUrl: './experience-card.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

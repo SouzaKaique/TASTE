@@ -1,71 +1,84 @@
-<article class="feed-item surface-card">
+<article class="feed-item surface-card" [class.feed-item--photo]="!!item().photoUrl">
   <header class="feed-item__header">
     <a [routerLink]="['/app/perfil', item().user.username]" class="feed-item__author">
       <app-avatar [src]="item().user.avatarUrl" [name]="item().user.displayName" size="sm"></app-avatar>
-      <div>
-        <p class="feed-item__name">
-          {{ item().user.displayName }} <span class="feed-item__activity">{{ activityLabel() }}</span>
-        </p>
-        <p class="feed-item__time">{{ item().createdAt | date: 'd MMM, HH:mm' }}</p>
-      </div>
+      <span class="feed-item__who">
+        <span class="feed-item__name">{{ item().user.displayName }}</span>
+        @if (item().restaurantName) {
+          <span class="feed-item__place">{{ item().restaurantName }}{{ item().city ? ' · ' + item().city : '' }}</span>
+        } @else {
+          <span class="feed-item__place">{{ activityLabel() }}</span>
+        }
+      </span>
     </a>
+    <time class="feed-item__time" [attr.datetime]="item().createdAt">{{ item().createdAt | date: 'd MMM' }}</time>
   </header>
 
-  @if (item().text) {
-    <p class="feed-item__text">{{ item().text }}</p>
-  }
-
-  @if (item().dishName) {
-    <div class="feed-item__dish">
-      @if (item().experienceId) {
-        <a [routerLink]="['/app/experiencias', item().experienceId]" class="feed-item__dish-link">{{ item().dishName }}</a>
-      } @else {
-        <strong>{{ item().dishName }}</strong>
-      }
-      @if (item().restaurantName) {
-        <span> · {{ item().restaurantName }}</span>
-      }
-      @if (item().city) {
-        <span> · {{ item().city }}</span>
-      }
-      @if (item().rating) {
-        <app-star-rating [readonly]="true" size="sm" [rating]="item().rating ?? 0"></app-star-rating>
+  @if (item().photoUrl) {
+    <!-- Dois toques na foto curtem, como no Instagram -->
+    <div class="feed-item__media" (dblclick)="likeFromPhoto()">
+      <img [src]="item().photoUrl" [alt]="item().dishName ?? 'Foto da publicação'" loading="lazy" />
+      @if (burst()) {
+        <i class="bi bi-heart-fill feed-item__burst" aria-hidden="true"></i>
       }
     </div>
+  }
+
+  <div class="feed-item__bar">
+    <button
+      type="button"
+      class="feed-item__icon-btn"
+      [class.is-active]="item().likedByMe"
+      [attr.aria-pressed]="item().likedByMe"
+      [attr.aria-label]="(item().likedByMe ? 'Descurtir' : 'Curtir') + ' (' + item().likesCount + ' curtidas)'"
+      (click)="toggleLike.emit(item().id)"
+    >
+      <i class="bi" [class.bi-heart-fill]="item().likedByMe" [class.bi-heart]="!item().likedByMe" aria-hidden="true"></i>
+    </button>
+    <button
+      type="button"
+      class="feed-item__icon-btn"
+      [attr.aria-expanded]="showComments()"
+      [attr.aria-label]="'Comentários (' + item().comments.length + ')'"
+      (click)="showComments.set(!showComments())"
+    >
+      <i class="bi bi-chat" aria-hidden="true"></i>
+    </button>
+    @if (item().rating) {
+      <span class="feed-item__rating">
+        <app-star-rating [readonly]="true" size="sm" [rating]="item().rating ?? 0"></app-star-rating>
+      </span>
+    }
+  </div>
+
+  @if (item().likesCount) {
+    <p class="feed-item__likes">{{ item().likesCount }} {{ item().likesCount === 1 ? 'curtida' : 'curtidas' }}</p>
+  }
+
+  @if (item().dishName || item().text) {
+    <p class="feed-item__caption">
+      @if (item().dishName) {
+        @if (item().experienceId) {
+          <a [routerLink]="['/app/experiencias', item().experienceId]" class="feed-item__dish-link">{{ item().dishName }}</a>
+        } @else {
+          <strong>{{ item().dishName }}</strong>
+        }
+      }
+      @if (item().text) {
+        <span> {{ item().text }}</span>
+      }
+    </p>
   }
 
   @if (item().collectionName) {
     <p class="feed-item__collection"><i class="bi bi-collection"></i> {{ item().collectionName }}</p>
   }
 
-  @if (item().photoUrl) {
-    <div class="feed-item__media">
-      <img [src]="item().photoUrl" [alt]="item().dishName ?? 'Publicação'" loading="lazy" />
-    </div>
+  @if (item().comments.length && !showComments()) {
+    <button type="button" class="feed-item__more" (click)="showComments.set(true)">
+      {{ item().comments.length === 1 ? 'Ver 1 comentário' : 'Ver os ' + item().comments.length + ' comentários' }}
+    </button>
   }
-
-  <footer class="feed-item__footer">
-    <button
-      type="button"
-      class="feed-item__action"
-      [class.is-active]="item().likedByMe"
-      [attr.aria-pressed]="item().likedByMe"
-      [attr.aria-label]="(item().likedByMe ? 'Descurtir' : 'Curtir') + ' (' + item().likesCount + ' curtidas)'"
-      (click)="toggleLike.emit(item().id)"
-    >
-      <i class="bi" [class.bi-heart-fill]="item().likedByMe" [class.bi-heart]="!item().likedByMe"></i>
-      {{ item().likesCount }}
-    </button>
-    <button
-      type="button"
-      class="feed-item__action"
-      [attr.aria-expanded]="showComments()"
-      [attr.aria-label]="'Comentários (' + item().comments.length + ')'"
-      (click)="showComments.set(!showComments())"
-    >
-      <i class="bi bi-chat"></i> {{ item().comments.length }}
-    </button>
-  </footer>
 
   @if (showComments()) {
     <div class="feed-item__comments">

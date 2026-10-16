@@ -12,3 +12,10 @@
   flex-direction: column;
   gap: var(--space-4);
 }
+
+// Coluna estreita e centralizada, como num app de fotos
+.page-header,
+.feed-list {
+  max-width: 560px;
+  margin-inline: auto;
+}

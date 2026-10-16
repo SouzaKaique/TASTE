@@ -24,6 +24,17 @@ export class FeedItemComponent {
   private readonly auth = inject(AuthService);
 
   protected readonly showComments = signal(false);
+  protected readonly burst = signal(false);
+  private burstTimer?: ReturnType<typeof setTimeout>;
+
+  /** Dois toques na foto: mostra o coração e curte (nunca descurte, como no Instagram). */
+  protected likeFromPhoto(): void {
+    if (!this.item().likedByMe) this.toggleLike.emit(this.item().id);
+    clearTimeout(this.burstTimer);
+    this.burst.set(false);
+    requestAnimationFrame(() => this.burst.set(true));
+    this.burstTimer = setTimeout(() => this.burst.set(false), 800);
+  }
 
   /** Pode apagar quem escreveu o comentário ou o dono da publicação. */
   protected canRemove(comment: FeedComment): boolean {

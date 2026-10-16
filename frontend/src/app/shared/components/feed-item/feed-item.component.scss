@@ -1,30 +1,110 @@
+// Post do feed no formato de rede social: cabeçalho, foto grande, ações e legenda.
 .feed-item {
   padding: var(--space-4);
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: var(--space-2);
+  overflow: hidden;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin-bottom: var(--space-1);
+  }
 
   &__author {
     display: flex;
     align-items: center;
     gap: var(--space-3);
+    min-width: 0;
     color: inherit;
     &:hover { color: inherit; }
+    &:hover .feed-item__name { text-decoration: underline; }
   }
 
-  &__name { margin: 0; font-weight: 600; }
-  &__activity { font-weight: 400; color: var(--color-text-secondary); }
-  &__time { margin: 0; font-size: var(--fs-caption); color: var(--color-text-secondary); }
+  &__who { display: flex; flex-direction: column; min-width: 0; line-height: 1.3; }
+  &__name { font-weight: 600; }
 
-  &__text { margin: 0; color: var(--color-text-primary); }
+  &__place {
+    font-size: var(--fs-caption);
+    color: var(--color-text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 
-  &__dish {
+  &__time {
+    flex-shrink: 0;
+    font-size: var(--fs-caption);
+    color: var(--color-text-secondary);
+  }
+
+  // A foto vai de borda a borda do card
+  &__media {
+    position: relative;
+    margin-inline: calc(var(--space-4) * -1);
+    aspect-ratio: 4 / 5;
+    max-height: 640px;
+    background: var(--color-surface-alt);
+    overflow: hidden;
+    cursor: pointer;
+    touch-action: manipulation; // dois toques sem dar zoom na página
+    user-select: none;
+
+    img { width: 100%; height: 100%; object-fit: cover; }
+  }
+
+  &__burst {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    font-size: 5.5rem;
+    color: #fff;
+    filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.35));
+    pointer-events: none;
+    animation: feed-burst 800ms var(--ease-spring, cubic-bezier(0.34, 1.56, 0.64, 1)) both;
+  }
+
+  &__bar {
     display: flex;
     align-items: center;
-    flex-wrap: wrap;
-    gap: 0.3rem;
+    gap: var(--space-1);
+    margin-left: -0.5rem;
+  }
+
+  &__icon-btn {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    background: none;
+    border: none;
+    border-radius: 50%;
+    color: var(--color-text-primary);
+    font-size: 1.45rem;
+    cursor: pointer;
+    transition: transform var(--dur-fast) var(--ease-standard), color var(--dur-fast) var(--ease-standard);
+
+    &:hover { color: var(--color-text-secondary); }
+    &:active { transform: scale(0.88); }
+    &.is-active { color: var(--taste-wine-800); }
+  }
+
+  &__rating { margin-left: auto; }
+
+  &__likes {
+    margin: 0;
     font-size: var(--fs-small);
-    color: var(--color-text-secondary);
+    font-weight: 600;
+  }
+
+  &__caption {
+    margin: 0;
+    font-size: var(--fs-small);
+    line-height: 1.5;
+    color: var(--color-text-primary);
   }
 
   &__collection {
@@ -33,42 +113,24 @@
     color: var(--color-brand);
   }
 
-  &__media {
-    border-radius: var(--radius-md);
-    overflow: hidden;
-    aspect-ratio: 16/10;
-
-    img { width: 100%; height: 100%; object-fit: cover; }
-  }
-
-  &__footer {
-    display: flex;
-    gap: var(--space-4);
-    border-top: 1px solid var(--color-border);
-    padding-top: var(--space-3);
-  }
-
-  &__action {
+  &__more {
+    align-self: flex-start;
+    padding: 0;
     background: none;
     border: none;
-    color: var(--color-text-secondary);
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
     font-size: var(--fs-small);
+    color: var(--color-text-secondary);
     cursor: pointer;
-    min-height: 40px; // área de toque confortável
-    padding: 0 0.35rem;
 
-    &.is-active { color: var(--taste-wine-800); }
+    &:hover { color: var(--color-text-primary); }
   }
 
   &__comments {
     display: flex;
     flex-direction: column;
     gap: var(--space-2);
-    border-top: 1px dashed var(--color-border);
-    padding-top: var(--space-3);
+    padding-top: var(--space-2);
+    animation: taste-rise 260ms var(--ease-out-soft, ease-out) both;
   }
 
   &__comment {
@@ -92,14 +154,26 @@
     gap: var(--space-2);
     margin-top: var(--space-1);
   }
+
+  // No celular, o card do post ocupa a largura toda, como num app
+  @media (max-width: 480px) {
+    padding: var(--space-3);
+
+    &__media { margin-inline: calc(var(--space-3) * -1); }
+  }
 }
 
 .feed-item__dish-link {
   font-weight: 600;
   color: var(--color-text-primary);
-  text-decoration: underline;
-  text-decoration-color: var(--color-border-strong);
-  text-underline-offset: 3px;
 
-  &:hover { color: var(--color-brand); }
+  &:hover { color: var(--color-brand); text-decoration: underline; }
+}
+
+@keyframes feed-burst {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.3); }
+  25% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+  45% { transform: translate(-50%, -50%) scale(0.95); }
+  70% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
 }

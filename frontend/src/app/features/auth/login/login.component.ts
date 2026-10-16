@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { returnUrlFrom } from '../../../core/guards/auth.guard';
 import { AuthService } from '../../../core/services/auth.service';
 import { ServerStatusService } from '../../../core/services/server-status.service';
 import { ToastService } from '../../../shared/services/toast.service';
@@ -20,6 +21,7 @@ export class LoginComponent {
   private readonly auth = inject(AuthService);
   protected readonly serverStatus = inject(ServerStatusService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private readonly toast = inject(ToastService);
 
   protected readonly loading = signal(false);
@@ -44,7 +46,7 @@ export class LoginComponent {
       next: () => {
         this.loading.set(false);
         this.toast.success('Que bom te ver de novo!');
-        this.router.navigate(['/app/inicio']);
+        this.router.navigateByUrl(returnUrlFrom(this.route.snapshot.queryParamMap.get('voltar')));
       },
       error: (err: Error) => {
         this.loading.set(false);

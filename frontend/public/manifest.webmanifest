@@ -1,0 +1,22 @@
+{
+  "name": "TASTE — Diário gastronômico",
+  "short_name": "TASTE",
+  "description": "Registre os pratos que você come fora e veja o que seus amigos andam comendo.",
+  "lang": "pt-BR",
+  "start_url": "/app/social",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#3D1521",
+  "theme_color": "#3D1521",
+  "categories": ["food", "social", "lifestyle"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Registrar prato", "short_name": "Registrar", "url": "/app/experiencias/nova", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Feed dos amigos", "short_name": "Feed", "url": "/app/social", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] }
+  ]
+}

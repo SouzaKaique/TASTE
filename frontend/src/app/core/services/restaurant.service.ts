@@ -110,6 +110,23 @@ export class RestaurantService {
     );
   }
 
+  /** Restaurantes perto de um ponto, do mais perto ao mais longe (OpenStreetMap). */
+  nearby(lat: number, lon: number): Observable<Restaurant[]> {
+    const params = { lat: String(lat), lon: String(lon) };
+    return this.http.get<ApiPlace[]>(`${environment.apiUrl}/places/nearby`, { params }).pipe(
+      map((places) => places.map(toRestaurant)),
+      catchError(toFriendlyError),
+    );
+  }
+
+  /** Cidades oficiais do IBGE para autocompletar ("Londrina", "PR"). */
+  cities(term: string): Observable<{ name: string; state: string }[]> {
+    if (term.trim().length < 2) return of([]);
+    return this.http
+      .get<{ name: string; state: string }[]>(`${environment.apiUrl}/places/cities`, { params: { q: term.trim() } })
+      .pipe(catchError(() => of([])));
+  }
+
   getById(id: string): Observable<Restaurant | undefined> {
     if (id.startsWith('osm-')) {
       return this.http.get<ApiPlace>(`${environment.apiUrl}/places/${encodeURIComponent(id)}`).pipe(

@@ -1,200 +1,241 @@
-<div class="container-editorial section-spacing form-page">
-  <header class="page-header">
-    <p class="eyebrow">{{ isEditMode() ? 'Editar registro' : 'Novo registro' }}</p>
-    <h1>{{ isEditMode() ? 'Editar experiência' : 'Registrar experiência' }}</h1>
-    <p class="text-secondary-taste">Conte sobre o que você comeu — leva menos de um minuto.</p>
+<div class="quick-page">
+  <header class="quick-head">
+    <a [routerLink]="isEditMode() ? ['/app/experiencias', editingId()] : '/app/inicio'" class="quick-head__back" aria-label="Voltar">
+      <i class="bi bi-x-lg" aria-hidden="true"></i>
+    </a>
+    <h1>{{ isEditMode() ? 'Editar prato' : 'Novo prato' }}</h1>
+    <span class="quick-head__spacer"></span>
   </header>
 
-  <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
-    <!-- Restaurante -->
-    <section class="form-section surface-card">
-      <h2 class="form-section__title"><span>1</span> Onde foi a experiência?</h2>
+  <form [formGroup]="form" (ngSubmit)="submit()" novalidate class="quick-card surface-card">
+    <!-- 1. Foto -->
+    @if (photoPreview()) {
+      <div class="quick-photo">
+        <img [src]="photoPreview()" alt="Prévia da foto do prato" />
+        <div class="quick-photo__actions">
+          <label class="quick-photo__btn">
+            <i class="bi bi-arrow-repeat" aria-hidden="true"></i> Trocar
+            <input type="file" accept="image/*" (change)="onPhotoSelected($event)" hidden />
+          </label>
+          <button type="button" class="quick-photo__btn" (click)="removePhoto()">
+            <i class="bi bi-trash" aria-hidden="true"></i> Remover
+          </button>
+        </div>
+      </div>
+    } @else {
+      <label class="quick-photo quick-photo--empty" [class.is-busy]="processingPhoto()">
+        @if (processingPhoto()) {
+          <span class="spinner-border" aria-hidden="true"></span>
+          <span>Preparando a foto...</span>
+        } @else {
+          <i class="bi bi-camera" aria-hidden="true"></i>
+          <span class="quick-photo__title">Adicionar foto</span>
+          <span class="quick-photo__hint">Opcional, mas deixa o post bem mais bonito</span>
+        }
+        <input type="file" accept="image/*" (change)="onPhotoSelected($event)" hidden />
+      </label>
+    }
+
+    <!-- 2. Onde -->
+    <section class="quick-field">
+      <h2 class="quick-field__label">Onde você comeu?</h2>
 
       @if (selectedRestaurant(); as restaurant) {
-        <div class="restaurant-chip">
-          <div>
-            <p class="restaurant-chip__name">{{ restaurant.name }}</p>
-            <p class="restaurant-chip__meta">{{ restaurant.city }}{{ restaurant.country ? ', ' + restaurant.country : '' }}</p>
+        <div class="place-picked">
+          <i class="bi bi-geo-alt-fill" aria-hidden="true"></i>
+          <div class="place-picked__text">
+            <strong>{{ restaurant.name }}</strong>
+            <span>{{ restaurant.city }}{{ restaurant.state ? ' · ' + restaurant.state : '' }}</span>
           </div>
           <button type="button" class="btn btn-ghost btn-sm" (click)="clearRestaurant()">Trocar</button>
         </div>
       } @else {
-        <div class="restaurant-search">
+        <div class="place-search">
+          <i class="bi bi-search" aria-hidden="true"></i>
           <input
-            type="text"
+            type="search"
             class="form-control"
-            placeholder="Buscar restaurante (Brasil todo)..."
-            aria-label="Buscar restaurante"
+            placeholder="Buscar pelo nome do restaurante"
+            aria-label="Buscar restaurante pelo nome"
             [ngModel]="restaurantSearchTerm()"
             (ngModelChange)="restaurantSearchTerm.set($event); searchRestaurants()"
             [ngModelOptions]="{ standalone: true }"
           />
+        </div>
 
+        @if (restaurantSearchTerm().trim()) {
           @if (searchingRestaurants()) {
-            <p class="restaurant-search__status"><span class="spinner-border spinner-border-sm"></span> Buscando restaurantes...</p>
+            <p class="place-status"><span class="spinner-border spinner-border-sm"></span> Buscando...</p>
           } @else if (restaurantResults().length) {
-            <div class="restaurant-search__results">
+            <div class="place-list">
               @for (r of restaurantResults(); track r.id) {
-                <button type="button" class="restaurant-search__item" (click)="selectRestaurant(r)">
+                <button type="button" class="place-list__item" (click)="selectRestaurant(r)">
                   <strong>{{ r.name }}</strong>
-                  <span>
-                    {{ r.address ? r.address + ' · ' : '' }}{{ r.city || 'Cidade não informada' }}{{ r.state ? ', ' + r.state : '' }}
-                    @if (r.source === 'curated') { · <em>Destaque TASTE</em> }
-                  </span>
+                  <span>{{ r.address ? r.address + ' · ' : '' }}{{ r.city || 'Cidade não informada' }}{{ r.state ? ', ' + r.state : '' }}</span>
                 </button>
               }
             </div>
           } @else if (restaurantSearchTerm().trim().length >= 3) {
-            <p class="restaurant-search__status">Nenhum restaurante encontrado. Você pode cadastrar manualmente abaixo.</p>
+            <p class="place-status">Nenhum restaurante com esse nome. Você pode cadastrar abaixo.</p>
+          }
+        } @else {
+          <!-- Sem digitar nada: perto de você e os lugares recentes -->
+          @switch (nearbyState()) {
+            @case ('idle') {
+              <button type="button" class="nearby-btn" (click)="findNearby()">
+                <i class="bi bi-crosshair" aria-hidden="true"></i> Ver restaurantes perto de mim
+              </button>
+            }
+            @case ('locating') {
+              <p class="place-status"><span class="spinner-border spinner-border-sm"></span> Procurando lugares perto de você...</p>
+            }
+            @case ('denied') {
+              <p class="place-status">Localização bloqueada. Busque pelo nome ou libere a localização nas configurações do navegador.</p>
+            }
+            @case ('error') {
+              <p class="place-status">
+                Não deu para ver os lugares perto agora.
+                <button type="button" class="link-btn" (click)="findNearby()">Tentar de novo</button>
+              </p>
+            }
+            @case ('loaded') {
+              @if (nearbyRestaurants().length) {
+                <p class="chips-label">Perto de você</p>
+                <div class="place-list">
+                  @for (r of nearbyRestaurants(); track r.id) {
+                    <button type="button" class="place-list__item" (click)="selectRestaurant(r)">
+                      <strong>{{ r.name }}</strong>
+                      <span>{{ r.address ? r.address + ' · ' : '' }}{{ r.city }}</span>
+                    </button>
+                  }
+                </div>
+              } @else {
+                <p class="place-status">Nenhum restaurante cadastrado no mapa aqui perto. Busque pelo nome.</p>
+              }
+            }
           }
 
-          <button type="button" class="btn btn-ghost btn-sm mt-2" (click)="showManualRestaurantForm.set(!showManualRestaurantForm())">
-            <i class="bi bi-plus-lg"></i> Não encontrei — cadastrar manualmente
-          </button>
-
-          @if (showManualRestaurantForm()) {
-            <div class="manual-restaurant">
-              <div class="row g-2">
-                <div class="col-sm-6">
-                  <label class="form-label">Nome do restaurante</label>
-                  <input type="text" class="form-control" formControlName="manualRestaurantName" />
-                </div>
-                <div class="col-sm-6">
-                  <label class="form-label">Cidade</label>
-                  <input type="text" class="form-control" formControlName="city" />
-                </div>
-                <div class="col-sm-6">
-                  <label class="form-label">País</label>
-                  <input type="text" class="form-control" formControlName="country" />
-                </div>
-                <div class="col-sm-6">
-                  <label class="form-label">Endereço (opcional)</label>
-                  <input type="text" class="form-control" formControlName="manualRestaurantAddress" />
-                </div>
-              </div>
-              <button type="button" class="btn btn-primary btn-sm mt-3" (click)="confirmManualRestaurant()">
-                Usar este restaurante
-              </button>
+          @if (recentRestaurants().length) {
+            <p class="chips-label">Onde você já foi</p>
+            <div class="chips">
+              @for (r of recentRestaurants(); track r.id + r.name) {
+                <button type="button" class="chip" (click)="selectRestaurant(r)">{{ r.name }}</button>
+              }
             </div>
           }
-        </div>
+        }
+
+        <button type="button" class="link-btn mt-2" (click)="showManualRestaurantForm.set(!showManualRestaurantForm())">
+          Não encontrou? Cadastre o lugar
+        </button>
+
+        @if (showManualRestaurantForm()) {
+          <div class="manual-restaurant">
+            <label class="form-label" for="manualName">Nome do restaurante</label>
+            <input id="manualName" type="text" class="form-control mb-2" formControlName="manualRestaurantName" />
+
+            <label class="form-label" for="manualCity">Cidade</label>
+            <div class="city-field">
+              <input
+                id="manualCity"
+                type="text"
+                class="form-control"
+                autocomplete="off"
+                placeholder="Comece a digitar..."
+                [value]="form.controls.city.value"
+                (input)="onCityInput($any($event.target).value)"
+              />
+              @if (citySuggestions().length) {
+                <div class="place-list city-field__list">
+                  @for (c of citySuggestions(); track c.name + c.state) {
+                    <button type="button" class="place-list__item" (click)="pickCity(c)">
+                      <strong>{{ c.name }}</strong><span>{{ c.state }}</span>
+                    </button>
+                  }
+                </div>
+              }
+            </div>
+
+            <button type="button" class="btn btn-primary btn-sm mt-3" (click)="confirmManualRestaurant()">Usar este lugar</button>
+          </div>
+        }
       }
     </section>
 
-    <!-- Prato -->
-    <section class="form-section surface-card">
-      <h2 class="form-section__title"><span>2</span> O que você experimentou?</h2>
-
-      <div class="mb-3">
-        <label class="form-label" for="dishName">Nome do prato ou item</label>
-        <input id="dishName" type="text" class="form-control" formControlName="dishName" placeholder="ex: Risoto de funghi" />
-      </div>
-
-      <div class="row g-3 mb-3">
-        <div class="col-sm-6">
-          <label class="form-label" for="category">Categoria</label>
-          <select id="category" class="form-select" formControlName="category">
-            @for (cat of categories; track cat[0]) {
-              <option [value]="cat[0]">{{ cat[1] }}</option>
-            }
-          </select>
-        </div>
-        <div class="col-sm-6">
-          <label class="form-label" for="cuisineType">Tipo de culinária</label>
-          <select id="cuisineType" class="form-select" formControlName="cuisineType">
-            @for (cuisine of cuisineTypes; track cuisine) {
-              <option [value]="cuisine">{{ cuisine }}</option>
-            }
-          </select>
-        </div>
-      </div>
-
-      <div class="mb-3">
-        <label class="form-label" for="date">Data da experiência</label>
-        <input id="date" type="date" class="form-control" formControlName="date" style="max-width: 220px" />
-      </div>
-
-      <div class="mb-2">
-        <label class="form-label">Sua avaliação geral</label>
-        <app-star-rating size="lg" formControlName="rating" label="Nota geral do prato"></app-star-rating>
-      </div>
-
-      <button type="button" class="link-toggle" (click)="showAdvancedCriteria.set(!showAdvancedCriteria())">
-        <i class="bi" [class.bi-chevron-down]="!showAdvancedCriteria()" [class.bi-chevron-up]="showAdvancedCriteria()"></i>
-        Critérios opcionais (sabor, apresentação, textura...)
-      </button>
-
-      @if (showAdvancedCriteria()) {
-        <div class="advanced-criteria">
-          <div class="advanced-criteria__row">
-            <span>Sabor</span>
-            <app-star-rating size="sm" formControlName="flavor"></app-star-rating>
-          </div>
-          <div class="advanced-criteria__row">
-            <span>Apresentação</span>
-            <app-star-rating size="sm" formControlName="presentation"></app-star-rating>
-          </div>
-          <div class="advanced-criteria__row">
-            <span>Textura</span>
-            <app-star-rating size="sm" formControlName="texture"></app-star-rating>
-          </div>
-          <div class="advanced-criteria__row">
-            <span>Criatividade</span>
-            <app-star-rating size="sm" formControlName="creativity"></app-star-rating>
-          </div>
-          <div class="advanced-criteria__row">
-            <span>Experiência</span>
-            <app-star-rating size="sm" formControlName="experienceCriteria"></app-star-rating>
-          </div>
-        </div>
-      }
+    <!-- 3. Prato -->
+    <section class="quick-field">
+      <label class="quick-field__label" for="dishName">O que você comeu?</label>
+      <input id="dishName" type="text" class="form-control form-control-lg" formControlName="dishName" placeholder="ex: Risoto de funghi" autocomplete="off" />
     </section>
 
-    <!-- Foto e visibilidade -->
-    <section class="form-section surface-card">
-      <h2 class="form-section__title"><span>3</span> Foto (opcional)</h2>
+    <!-- 4. Nota -->
+    <section class="quick-field">
+      <span class="quick-field__label" id="ratingLabel">Que nota você dá?</span>
+      <app-star-rating size="lg" formControlName="rating" label="Nota do prato"></app-star-rating>
+    </section>
 
-      <div class="mb-4">
-        
-        @if (photoPreview()) {
-          <div class="photo-preview">
-            <img [src]="photoPreview()" alt="Prévia da fotografia" />
-            <button type="button" class="photo-preview__remove" (click)="removePhoto()" aria-label="Remover foto">
-              <i class="bi bi-x-lg"></i>
-            </button>
+    <!-- Mais detalhes (tudo já vem preenchido) -->
+    <button type="button" class="details-toggle" [attr.aria-expanded]="showDetails()" (click)="showDetails.set(!showDetails())">
+      <span>Mais detalhes <small>categoria, culinária, data, quem vê</small></span>
+      <i class="bi" [class.bi-chevron-down]="!showDetails()" [class.bi-chevron-up]="showDetails()" aria-hidden="true"></i>
+    </button>
+
+    @if (showDetails()) {
+      <div class="details">
+        <div class="row g-3">
+          <div class="col-6">
+            <label class="form-label" for="category">Categoria</label>
+            <select id="category" class="form-select" formControlName="category">
+              @for (cat of categories; track cat[0]) {
+                <option [value]="cat[0]">{{ cat[1] }}</option>
+              }
+            </select>
           </div>
-        } @else {
-          <label class="photo-upload">
-            <i class="bi bi-camera"></i>
-            <span>Adicionar fotografia</span>
-            <input type="file" accept="image/*" (change)="onPhotoSelected($event)" hidden />
-          </label>
+          <div class="col-6">
+            <label class="form-label" for="cuisineType">Culinária</label>
+            <select id="cuisineType" class="form-select" formControlName="cuisineType">
+              @for (cuisine of cuisineTypes; track cuisine) {
+                <option [value]="cuisine">{{ cuisine }}</option>
+              }
+            </select>
+          </div>
+          <div class="col-6">
+            <label class="form-label" for="date">Data</label>
+            <input id="date" type="date" class="form-control" formControlName="date" />
+          </div>
+          <div class="col-6">
+            <label class="form-label" for="visibility">Quem vê</label>
+            <select id="visibility" class="form-select" formControlName="visibility">
+              <option value="public">Todo mundo</option>
+              <option value="friends">Só amigos</option>
+              <option value="private">Só eu</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-check mt-3">
+          <input id="isFavorite" type="checkbox" class="form-check-input" formControlName="isFavorite" />
+          <label for="isFavorite" class="form-check-label">Marcar como favorito</label>
+        </div>
+
+        <button type="button" class="link-btn mt-3" (click)="showAdvancedCriteria.set(!showAdvancedCriteria())">
+          {{ showAdvancedCriteria() ? 'Tirar notas detalhadas' : 'Dar notas detalhadas (sabor, apresentação...)' }}
+        </button>
+
+        @if (showAdvancedCriteria()) {
+          <div class="advanced-criteria">
+            <div class="advanced-criteria__row"><span>Sabor</span><app-star-rating size="sm" formControlName="flavor"></app-star-rating></div>
+            <div class="advanced-criteria__row"><span>Apresentação</span><app-star-rating size="sm" formControlName="presentation"></app-star-rating></div>
+            <div class="advanced-criteria__row"><span>Textura</span><app-star-rating size="sm" formControlName="texture"></app-star-rating></div>
+            <div class="advanced-criteria__row"><span>Criatividade</span><app-star-rating size="sm" formControlName="creativity"></app-star-rating></div>
+            <div class="advanced-criteria__row"><span>Experiência</span><app-star-rating size="sm" formControlName="experienceCriteria"></app-star-rating></div>
+          </div>
         }
       </div>
+    }
 
-      <div class="row g-3">
-        <div class="col-sm-6">
-          <label class="form-label" for="visibility">Visibilidade</label>
-          <select id="visibility" class="form-select" formControlName="visibility">
-            <option value="public">Pública</option>
-            <option value="friends">Somente amigos</option>
-            <option value="private">Privada</option>
-          </select>
-        </div>
-        <div class="col-sm-6 d-flex align-items-end">
-          <div class="form-check">
-            <input id="isFavorite" type="checkbox" class="form-check-input" formControlName="isFavorite" />
-            <label for="isFavorite" class="form-check-label">Marcar como favorito</label>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <div class="form-actions">
-      <a routerLink="/app/experiencias" class="btn btn-ghost-on-bg">Cancelar</a>
-      <button type="submit" class="btn btn-primary" [class.btn-loading]="submitting()" [disabled]="submitting()">
-        {{ isEditMode() ? 'Salvar alterações' : 'Registrar experiência' }}
-      </button>
-    </div>
+    <button type="submit" class="btn btn-primary btn-lg quick-submit" [class.btn-loading]="submitting()" [disabled]="submitting() || processingPhoto()">
+      {{ isEditMode() ? 'Salvar alterações' : 'Publicar' }}
+    </button>
   </form>
 </div>

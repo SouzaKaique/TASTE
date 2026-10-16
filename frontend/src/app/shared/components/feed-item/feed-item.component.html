@@ -44,6 +44,11 @@
     >
       <i class="bi bi-chat" aria-hidden="true"></i>
     </button>
+    @if (item().experienceId) {
+      <button type="button" class="feed-item__icon-btn" aria-label="Compartilhar" (click)="share()">
+        <i class="bi bi-send" aria-hidden="true"></i>
+      </button>
+    }
     @if (item().rating) {
       <span class="feed-item__rating">
         <app-star-rating [readonly]="true" size="sm" [rating]="item().rating ?? 0"></app-star-rating>

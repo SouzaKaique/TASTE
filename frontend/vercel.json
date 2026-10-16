@@ -3,7 +3,7 @@
   "outputDirectory": "dist/taste-app/browser",
   "rewrites": [
     {
-      "source": "/((?!.*\.(?:js|css|map|ico|png|jpg|jpeg|svg|webp|woff2?|txt|json)$).*)",
+      "source": "/((?!.*\.(?:js|css|map|ico|png|jpg|jpeg|svg|webp|woff2?|txt|json|webmanifest)$).*)",
       "destination": "/index.html"
     }
   ],

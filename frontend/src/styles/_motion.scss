@@ -86,7 +86,11 @@ app-restaurant-card,
 
 // Imagens aparecem com um fade curto
 img[loading='lazy'] {
-  animation: taste-rise 360ms var(--ease-out-soft) both;
+  animation: taste-fade 360ms var(--ease-out-soft) both;
+}
+
+@keyframes taste-fade {
+  from { opacity: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {

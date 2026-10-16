@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 /**
  * Busca de restaurantes no OpenStreetMap (gratuito, sem chave):
  * - Photon (photon.komoot.io): busca enquanto a pessoa digita;
+ * - Photon reverse: restaurantes perto de um ponto (registro rapido);
  * - Nominatim (nominatim.openstreetmap.org): detalhes de um lugar pelo id.
  * As respostas ficam em cache e o Nominatim e chamado no maximo 1x por segundo,
  * como pede a politica de uso dos servicos publicos do OSM.
@@ -40,6 +41,8 @@ public class PlaceService {
     private static final Duration SEARCH_TTL = Duration.ofMinutes(15);
     private static final Duration DETAILS_TTL = Duration.ofHours(24);
     private static final int MAX_CACHE_ENTRIES = 1000;
+    private static final double NEARBY_RADIUS_KM = 0.4;
+    private static final int NEARBY_LIMIT = 15;
 
     private static final Map<String, String> CUISINES = Map.ofEntries(
             Map.entry("pizza", "Pizza"), Map.entry("italian", "Italiana"), Map.entry("japanese", "Japonesa"),
@@ -64,6 +67,7 @@ public class PlaceService {
     private final ObjectMapper mapper;
     private final Map<String, CacheEntry<List<PlaceResponse>>> searchCache = new ConcurrentHashMap<>();
     private final Map<String, CacheEntry<PlaceResponse>> detailsCache = new ConcurrentHashMap<>();
+    private final Map<String, CacheEntry<List<PlaceResponse>>> nearbyCache = new ConcurrentHashMap<>();
     private final Object nominatimLock = new Object();
     private long lastNominatimCall = 0;
 
@@ -96,29 +100,79 @@ public class PlaceService {
         List<PlaceResponse> results = new ArrayList<>();
         JsonNode json = get(url.toString());
         for (JsonNode feature : json.path("features")) {
-            JsonNode p = feature.path("properties");
-            String name = text(p, "name");
-            String type = text(p, "osm_type");
-            if (name == null || type == null || !"BR".equalsIgnoreCase(text(p, "countrycode"))) {
-                continue;
+            PlaceResponse place = fromPhoton(feature);
+            if (place != null) {
+                results.add(place);
             }
-            JsonNode coords = feature.path("geometry").path("coordinates");
-            results.add(new PlaceResponse(
-                    "osm-" + type + p.path("osm_id").asText(),
-                    name,
-                    joinAddress(text(p, "street"), text(p, "housenumber")),
-                    firstNonNull(text(p, "district"), text(p, "locality")),
-                    firstNonNull(text(p, "city"), text(p, "county")),
-                    text(p, "state"),
-                    "Brasil",
-                    List.of(),
-                    null, null, null,
-                    coords.size() == 2 ? coords.get(1).asDouble() : null,
-                    coords.size() == 2 ? coords.get(0).asDouble() : null));
         }
 
         putBounded(searchCache, cacheKey, new CacheEntry<>(List.copyOf(results), Instant.now().plus(SEARCH_TTL)));
         return results;
+    }
+
+    /**
+     * Restaurantes num raio curto em volta da pessoa, do mais perto ao mais longe (Photon reverse).
+     * As coordenadas sao arredondadas (~100 m) antes de sair do servidor: melhora o cache
+     * e nao envia a localizacao exata para servicos externos.
+     */
+    public List<PlaceResponse> nearby(double lat, double lon) {
+        if (lat < -34.0 || lat > 5.3 || lon < -74.0 || lon > -34.7) {
+            return List.of(); // fora do Brasil
+        }
+        double rLat = Math.round(lat * 1000) / 1000.0;
+        double rLon = Math.round(lon * 1000) / 1000.0;
+        String key = rLat + "," + rLon;
+        CacheEntry<List<PlaceResponse>> cached = nearbyCache.get(key);
+        if (cached != null && cached.valid()) {
+            return cached.value();
+        }
+
+        StringBuilder url = new StringBuilder(String.format(Locale.ROOT,
+                "https://photon.komoot.io/reverse?limit=%d&radius=%.2f&lat=%.3f&lon=%.3f",
+                NEARBY_LIMIT, NEARBY_RADIUS_KM, rLat, rLon));
+        FOOD_TAGS.forEach(tag -> url.append("&osm_tag=").append(URLEncoder.encode(tag, StandardCharsets.UTF_8)));
+
+        List<PlaceResponse> results = new ArrayList<>();
+        for (JsonNode feature : get(url.toString()).path("features")) {
+            PlaceResponse place = fromPhoton(feature);
+            if (place != null) {
+                results.add(place);
+            }
+        }
+        results.sort(Comparator.comparingDouble(r -> distanceMeters(lat, lon, r.lat(), r.lon())));
+        putBounded(nearbyCache, key, new CacheEntry<>(List.copyOf(results), Instant.now().plus(SEARCH_TTL)));
+        return results;
+    }
+
+    /** Converte um resultado do Photon; ignora o que nao tem nome ou fica fora do Brasil. */
+    private static PlaceResponse fromPhoton(JsonNode feature) {
+        JsonNode p = feature.path("properties");
+        String name = text(p, "name");
+        String type = text(p, "osm_type");
+        JsonNode coords = feature.path("geometry").path("coordinates");
+        if (name == null || type == null || coords.size() != 2 || !"BR".equalsIgnoreCase(text(p, "countrycode"))) {
+            return null;
+        }
+        return new PlaceResponse(
+                "osm-" + type + p.path("osm_id").asText(),
+                name,
+                joinAddress(text(p, "street"), text(p, "housenumber")),
+                firstNonNull(text(p, "district"), text(p, "locality")),
+                firstNonNull(text(p, "city"), text(p, "county")),
+                text(p, "state"),
+                "Brasil",
+                List.of(),
+                null, null, null,
+                coords.get(1).asDouble(),
+                coords.get(0).asDouble());
+    }
+
+    static double distanceMeters(double lat1, double lon1, double lat2, double lon2) {
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        return 6_371_000 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     }
 
     public PlaceResponse details(String id) {
@@ -177,11 +231,14 @@ public class PlaceService {
     }
 
     private JsonNode get(String url) {
-        HttpRequest request = HttpRequest.newBuilder(URI.create(url))
-                .timeout(Duration.ofSeconds(6))
+        return send(HttpRequest.newBuilder(URI.create(url)).GET(), url);
+    }
+
+    private JsonNode send(HttpRequest.Builder builder, String url) {
+        HttpRequest request = builder
+                .timeout(Duration.ofSeconds(10))
                 .header("User-Agent", USER_AGENT)
                 .header("Accept", "application/json")
-                .GET()
                 .build();
         try {
             HttpResponse<String> response = http.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));

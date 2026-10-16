@@ -16,6 +16,12 @@ import { ToastService } from '../../../shared/services/toast.service';
 import { StarRatingComponent } from '../../../shared/components/star-rating/star-rating.component';
 import { resizeImageToDataUrl } from '../../../shared/utils/image-resize.util';
 
+type NearbyState = 'idle' | 'locating' | 'loaded' | 'denied' | 'error';
+
+/**
+ * Registro rápido: foto, restaurante (perto de você, recentes ou busca), prato e nota.
+ * Categoria, culinária, data e o resto ficam em "Mais detalhes", já preenchidos.
+ */
 @Component({
   selector: 'app-experience-form',
   standalone: true,
@@ -38,6 +44,7 @@ export class ExperienceFormComponent implements OnInit {
   protected readonly editingId = signal<string | null>(null);
   protected readonly isEditMode = computed(() => this.editingId() !== null);
   protected readonly submitting = signal(false);
+  protected readonly showDetails = signal(false);
 
   protected readonly restaurantSearchTerm = signal('');
   protected readonly restaurantResults = signal<Restaurant[]>([]);
@@ -46,9 +53,19 @@ export class ExperienceFormComponent implements OnInit {
   private restaurantSearchSeq = 0;
   protected readonly selectedRestaurant = signal<Restaurant | null>(null);
   protected readonly showManualRestaurantForm = signal(false);
+
+  protected readonly nearbyState = signal<NearbyState>('idle');
+  protected readonly nearbyRestaurants = signal<Restaurant[]>([]);
+  /** Lugares onde a pessoa já registrou pratos, do mais recente ao mais antigo. */
+  protected readonly recentRestaurants = signal<Restaurant[]>([]);
+
+  protected readonly citySuggestions = signal<{ name: string; state: string }[]>([]);
+  private citySearchTimer: ReturnType<typeof setTimeout> | undefined;
+
   protected readonly photoPreview = signal<string | null>(null);
+  protected readonly processingPhoto = signal(false);
   // Relato e tags saíram do formulário (registro rápido); na edição, os valores antigos são mantidos
-  protected readonly tagsInput = signal('');
+  private keptTags: string[] = [];
   protected readonly showAdvancedCriteria = signal(false);
 
   protected readonly form = this.fb.nonNullable.group({
@@ -56,7 +73,7 @@ export class ExperienceFormComponent implements OnInit {
     category: ['main-course' as ExperienceCategory, Validators.required],
     cuisineType: ['Brasileira', Validators.required],
     city: ['', Validators.required],
-    country: [''],
+    country: ['Brasil'],
     date: [todayLocalIso(), Validators.required],
     rating: [0, [Validators.required, Validators.min(1)]],
     notes: [''],
@@ -72,7 +89,10 @@ export class ExperienceFormComponent implements OnInit {
   });
 
   constructor() {
-    inject(DestroyRef).onDestroy(() => clearTimeout(this.restaurantSearchTimer));
+    inject(DestroyRef).onDestroy(() => {
+      clearTimeout(this.restaurantSearchTimer);
+      clearTimeout(this.citySearchTimer);
+    });
   }
 
   ngOnInit(): void {
@@ -96,7 +116,11 @@ export class ExperienceFormComponent implements OnInit {
         }
         this.prefill(exp);
       });
+      return;
     }
+
+    this.loadRecentRestaurants();
+    this.locateIfAlreadyAllowed();
   }
 
   private prefill(exp: Experience): void {
@@ -125,8 +149,66 @@ export class ExperienceFormComponent implements OnInit {
       cuisineTypes: [exp.cuisineType],
       source: exp.restaurantId.startsWith('manual-') ? 'manual' : 'curated',
     });
-    this.tagsInput.set(exp.tags.join(', '));
+    this.keptTags = exp.tags;
     this.photoPreview.set(exp.photos[0]?.url ?? null);
+    this.showAdvancedCriteria.set(!!exp.optionalCriteria);
+  }
+
+  // ---------- Restaurante ----------
+
+  private loadRecentRestaurants(): void {
+    this.experienceService.list().subscribe({
+      next: (list) => {
+        const seen = new Set<string>();
+        const recent: Restaurant[] = [];
+        for (const exp of [...list].sort((a, b) => b.date.localeCompare(a.date))) {
+          // O mesmo lugar pode ter sido salvo com ids diferentes: agrupa por nome + cidade
+          const key = `${exp.restaurantName}|${exp.city}`.toLowerCase();
+          if (seen.has(key)) continue;
+          seen.add(key);
+          recent.push({
+            id: exp.restaurantId,
+            name: exp.restaurantName,
+            city: exp.city,
+            country: exp.country,
+            cuisineTypes: [exp.cuisineType],
+            source: exp.restaurantId?.startsWith('manual-') ? 'manual' : 'osm',
+          });
+          if (recent.length === 6) break;
+        }
+        this.recentRestaurants.set(recent);
+      },
+      error: () => undefined,
+    });
+  }
+
+  /** Se a pessoa já autorizou a localização antes, mostra os lugares perto sem perguntar de novo. */
+  private locateIfAlreadyAllowed(): void {
+    navigator.permissions
+      ?.query({ name: 'geolocation' })
+      .then((status) => status.state === 'granted' && this.findNearby())
+      .catch(() => undefined);
+  }
+
+  protected findNearby(): void {
+    if (!('geolocation' in navigator)) {
+      this.nearbyState.set('error');
+      return;
+    }
+    this.nearbyState.set('locating');
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        this.restaurantService.nearby(pos.coords.latitude, pos.coords.longitude).subscribe({
+          next: (list) => {
+            this.nearbyRestaurants.set(list);
+            this.nearbyState.set('loaded');
+          },
+          error: () => this.nearbyState.set('error'),
+        });
+      },
+      (err) => this.nearbyState.set(err.code === err.PERMISSION_DENIED ? 'denied' : 'error'),
+      { enableHighAccuracy: false, timeout: 10000, maximumAge: 5 * 60 * 1000 },
+    );
   }
 
   /** Busca local na hora e no Brasil todo (OpenStreetMap) depois de uma pausa na digitação. */
@@ -153,7 +235,12 @@ export class ExperienceFormComponent implements OnInit {
     this.selectedRestaurant.set(restaurant);
     this.restaurantResults.set([]);
     this.restaurantSearchTerm.set('');
-    this.form.patchValue({ city: restaurant.city, country: restaurant.country });
+    this.form.patchValue({ city: restaurant.city, country: restaurant.country || 'Brasil' });
+    // Culinária vem do restaurante quando ela existe na nossa lista
+    const cuisine = restaurant.cuisineTypes.find((c) => (CUISINE_TYPES as readonly string[]).includes(c));
+    if (cuisine && !this.isEditMode()) {
+      this.form.patchValue({ cuisineType: cuisine });
+    }
     this.showManualRestaurantForm.set(false);
   }
 
@@ -161,25 +248,40 @@ export class ExperienceFormComponent implements OnInit {
     this.selectedRestaurant.set(null);
   }
 
+  protected onCityInput(value: string): void {
+    this.form.controls.city.setValue(value);
+    clearTimeout(this.citySearchTimer);
+    this.citySearchTimer = setTimeout(() => {
+      this.restaurantService.cities(value).subscribe((list) => this.citySuggestions.set(list));
+    }, 250);
+  }
+
+  protected pickCity(city: { name: string; state: string }): void {
+    this.form.controls.city.setValue(city.name);
+    this.citySuggestions.set([]);
+  }
+
   protected confirmManualRestaurant(): void {
     const name = this.form.controls.manualRestaurantName.value.trim();
     const city = this.form.controls.city.value.trim();
     if (!name || !city) {
-      this.toast.error('Informe ao menos o nome do restaurante e a cidade.');
+      this.toast.error('Informe o nome do restaurante e a cidade.');
       return;
     }
     this.restaurantService
       .createManual({
         name,
         city,
-        country: this.form.controls.country.value,
+        country: this.form.controls.country.value || 'Brasil',
         address: this.form.controls.manualRestaurantAddress.value,
       })
       .subscribe((created) => {
         this.selectRestaurant(created);
-        this.toast.success('Restaurante cadastrado.');
+        this.citySuggestions.set([]);
       });
   }
+
+  // ---------- Foto ----------
 
   protected onPhotoSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -187,20 +289,33 @@ export class ExperienceFormComponent implements OnInit {
     input.value = '';
     if (!file) return;
 
-    resizeImageToDataUrl(file, 1280)
+    // 1080 px no lado maior: nítida no celular e leve no banco (~150 KB)
+    this.processingPhoto.set(true);
+    resizeImageToDataUrl(file, 1080, 0.78)
       .then((dataUrl) => this.photoPreview.set(dataUrl))
-      .catch((err: Error) => this.toast.error(err.message));
+      .catch((err: Error) => this.toast.error(err.message))
+      .finally(() => this.processingPhoto.set(false));
   }
 
   protected removePhoto(): void {
     this.photoPreview.set(null);
   }
 
+  // ---------- Envio ----------
+
   protected submit(): void {
-    if (this.form.invalid || !this.selectedRestaurant()) {
+    if (!this.selectedRestaurant()) {
+      this.toast.error('Escolha onde você comeu.');
+      return;
+    }
+    if (this.form.invalid) {
       this.form.markAllAsTouched();
-      if (!this.selectedRestaurant()) {
-        this.toast.error('Selecione ou cadastre um restaurante.');
+      if (this.form.controls.dishName.invalid) {
+        this.toast.error('Diga o nome do prato.');
+      } else if (this.form.controls.rating.invalid) {
+        this.toast.error('Dê uma nota de 1 a 5 estrelas.');
+      } else {
+        this.showDetails.set(true);
       }
       return;
     }
@@ -208,17 +323,13 @@ export class ExperienceFormComponent implements OnInit {
     this.submitting.set(true);
     const raw = this.form.getRawValue();
     const restaurant = this.selectedRestaurant()!;
-    const tags = this.tagsInput()
-      .split(',')
-      .map((t) => t.trim())
-      .filter(Boolean);
 
     const photos: ExperiencePhoto[] = this.photoPreview()
       ? [{ id: 'p-' + Date.now(), url: this.photoPreview()!, isPrimary: true }]
       : [];
 
     const payload = {
-      dishName: raw.dishName,
+      dishName: raw.dishName.trim(),
       category: raw.category,
       cuisineType: raw.cuisineType,
       restaurantId: restaurant.id,
@@ -229,7 +340,7 @@ export class ExperienceFormComponent implements OnInit {
       rating: raw.rating,
       photos,
       notes: raw.notes,
-      tags,
+      tags: this.keptTags,
       isFavorite: raw.isFavorite,
       visibility: raw.visibility,
       optionalCriteria: this.showAdvancedCriteria()
@@ -249,12 +360,17 @@ export class ExperienceFormComponent implements OnInit {
     request.subscribe({
       next: (result) => {
         this.submitting.set(false);
-        this.toast.success(id ? 'Experiência atualizada.' : 'Experiência registrada com sucesso!');
-        this.router.navigate(['/app/experiencias', result.id]);
+        if (id) {
+          this.toast.success('Alterações salvas.');
+          this.router.navigate(['/app/experiencias', result.id]);
+        } else {
+          this.toast.success('Prato publicado!');
+          this.router.navigate(['/app/social']);
+        }
       },
       error: (err: Error) => {
         this.submitting.set(false);
-        this.toast.error(err.message || 'Não foi possível salvar a experiência.');
+        this.toast.error(err.message || 'Não foi possível salvar.');
       },
     });
   }

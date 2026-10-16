@@ -1,97 +1,300 @@
-.page-header { margin-bottom: var(--space-5); max-width: 640px; }
+// Registro rápido: uma coluna só, como o "novo post" de um app de fotos.
+.quick-page {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: var(--space-5) var(--space-4) var(--space-7);
 
-.form-section {
-  padding: var(--space-5);
-  margin-bottom: var(--space-4);
-
-  &__title {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    font-size: 1.1rem;
-    margin-bottom: var(--space-4);
-
-    span {
-      width: 26px;
-      height: 26px;
-      border-radius: 50%;
-      background: var(--color-brand-soft);
-      color: var(--color-brand-strong);
-      font-family: var(--font-sans);
-      font-size: 0.85rem;
-      font-weight: 700;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
-  }
+  @media (max-width: 480px) { padding: var(--space-3) var(--space-3) var(--space-6); }
 }
 
-.restaurant-chip {
+.quick-head {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  background: var(--color-brand-soft);
-  border-radius: var(--radius-md);
-  padding: var(--space-3) var(--space-4);
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
 
-  &__name { margin: 0; font-weight: 600; color: var(--color-brand-strong); }
-  &__meta { margin: 0; font-size: var(--fs-small); color: var(--color-text-secondary); }
+  h1 {
+    flex: 1;
+    margin: 0;
+    text-align: center;
+    font-size: 1.6rem;
+    color: var(--color-heading-on-bg);
+  }
+
+  &__back,
+  &__spacer { width: 40px; height: 40px; flex-shrink: 0; }
+
+  &__back {
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    color: var(--color-text-on-bg);
+    font-size: 1.1rem;
+    transition: background-color var(--dur-fast) var(--ease-standard);
+
+    &:hover { background: rgba(255, 255, 255, 0.08); color: var(--color-heading-on-bg); }
+  }
 }
 
-.restaurant-search {
+.quick-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+// Foto ocupa o topo do card, de borda a borda
+.quick-photo {
+  position: relative;
+  display: block;
+  aspect-ratio: 4 / 3;
+  background: var(--color-surface-alt);
+
+  img { width: 100%; height: 100%; object-fit: cover; }
+
+  &--empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-1);
+    aspect-ratio: 16 / 9;
+    border-bottom: 1px dashed var(--color-border-strong);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: background-color var(--dur-medium) var(--ease-standard), color var(--dur-medium) var(--ease-standard);
+
+    i { font-size: 2rem; color: var(--color-brand); transition: transform var(--dur-medium) var(--ease-out-soft, ease-out); }
+
+    &:hover { background: var(--color-brand-soft); color: var(--color-text-primary); }
+    &:hover i { transform: scale(1.08); }
+    &.is-busy { cursor: progress; }
+  }
+
+  &__title { font-weight: 600; color: var(--color-text-primary); }
+  &__hint { font-size: var(--fs-caption); }
+
+  &__actions {
+    position: absolute;
+    right: var(--space-3);
+    bottom: var(--space-3);
+    display: flex;
+    gap: var(--space-2);
+  }
+
+  &__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.4rem 0.8rem;
+    border: none;
+    border-radius: var(--radius-pill);
+    background: rgba(20, 10, 14, 0.7);
+    color: #fff;
+    font-size: var(--fs-caption);
+    font-weight: 600;
+    cursor: pointer;
+    backdrop-filter: blur(6px);
+
+    &:hover { background: rgba(20, 10, 14, 0.85); }
+  }
+}
+
+.quick-field {
+  padding: var(--space-4) var(--space-4) 0;
+
+  &__label {
+    display: block;
+    margin: 0 0 var(--space-2);
+    font-family: var(--font-sans);
+    font-size: var(--fs-small);
+    font-weight: 600;
+    color: var(--color-text-primary);
+  }
+}
+
+.place-search {
   position: relative;
 
-  &__results {
-    margin-top: var(--space-2);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    overflow: hidden;
-    background: var(--color-surface);
+  i {
+    position: absolute;
+    left: 0.85rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-text-secondary);
+    pointer-events: none;
   }
+
+  .form-control { padding-left: 2.4rem; }
+}
+
+.nearby-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  width: 100%;
+  margin-top: var(--space-2);
+  padding: 0.7rem;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-brand);
+  font-weight: 600;
+  font-size: var(--fs-small);
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease-standard), transform var(--dur-fast) var(--ease-standard);
+
+  &:hover { background: var(--color-brand-soft); }
+  &:active { transform: scale(0.98); }
+}
+
+.place-status {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: var(--space-2) 0 0;
+  font-size: var(--fs-small);
+  color: var(--color-text-secondary);
+}
+
+.place-list {
+  margin-top: var(--space-2);
+  max-height: 264px;
+  overflow-y: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  animation: taste-rise 240ms var(--ease-out-soft, ease-out) both;
 
   &__item {
     display: flex;
     flex-direction: column;
     width: 100%;
+    padding: 0.6rem var(--space-3);
     text-align: left;
-    padding: var(--space-2) var(--space-3);
     background: none;
     border: none;
     border-bottom: 1px solid var(--color-border);
     cursor: pointer;
+    transition: background-color var(--dur-fast) var(--ease-standard);
 
     &:last-child { border-bottom: none; }
     &:hover { background: var(--color-surface-alt); }
 
+    strong { font-size: var(--fs-small); }
     span { font-size: var(--fs-caption); color: var(--color-text-secondary); }
   }
 }
 
+.chips-label {
+  margin: var(--space-3) 0 var(--space-2);
+  font-size: var(--fs-caption);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.chip {
+  padding: 0.4rem 0.85rem;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  font-size: var(--fs-small);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease-standard), border-color var(--dur-fast) var(--ease-standard), transform var(--dur-fast) var(--ease-standard);
+
+  &:hover { background: var(--color-brand-soft); border-color: var(--color-brand); }
+  &:active { transform: scale(0.96); }
+}
+
+.place-picked {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-brand-soft);
+  animation: taste-rise 240ms var(--ease-out-soft, ease-out) both;
+
+  > i { color: var(--color-brand); font-size: 1.1rem; }
+
+  &__text {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+
+    strong { color: var(--color-brand-strong); }
+    span { font-size: var(--fs-caption); color: var(--color-text-secondary); }
+  }
+}
+
+.link-btn {
+  padding: 0;
+  background: none;
+  border: none;
+  color: var(--color-brand);
+  font-size: var(--fs-small);
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover { text-decoration: underline; }
+}
+
 .manual-restaurant {
   margin-top: var(--space-3);
-  padding: var(--space-4);
+  padding: var(--space-3);
   border: 1px dashed var(--color-border-strong);
   border-radius: var(--radius-md);
 }
 
-.link-toggle {
+.city-field {
+  position: relative;
+
+  &__list {
+    position: absolute;
+    z-index: 5;
+    left: 0;
+    right: 0;
+    box-shadow: var(--shadow-md);
+  }
+}
+
+.details-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: calc(100% - var(--space-4) * 2);
+  margin: var(--space-4) var(--space-4) 0;
+  padding: var(--space-3) 0;
   background: none;
   border: none;
-  color: var(--color-brand);
-  font-weight: 600;
+  border-top: 1px solid var(--color-border);
+  color: var(--color-text-primary);
   font-size: var(--fs-small);
-  padding: 0;
-  margin-top: var(--space-3);
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
+  font-weight: 600;
+  text-align: left;
   cursor: pointer;
+
+  small { display: block; font-weight: 400; color: var(--color-text-secondary); }
+}
+
+.details {
+  padding: 0 var(--space-4);
+  animation: taste-rise 260ms var(--ease-out-soft, ease-out) both;
 }
 
 .advanced-criteria {
-  margin-top: var(--space-4);
-  padding: var(--space-4);
+  margin-top: var(--space-3);
+  padding: var(--space-3);
   background: var(--color-surface-alt);
   border-radius: var(--radius-md);
   display: flex;
@@ -106,58 +309,8 @@
   }
 }
 
-.photo-upload {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-2);
-  height: 180px;
-  border: 2px dashed var(--color-border-strong);
-  border-radius: var(--radius-md);
-  color: var(--color-text-secondary);
-  cursor: pointer;
-  transition: border-color var(--dur-fast) var(--ease-standard);
-
-  i { font-size: 1.8rem; }
-
-  &:hover { border-color: var(--taste-wine-500); color: var(--color-brand); }
-}
-
-.photo-preview {
-  position: relative;
-  height: 220px;
-  border-radius: var(--radius-md);
-  overflow: hidden;
-
-  img { width: 100%; height: 100%; object-fit: cover; }
-
-  &__remove {
-    position: absolute;
-    top: var(--space-2);
-    right: var(--space-2);
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    border: none;
-    background: rgba(36, 21, 25, 0.65);
-    color: #fff;
-    cursor: pointer;
-  }
-}
-
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: var(--space-3);
-  margin-top: var(--space-5);
-}
-
-.restaurant-search__status {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  margin: var(--space-2) 0 0;
-  font-size: var(--fs-small);
-  color: var(--color-text-secondary);
+.quick-submit {
+  display: block;
+  width: calc(100% - var(--space-4) * 2);
+  margin: var(--space-4);
 }

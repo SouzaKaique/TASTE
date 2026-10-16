@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { FeedComment, FeedItem } from '../../../core/models';
 import { AuthService } from '../../../core/services/auth.service';
+import { ShareService } from '../../services/share.service';
 import { AvatarComponent } from '../avatar/avatar.component';
 import { StarRatingComponent } from '../star-rating/star-rating.component';
 
@@ -22,6 +23,18 @@ export class FeedItemComponent {
   removeComment = output<{ feedItemId: string; commentId: string }>();
 
   private readonly auth = inject(AuthService);
+  private readonly shareService = inject(ShareService);
+
+  protected share(): void {
+    const item = this.item();
+    const where = item.restaurantName ? ` no ${item.restaurantName}` : '';
+    const stars = item.rating ? ` e deu nota ${item.rating}` : '';
+    this.shareService.share({
+      title: item.dishName ?? 'TASTE',
+      text: `${item.user.displayName} comeu ${item.dishName}${where}${stars} no TASTE.`,
+      path: `/app/experiencias/${item.experienceId}`,
+    });
+  }
 
   protected readonly showComments = signal(false);
   protected readonly burst = signal(false);

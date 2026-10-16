@@ -1,44 +1,137 @@
-.profile-header {
+.profile-top {
+  max-width: 640px;
+  margin: 0 auto var(--space-5);
+  color: var(--color-text-on-bg);
+
+  &__row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-5);
+    margin-bottom: var(--space-3);
+
+    @media (max-width: 480px) { gap: var(--space-3); }
+  }
+
+  &__name { margin: 0; font-size: 1.5rem; color: var(--color-heading-on-bg); }
+  &__username { margin: 0; font-size: var(--fs-small); color: var(--color-text-on-bg); }
+  &__bio { margin: var(--space-2) 0 0; max-width: 52ch; line-height: 1.5; }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-top: var(--space-3);
+
+    .btn { flex: 1; max-width: 220px; }
+  }
+}
+
+// Números lado a lado, como num perfil de rede social
+.profile-counts {
+  flex: 1;
   display: flex;
-  align-items: center;
-  gap: var(--space-5);
-  margin-bottom: var(--space-6);
-  flex-wrap: wrap;
-
-  &__info { flex: 1; min-width: 200px; }
-  &__username { color: var(--color-text-on-bg); margin: 0 0 var(--space-2); }
-
-  h1 { margin: 0; color: var(--color-heading-on-bg); }
-  .lede { color: var(--color-text-on-bg); }
-}
-
-.profile-stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: var(--space-3);
-  margin-bottom: var(--space-6);
+  justify-content: space-around;
+  margin: 0;
+  padding: 0;
+  list-style: none;
   text-align: center;
+
+  li { display: flex; flex-direction: column; }
+  strong { font-size: 1.35rem; line-height: 1.2; color: var(--color-heading-on-bg); font-variant-numeric: tabular-nums; }
+  span { font-size: var(--fs-caption); color: var(--color-text-on-bg); }
 }
 
-.profile-stat {
-  padding: var(--space-4);
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
+.profile-grid-section {
+  max-width: 640px;
+  margin: 0 auto var(--space-6);
+}
 
-  strong { display: block; font-family: var(--font-serif); font-size: 1.5rem; color: var(--color-brand); }
-  span { font-size: var(--fs-caption); color: var(--color-text-secondary); text-transform: uppercase; }
+// Grade de 3 colunas com quadrados encostados
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+
+  @media (max-width: 480px) {
+    gap: 2px;
+    margin-inline: calc(var(--space-4) * -1); // borda a borda no celular
+    border-radius: 0;
+  }
+
+  &__tile {
+    position: relative;
+    aspect-ratio: 1;
+    overflow: hidden;
+    background: var(--color-surface);
+    color: var(--color-text-primary);
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 400ms var(--ease-out-soft, ease-out);
+    }
+
+    &:hover img { transform: scale(1.04); }
+    &:hover .photo-grid__overlay { opacity: 1; }
+  }
+
+  // Sem foto: o nome do prato vira a "capa" do quadrado
+  &__text {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 2px;
+    height: 100%;
+    padding: var(--space-3);
+    background: linear-gradient(160deg, var(--color-surface) 0%, var(--color-brand-soft) 100%);
+
+    strong {
+      font-family: var(--font-serif);
+      font-size: 1.05rem;
+      line-height: 1.15;
+      color: var(--color-brand-strong);
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    small {
+      font-size: var(--fs-caption);
+      color: var(--color-text-secondary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    @media (max-width: 480px) {
+      padding: var(--space-2);
+      strong { font-size: 0.9rem; }
+    }
+  }
+
+  &__overlay {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    background: rgba(20, 10, 14, 0.45);
+    color: #fff;
+    font-weight: 700;
+    opacity: 0;
+    transition: opacity var(--dur-medium) var(--ease-standard);
+
+    i { color: var(--taste-gold-500); margin-right: 0.3rem; }
+  }
 }
 
 .profile-section {
-  margin-bottom: var(--space-6);
+  max-width: 640px;
+  margin: 0 auto var(--space-6);
   h2 { color: var(--color-heading-on-bg); }
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: var(--space-4);
 }
 
 .collections-row {

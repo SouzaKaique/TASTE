@@ -7,6 +7,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { AvatarComponent } from '../../../shared/components/avatar/avatar.component';
 import { ConfirmService } from '../../../shared/services/confirm.service';
 import { ToastService } from '../../../shared/services/toast.service';
+import { ShareService } from '../../../shared/services/share.service';
 import { StarRatingComponent } from '../../../shared/components/star-rating/star-rating.component';
 import { TagComponent } from '../../../shared/components/tag/tag.component';
 import { LoadingStateComponent } from '../../../shared/components/loading-state/loading-state.component';
@@ -33,6 +34,16 @@ export class ExperienceDetailComponent {
   private readonly confirmService = inject(ConfirmService);
   private readonly toast = inject(ToastService);
   private readonly auth = inject(AuthService);
+  private readonly shareService = inject(ShareService);
+
+  protected share(exp: Experience): void {
+    const who = this.isOwner() ? 'Comi' : `${exp.author?.displayName ?? 'Alguém'} comeu`;
+    this.shareService.share({
+      title: exp.dishName,
+      text: `${who} ${exp.dishName} no ${exp.restaurantName} (${exp.city}) e deu nota ${exp.rating} no TASTE.`,
+      path: `/app/experiencias/${exp.id}`,
+    });
+  }
 
   protected readonly categoryLabels = EXPERIENCE_CATEGORY_LABELS;
   protected readonly visibilityLabels = VISIBILITY_LABELS;

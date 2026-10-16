@@ -72,8 +72,11 @@
             </div>
           }
 
-          @if (isOwner()) {
           <div class="detail-page__actions">
+            <button type="button" class="btn btn-outline-primary" (click)="share(exp)">
+              <i class="bi bi-send"></i> Compartilhar
+            </button>
+          @if (isOwner()) {
             <button type="button" class="btn" [class.btn-outline-primary]="!exp.isFavorite" [class.btn-primary]="exp.isFavorite" (click)="toggleFavorite()">
               <i class="bi" [class.bi-heart-fill]="exp.isFavorite" [class.bi-heart]="!exp.isFavorite"></i>
               {{ exp.isFavorite ? 'Favoritado' : 'Favoritar' }}
@@ -84,8 +87,8 @@
             <button type="button" class="btn btn-ghost" (click)="onDelete()">
               <i class="bi bi-trash"></i> Excluir
             </button>
-          </div>
           }
+          </div>
         </div>
       </article>
     }

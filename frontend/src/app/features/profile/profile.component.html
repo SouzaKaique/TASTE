@@ -5,41 +5,42 @@
     <app-error-state title="Usuário não encontrado" [retryable]="false"></app-error-state>
   } @else {
     @if (viewedUser(); as user) {
-      <header class="profile-header">
-        <app-avatar [src]="user.avatarUrl" [name]="user.displayName" size="xl"></app-avatar>
-        <div class="profile-header__info">
-          <h1>{{ user.displayName }}</h1>
-          <p class="profile-header__username">&#64;{{ user.username }}</p>
-          @if (user.bio) {
-            <p class="lede">{{ user.bio }}</p>
-          }
+      <!-- Cabeçalho no estilo de perfil de rede social: foto, números, nome e bio -->
+      <header class="profile-top">
+        <div class="profile-top__row">
+          <app-avatar [src]="user.avatarUrl" [name]="user.displayName" size="xl"></app-avatar>
+          <ul class="profile-counts">
+            <li><strong>{{ user.stats.totalExperiences }}</strong><span>{{ user.stats.totalExperiences === 1 ? 'prato' : 'pratos' }}</span></li>
+            <li><strong>{{ user.stats.totalRestaurants }}</strong><span>{{ user.stats.totalRestaurants === 1 ? 'lugar' : 'lugares' }}</span></li>
+            <li><strong>{{ user.stats.totalCities }}</strong><span>{{ user.stats.totalCities === 1 ? 'cidade' : 'cidades' }}</span></li>
+          </ul>
         </div>
 
-        @if (isOwnProfile()) {
-          <a routerLink="/app/configuracoes" class="btn btn-ghost-on-bg">
-            <i class="bi bi-pencil"></i> Editar perfil
-          </a>
-        } @else if (friendshipStatus() === 'none') {
-          <button type="button" class="btn btn-primary" (click)="sendRequest()">
-            <i class="bi bi-person-plus"></i> Adicionar
-          </button>
-        } @else if (friendshipStatus() === 'pending-received') {
-          <button type="button" class="btn btn-primary" (click)="acceptRequest()">
-            <i class="bi bi-person-check"></i> Aceitar amizade
-          </button>
-        } @else if (friendshipStatus() === 'friends') {
-          <span class="badge-taste"><i class="bi bi-person-check"></i> Amigos</span>
-        } @else if (friendshipStatus() === 'pending-sent') {
-          <span class="badge-taste">Solicitação enviada</span>
+        <h1 class="profile-top__name">{{ user.displayName }}</h1>
+        <p class="profile-top__username">&#64;{{ user.username }}</p>
+        @if (user.bio) {
+          <p class="profile-top__bio">{{ user.bio }}</p>
         }
-      </header>
 
-      <section class="profile-stats">
-        <div class="profile-stat"><strong>{{ user.stats.totalExperiences }}</strong><span>Experiências</span></div>
-        <div class="profile-stat"><strong>{{ user.stats.totalRestaurants }}</strong><span>Restaurantes</span></div>
-        <div class="profile-stat"><strong>{{ user.stats.totalCities }}</strong><span>Cidades</span></div>
-        <div class="profile-stat"><strong>{{ user.stats.totalFavorites }}</strong><span>Favoritos</span></div>
-      </section>
+        <div class="profile-top__actions">
+          @if (isOwnProfile()) {
+            <a routerLink="/app/configuracoes" class="btn btn-ghost-on-bg btn-sm">Editar perfil</a>
+            <a routerLink="/app/experiencias/nova" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg"></i> Novo prato</a>
+          } @else if (friendshipStatus() === 'none') {
+            <button type="button" class="btn btn-primary btn-sm" (click)="sendRequest()">
+              <i class="bi bi-person-plus"></i> Adicionar
+            </button>
+          } @else if (friendshipStatus() === 'pending-received') {
+            <button type="button" class="btn btn-primary btn-sm" (click)="acceptRequest()">
+              <i class="bi bi-person-check"></i> Aceitar amizade
+            </button>
+          } @else if (friendshipStatus() === 'friends') {
+            <span class="badge-taste"><i class="bi bi-person-check"></i> Amigos</span>
+          } @else if (friendshipStatus() === 'pending-sent') {
+            <span class="badge-taste">Solicitação enviada</span>
+          }
+        </div>
+      </header>
 
       @if (isPrivateAndBlocked()) {
         <app-error-state
@@ -48,16 +49,31 @@
           [retryable]="false"
         ></app-error-state>
       } @else {
-        <section class="profile-section">
-          <h2>{{ isOwnProfile() ? 'Suas experiências' : 'Experiências' }}</h2>
+        <section class="profile-grid-section" aria-label="Pratos">
           @if (experiences().length) {
-            <div class="grid">
-              @for (exp of experiences().slice(0, 8); track exp.id) {
-                <app-experience-card [experience]="exp" [compact]="true"></app-experience-card>
+            <div class="photo-grid">
+              @for (exp of experiences(); track exp.id) {
+                <a class="photo-grid__tile" [routerLink]="['/app/experiencias', exp.id]" [attr.aria-label]="exp.dishName + ', nota ' + exp.rating + ' de 5'">
+                  @if (exp.photos[0]) {
+                    <img [src]="exp.photos[0].url" alt="" loading="lazy" />
+                  } @else {
+                    <span class="photo-grid__text">
+                      <strong>{{ exp.dishName }}</strong>
+                      <small>{{ exp.restaurantName }}</small>
+                    </span>
+                  }
+                  <span class="photo-grid__overlay" aria-hidden="true">
+                    <i class="bi bi-star-fill"></i> {{ exp.rating }}
+                  </span>
+                </a>
               }
             </div>
+          } @else if (isOwnProfile()) {
+            <app-empty-state icon="bi-camera" title="Seu primeiro prato" description="Registre o próximo prato que comer fora. Leva poucos segundos.">
+              <a routerLink="/app/experiencias/nova" class="btn btn-primary mt-3">Registrar prato</a>
+            </app-empty-state>
           } @else {
-            <app-empty-state icon="bi-journal" title="Nenhuma experiência para exibir"></app-empty-state>
+            <app-empty-state icon="bi-camera" title="Nenhum prato por aqui ainda"></app-empty-state>
           }
         </section>
 

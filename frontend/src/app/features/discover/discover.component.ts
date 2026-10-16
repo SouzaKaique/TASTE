@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { FeedItem, Restaurant } from '../../core/models';
 import { RestaurantService } from '../../core/services/restaurant.service';
 import { SocialService } from '../../core/services/social.service';
+import { FoodArtComponent } from '../../shared/components/food-art/food-art.component';
 import { RestaurantCardComponent } from '../../shared/components/restaurant-card/restaurant-card.component';
 import { LoadingStateComponent } from '../../shared/components/loading-state/loading-state.component';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
@@ -11,7 +12,7 @@ import { EmptyStateComponent } from '../../shared/components/empty-state/empty-s
 @Component({
   selector: 'app-discover',
   standalone: true,
-  imports: [FormsModule, RouterLink, RestaurantCardComponent, LoadingStateComponent, EmptyStateComponent],
+  imports: [FormsModule, RouterLink, RestaurantCardComponent, FoodArtComponent, LoadingStateComponent, EmptyStateComponent],
   templateUrl: './discover.component.html',
   styleUrl: './discover.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -78,21 +78,24 @@
     &:hover .photo-grid__overlay { opacity: 1; }
   }
 
-  // Sem foto: o nome do prato vira a "capa" do quadrado
+  // Sem foto: ilustração do tipo de comida com o nome do prato por cima
+  &__art { position: absolute; inset: 0; }
+
   &__text {
+    position: relative;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
     gap: 2px;
     height: 100%;
     padding: var(--space-3);
-    background: linear-gradient(160deg, var(--color-surface) 0%, var(--color-brand-soft) 100%);
+    background: linear-gradient(180deg, transparent 45%, rgba(20, 10, 14, 0.78) 100%);
 
     strong {
       font-family: var(--font-serif);
       font-size: 1.05rem;
       line-height: 1.15;
-      color: var(--color-brand-strong);
+      color: #fff;
       display: -webkit-box;
       -webkit-line-clamp: 3;
       -webkit-box-orient: vertical;
@@ -101,7 +104,7 @@
 
     small {
       font-size: var(--fs-caption);
-      color: var(--color-text-secondary);
+      color: rgba(255, 255, 255, 0.78);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;

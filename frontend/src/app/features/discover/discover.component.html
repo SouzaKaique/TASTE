@@ -72,7 +72,7 @@
               @if (item.photoUrl) {
                 <img [src]="item.photoUrl" [alt]="item.dishName ?? ''" />
               } @else {
-                <span class="discover-activity__icon" aria-hidden="true"><i class="bi bi-journal-richtext"></i></span>
+                <app-food-art class="discover-activity__art" aria-hidden="true" [hints]="[item.restaurantName, item.dishName]"></app-food-art>
               }
               <div>
                 <p class="discover-activity__name">{{ item.user.displayName }}</p>

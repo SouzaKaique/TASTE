@@ -9,7 +9,7 @@
 
       <div class="rest-hero">
         <div class="rest-hero__cover">
-          <app-restaurant-cover [name]="r.name" [photoUrl]="coverUrl()"></app-restaurant-cover>
+          <app-restaurant-cover [name]="r.name" [cuisines]="r.cuisineTypes" [photoUrl]="coverUrl()"></app-restaurant-cover>
         </div>
         <div class="rest-hero__info">
           <p class="eyebrow rest-hero__eyebrow">{{ r.cuisineTypes.join(' · ') || 'Restaurante' }}</p>

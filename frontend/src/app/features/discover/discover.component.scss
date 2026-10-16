@@ -36,17 +36,12 @@
     img { width: 56px; height: 56px; border-radius: var(--radius-md); object-fit: cover; }
   }
 
-  &__icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+  &__art {
     flex-shrink: 0;
     width: 56px;
     height: 56px;
     border-radius: var(--radius-md);
-    background: var(--color-brand-soft);
-    color: var(--color-brand);
-    font-size: 1.3rem;
+    overflow: hidden;
   }
 
   &__name { margin: 0; font-weight: 600; font-size: var(--fs-small); }

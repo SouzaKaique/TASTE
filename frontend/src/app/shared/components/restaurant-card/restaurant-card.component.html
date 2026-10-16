@@ -1,6 +1,6 @@
 <a class="rest-card surface-card surface-card--hover" [routerLink]="['/app/restaurantes', restaurant().id]">
   <div class="rest-card__cover">
-    <app-restaurant-cover [name]="restaurant().name" [photoUrl]="coverUrl()"></app-restaurant-cover>
+    <app-restaurant-cover [name]="restaurant().name" [cuisines]="restaurant().cuisineTypes" [photoUrl]="coverUrl()"></app-restaurant-cover>
     @if (restaurant().source === 'manual') {
       <span class="badge-taste rest-card__badge">Cadastro manual</span>
     }

@@ -1,3 +1,4 @@
+import { FoodArtComponent } from '../food-art/food-art.component';
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
@@ -8,7 +9,7 @@ import { TagComponent } from '../tag/tag.component';
 @Component({
   selector: 'app-experience-card',
   standalone: true,
-  imports: [RouterLink, DatePipe, StarRatingComponent, TagComponent],
+  imports: [RouterLink, DatePipe, StarRatingComponent, TagComponent, FoodArtComponent],
   templateUrl: './experience-card.component.html',
   styleUrl: './experience-card.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

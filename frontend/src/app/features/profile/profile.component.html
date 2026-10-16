@@ -57,6 +57,7 @@
                   @if (exp.photos[0]) {
                     <img [src]="exp.photos[0].url" alt="" loading="lazy" />
                   } @else {
+                    <app-food-art class="photo-grid__art" [hints]="[exp.cuisineType, exp.restaurantName, exp.dishName]"></app-food-art>
                     <span class="photo-grid__text">
                       <strong>{{ exp.dishName }}</strong>
                       <small>{{ exp.restaurantName }}</small>

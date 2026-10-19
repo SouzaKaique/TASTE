@@ -82,12 +82,16 @@ public class DemoDataService {
     private final ExperienceLikeRepository likeRepository;
     private final ExperienceCommentRepository commentRepository;
     private final FriendshipRepository friendshipRepository;
+    private final com.taste.backend.social.SavedExperienceRepository savedRepository;
+    private final com.taste.backend.push.PushSubscriptionRepository pushSubscriptionRepository;
     private final SecureRandom random = new SecureRandom();
 
     public DemoDataService(UserRepository userRepository, ExperienceRepository experienceRepository,
                            FriendshipService friendshipService, FeedService feedService, PasswordEncoder passwordEncoder,
                            NotificationRepository notificationRepository, ExperienceLikeRepository likeRepository,
-                           ExperienceCommentRepository commentRepository, FriendshipRepository friendshipRepository) {
+                           ExperienceCommentRepository commentRepository, FriendshipRepository friendshipRepository,
+                           com.taste.backend.social.SavedExperienceRepository savedRepository,
+                           com.taste.backend.push.PushSubscriptionRepository pushSubscriptionRepository) {
         this.userRepository = userRepository;
         this.experienceRepository = experienceRepository;
         this.friendshipService = friendshipService;
@@ -97,6 +101,8 @@ public class DemoDataService {
         this.likeRepository = likeRepository;
         this.commentRepository = commentRepository;
         this.friendshipRepository = friendshipRepository;
+        this.savedRepository = savedRepository;
+        this.pushSubscriptionRepository = pushSubscriptionRepository;
     }
 
     /** Cria os perfis de demonstracao ligados a conta "targetUsername". Nao faz nada se ja existirem. */
@@ -198,6 +204,8 @@ public class DemoDataService {
         List<Long> ids = demo.stream().map(User::getId).toList();
         notificationRepository.deleteInvolvingUsers(ids);
         likeRepository.deleteInvolvingUsers(ids);
+        savedRepository.deleteInvolvingUsers(ids);
+        pushSubscriptionRepository.deleteByUserIds(ids);
         commentRepository.deleteInvolvingUsers(ids);
         friendshipRepository.deleteInvolvingUsers(ids);
         for (Long id : ids) {

@@ -53,6 +53,13 @@ public class UserService {
 
         user = userRepository.save(user);
 
+        // Chegou por um link de convite: ja vira amigo de quem convidou
+        if (request.inviteCode() != null && !request.inviteCode().isBlank()) {
+            Long newUserId = user.getId();
+            userRepository.findByInviteCode(request.inviteCode().trim())
+                    .ifPresent(inviter -> friendshipService.connectByInvite(newUserId, inviter.getId()));
+        }
+
         String token = jwtService.generateToken(user.getId(), user.getEmail());
         return new AuthResponse(token, toResponse(user));
     }

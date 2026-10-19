@@ -107,3 +107,9 @@ img[loading='lazy'] {
     animation: none;
   }
 }
+
+// Na tela do feed, o "puxar para atualizar" é o nosso, não o recarregar do navegador
+html.no-overscroll,
+html.no-overscroll body {
+  overscroll-behavior-y: contain;
+}

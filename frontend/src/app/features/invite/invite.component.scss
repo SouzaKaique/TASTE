@@ -1,0 +1,41 @@
+.invite-page {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-5);
+  padding: var(--space-5) var(--space-4);
+}
+
+.invite-card {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-6) var(--space-5);
+  text-align: center;
+  animation: taste-dialog-in 360ms var(--ease-out-soft, ease-out) both;
+
+  h1 {
+    margin: var(--space-2) 0 0;
+    font-size: 1.7rem;
+    line-height: 1.2;
+
+    span { color: var(--color-brand); }
+  }
+
+  &__text {
+    margin: 0 0 var(--space-2);
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+  }
+
+  &__note {
+    margin: 0;
+    font-size: var(--fs-small);
+    color: var(--color-text-secondary);
+  }
+}

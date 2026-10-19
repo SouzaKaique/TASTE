@@ -12,6 +12,11 @@ export const routes: Routes = [
     loadComponent: () => import('./features/auth/login/login.component').then((m) => m.LoginComponent),
   },
   {
+    // Link de convite: abre com ou sem login
+    path: 'convite/:code',
+    loadComponent: () => import('./features/invite/invite.component').then((m) => m.InviteComponent),
+  },
+  {
     path: 'cadastro',
     canActivate: [guestGuard],
     loadComponent: () => import('./features/auth/register/register.component').then((m) => m.RegisterComponent),
@@ -80,6 +85,10 @@ export const routes: Routes = [
         path: 'retrospectiva',
         loadComponent: () =>
           import('./features/retrospective/retrospective.component').then((m) => m.RetrospectiveComponent),
+      },
+      {
+        path: 'quero-ir',
+        loadComponent: () => import('./features/saved/saved.component').then((m) => m.SavedComponent),
       },
       {
         path: 'favoritos',

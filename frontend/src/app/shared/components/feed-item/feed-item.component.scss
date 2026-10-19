@@ -94,6 +94,12 @@
 
   &__rating { margin-left: auto; }
 
+  &__save {
+    font-size: 1.3rem;
+    &.is-active { color: var(--color-brand); }
+    &.is-active i { animation: taste-pop 380ms var(--ease-spring, ease-out); }
+  }
+
   &__likes {
     margin: 0;
     font-size: var(--fs-small);

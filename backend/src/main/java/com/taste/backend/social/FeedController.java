@@ -19,9 +19,25 @@ public class FeedController {
         this.feedService = feedService;
     }
 
+    /** Feed em paginas: passe beforeAt/beforeId do ultimo post recebido para buscar os seguintes. */
     @GetMapping("/feed")
-    public List<FeedItemResponse> feed(@AuthenticationPrincipal CurrentUser currentUser) {
-        return feedService.feed(currentUser.userId());
+    public List<FeedItemResponse> feed(
+            @AuthenticationPrincipal CurrentUser currentUser,
+            @RequestParam(value = "beforeAt", required = false) java.time.Instant beforeAt,
+            @RequestParam(value = "beforeId", required = false) Long beforeId,
+            @RequestParam(value = "limit", required = false) Integer limit
+    ) {
+        return feedService.feed(currentUser.userId(), beforeAt, beforeId, limit);
+    }
+
+    @PostMapping("/experiences/{id}/save")
+    public FeedItemResponse toggleSave(@AuthenticationPrincipal CurrentUser currentUser, @PathVariable Long id) {
+        return feedService.toggleSave(currentUser.userId(), id);
+    }
+
+    @GetMapping("/saved")
+    public List<FeedItemResponse> saved(@AuthenticationPrincipal CurrentUser currentUser) {
+        return feedService.saved(currentUser.userId());
     }
 
     @PostMapping("/experiences/{id}/like")

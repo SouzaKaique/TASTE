@@ -18,9 +18,22 @@ public interface ExperienceRepository extends JpaRepository<Experience, Long> {
     @Query("""
             select e from Experience e
             where e.user.id in :userIds and e.visibility <> 'private'
-            order by e.createdAt desc
+            order by e.createdAt desc, e.id desc
             """)
     List<Experience> findFeed(@Param("userIds") Collection<Long> userIds, Pageable pageable);
+
+    /** Proxima pagina do feed: posts mais antigos que o ultimo que a pessoa ja viu. */
+    @Query("""
+            select e from Experience e
+            where e.user.id in :userIds and e.visibility <> 'private'
+              and (e.createdAt < :beforeAt or (e.createdAt = :beforeAt and e.id < :beforeId))
+            order by e.createdAt desc, e.id desc
+            """)
+    List<Experience> findFeedBefore(
+            @Param("userIds") Collection<Long> userIds,
+            @Param("beforeAt") java.time.Instant beforeAt,
+            @Param("beforeId") Long beforeId,
+            Pageable pageable);
 
     /**
      * Candidatas a capa de restaurante: experiencias publicas, com foto, de perfis publicos.

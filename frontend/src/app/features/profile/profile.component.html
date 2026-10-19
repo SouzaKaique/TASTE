@@ -26,6 +26,9 @@
           @if (isOwnProfile()) {
             <a routerLink="/app/configuracoes" class="btn btn-ghost-on-bg btn-sm">Editar perfil</a>
             <a routerLink="/app/experiencias/nova" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg"></i> Novo prato</a>
+            <a routerLink="/app/quero-ir" class="btn btn-ghost-on-bg btn-sm profile-top__icon-btn" aria-label="Quero ir" title="Quero ir">
+              <i class="bi bi-bookmark" aria-hidden="true"></i>
+            </a>
           } @else if (friendshipStatus() === 'none') {
             <button type="button" class="btn btn-primary btn-sm" (click)="sendRequest()">
               <i class="bi bi-person-plus"></i> Adicionar

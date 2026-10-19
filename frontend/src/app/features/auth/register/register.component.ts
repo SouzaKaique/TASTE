@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { returnUrlFrom } from '../../../core/guards/auth.guard';
+import { pendingInvite } from '../../../core/services/pending-invite';
 import { AuthService } from '../../../core/services/auth.service';
 import { ServerStatusService } from '../../../core/services/server-status.service';
 import { ToastService } from '../../../shared/services/toast.service';
@@ -63,12 +64,16 @@ export class RegisterComponent {
 
     this.loading.set(true);
     this.errorMessage.set(null);
-    const { confirmPassword, acceptTerms, ...payload } = this.form.getRawValue();
+    const { confirmPassword, acceptTerms, ...fields } = this.form.getRawValue();
+    // Veio de um link de convite: a conta já nasce amiga de quem convidou
+    const inviteCode = pendingInvite.get() ?? undefined;
+    const payload = { ...fields, inviteCode };
 
     this.auth.register(payload).pipe(this.serverStatus.watch()).subscribe({
       next: () => {
         this.loading.set(false);
-        this.toast.success('Conta criada! Boas-vindas ao TASTE.');
+        pendingInvite.clear();
+        this.toast.success(inviteCode ? 'Conta criada! Vocês já são amigos no TASTE.' : 'Conta criada! Boas-vindas ao TASTE.');
         this.router.navigateByUrl(returnUrlFrom(this.route.snapshot.queryParamMap.get('voltar')));
       },
       error: (err: Error) => {

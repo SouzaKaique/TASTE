@@ -18,6 +18,7 @@ public record FeedItemResponse(
         String text,
         long likesCount,
         boolean likedByMe,
+        boolean savedByMe,
         List<FeedCommentResponse> comments
 ) {
 }

@@ -38,5 +38,7 @@ export interface FeedItem {
   collectionName?: string;
   likesCount: number;
   likedByMe: boolean;
+  /** Está na lista "Quero ir" de quem vê. */
+  savedByMe: boolean;
   comments: FeedComment[];
 }

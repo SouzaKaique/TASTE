@@ -22,7 +22,8 @@ import java.util.Set;
 @Transactional
 public class FeedService {
 
-    private static final int FEED_LIMIT = 50;
+    private static final int DEFAULT_PAGE = 10;
+    private static final int MAX_PAGE = 30;
 
     private final ExperienceRepository experienceRepository;
     private final ExperienceAccess experienceAccess;
@@ -31,6 +32,7 @@ public class FeedService {
     private final ExperienceCommentRepository commentRepository;
     private final UserRepository userRepository;
     private final NotificationService notificationService;
+    private final SavedExperienceRepository savedRepository;
 
     public FeedService(
             ExperienceRepository experienceRepository,
@@ -39,7 +41,8 @@ public class FeedService {
             ExperienceLikeRepository likeRepository,
             ExperienceCommentRepository commentRepository,
             UserRepository userRepository,
-            NotificationService notificationService
+            NotificationService notificationService,
+            SavedExperienceRepository savedRepository
     ) {
         this.experienceRepository = experienceRepository;
         this.experienceAccess = experienceAccess;
@@ -48,15 +51,44 @@ public class FeedService {
         this.commentRepository = commentRepository;
         this.userRepository = userRepository;
         this.notificationService = notificationService;
+        this.savedRepository = savedRepository;
     }
 
-    /** Experiencias dos amigos e as proprias (nao privadas), das mais recentes para as mais antigas. */
+    /**
+     * Experiencias dos amigos e as proprias (nao privadas), das mais recentes para as mais antigas,
+     * em paginas. Sem cursor vem a primeira pagina; com (beforeAt, beforeId) vem a seguinte.
+     */
     @Transactional(readOnly = true)
-    public List<FeedItemResponse> feed(Long me) {
+    public List<FeedItemResponse> feed(Long me, java.time.Instant beforeAt, Long beforeId, Integer limit) {
         Set<Long> authors = new HashSet<>(friendshipService.friendIds(me));
         authors.add(me);
+        int size = limit == null ? DEFAULT_PAGE : Math.max(1, Math.min(limit, MAX_PAGE));
+        PageRequest page = PageRequest.of(0, size);
 
-        return experienceRepository.findFeed(authors, PageRequest.of(0, FEED_LIMIT)).stream()
+        List<Experience> experiences = (beforeAt != null && beforeId != null)
+                ? experienceRepository.findFeedBefore(authors, beforeAt, beforeId, page)
+                : experienceRepository.findFeed(authors, page);
+        return experiences.stream()
+                .filter(e -> experienceAccess.canView(me, e))
+                .map(e -> toItem(me, e))
+                .toList();
+    }
+
+    /** Salva ou tira da lista "Quero ir". */
+    public FeedItemResponse toggleSave(Long me, Long experienceId) {
+        Experience experience = findVisible(me, experienceId);
+        savedRepository.findByExperienceIdAndUserId(experienceId, me).ifPresentOrElse(
+                savedRepository::delete,
+                () -> savedRepository.save(new SavedExperience(experience, findUser(me))));
+        savedRepository.flush();
+        return toItem(me, experience);
+    }
+
+    /** Lista "Quero ir", do salvo mais recente ao mais antigo; some o que deixou de ser visivel. */
+    @Transactional(readOnly = true)
+    public List<FeedItemResponse> saved(Long me) {
+        return savedRepository.findByUserIdOrderByCreatedAtDesc(me).stream()
+                .map(SavedExperience::getExperience)
                 .filter(e -> experienceAccess.canView(me, e))
                 .map(e -> toItem(me, e))
                 .toList();
@@ -137,6 +169,7 @@ public class FeedService {
                 e.getNotes(),
                 likeRepository.countByExperienceId(e.getId()),
                 likeRepository.existsByExperienceIdAndUserId(e.getId(), me),
+                savedRepository.existsByExperienceIdAndUserId(e.getId(), me),
                 comments
         );
     }

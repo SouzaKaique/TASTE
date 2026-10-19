@@ -2,6 +2,8 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { AppNotification } from '../../core/models';
+import { ToastService } from '../../shared/services/toast.service';
+import { PushService } from '../../core/services/push.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { AvatarComponent } from '../../shared/components/avatar/avatar.component';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
@@ -18,6 +20,19 @@ import { LoadingStateComponent } from '../../shared/components/loading-state/loa
 })
 export class NotificationsComponent {
   private readonly notificationService = inject(NotificationService);
+  protected readonly push = inject(PushService);
+  private readonly toast = inject(ToastService);
+
+  protected enablePush(): void {
+    this.push
+      .enable()
+      .then(() => this.push.state() === 'on' && this.toast.success('Pronto! Você vai receber os avisos neste aparelho.'))
+      .catch(() => this.toast.error('Não foi possível ativar agora. Tente de novo em instantes.'));
+  }
+
+  protected disablePush(): void {
+    this.push.disable().catch(() => undefined);
+  }
 
   protected readonly loading = signal(true);
   protected readonly error = signal(false);

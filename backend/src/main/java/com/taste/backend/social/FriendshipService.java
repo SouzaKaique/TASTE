@@ -115,6 +115,29 @@ public class FriendshipService {
         return UserSummaryResponse.of(other, statusFor(me, friendship));
     }
 
+    /**
+     * Quem entra pelo link de convite vira amigo de quem convidou (o convite ja e o "aceite").
+     * Avisa quem convidou como se o pedido tivesse sido aceito.
+     */
+    public UserSummaryResponse connectByInvite(Long me, Long inviterId) {
+        if (me.equals(inviterId)) {
+            return UserSummaryResponse.of(findUser(me), null);
+        }
+        User inviter = findUser(inviterId);
+        User newcomer = findUser(me);
+        Friendship friendship = friendshipRepository.findBetween(me, inviterId).orElse(null);
+        if (friendship == null) {
+            friendship = new Friendship(inviter, newcomer);
+            friendship.setStatus(Friendship.Status.ACCEPTED);
+            friendshipRepository.save(friendship);
+            notificationService.friendAccepted(newcomer, inviter);
+        } else if (friendship.getStatus() == Friendship.Status.PENDING) {
+            friendship.setStatus(Friendship.Status.ACCEPTED);
+            notificationService.friendAccepted(friendship.getAddressee(), friendship.getRequester());
+        }
+        return UserSummaryResponse.of(inviter, FRIENDS);
+    }
+
     public UserSummaryResponse accept(Long me, Long otherId) {
         Friendship friendship = friendshipRepository.findBetween(me, otherId)
                 .filter(f -> f.getStatus() == Friendship.Status.PENDING && f.getAddressee().getId().equals(me))

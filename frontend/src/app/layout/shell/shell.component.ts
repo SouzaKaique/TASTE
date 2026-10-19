@@ -2,7 +2,8 @@ import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
-import { AuthService } from '../../core/services/auth.service';
+import { AuthService, getStoredToken } from '../../core/services/auth.service';
+import { PushService } from '../../core/services/push.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { LogoComponent } from '../../shared/components/logo/logo.component';
 import { AvatarComponent } from '../../shared/components/avatar/avatar.component';
@@ -30,12 +31,14 @@ export class ShellComponent {
   protected readonly auth = inject(AuthService);
   private readonly router = inject(Router);
   protected readonly notifications = inject(NotificationService);
+  private readonly push = inject(PushService);
 
   protected readonly navItems: NavItem[] = [
     { label: 'Início', icon: 'bi-house', route: '/app/inicio' },
     { label: 'Minhas experiências', icon: 'bi-journal-richtext', route: '/app/experiencias' },
     { label: 'Descobrir', icon: 'bi-compass', route: '/app/descobrir' },
     { label: 'Amigos / Feed', icon: 'bi-people', route: '/app/social' },
+    { label: 'Quero ir', icon: 'bi-bookmark', route: '/app/quero-ir' },
     { label: 'Notificações', icon: 'bi-bell', route: '/app/notificacoes', badge: true },
     { label: 'Retrospectiva', icon: 'bi-stars', route: '/app/retrospectiva' },
     { label: 'Favoritos', icon: 'bi-heart', route: '/app/favoritos' },
@@ -50,10 +53,14 @@ export class ShellComponent {
       .subscribe(() => this.notifications.refreshUnreadCount());
     const timer = setInterval(() => this.notifications.refreshUnreadCount(), UNREAD_POLL_MS);
     inject(DestroyRef).onDestroy(() => clearInterval(timer));
+    // Notificações no celular: confere a situação e mantém a inscrição em dia
+    this.push.refresh().catch(() => undefined);
   }
 
   protected logout(): void {
     this.notifications.unreadCount.set(0);
+    // Este aparelho deixa de receber os avisos desta conta
+    this.push.forgetOnLogout(getStoredToken());
     this.auth.logout();
     this.router.navigate(['/entrar']);
   }

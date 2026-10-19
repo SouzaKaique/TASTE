@@ -2,6 +2,7 @@ package com.taste.backend.notification;
 
 import com.taste.backend.common.NotFoundException;
 import com.taste.backend.experience.Experience;
+import com.taste.backend.push.PushService;
 import com.taste.backend.user.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,9 +14,11 @@ import java.util.List;
 public class NotificationService {
 
     private final NotificationRepository repository;
+    private final PushService pushService;
 
-    public NotificationService(NotificationRepository repository) {
+    public NotificationService(NotificationRepository repository, PushService pushService) {
         this.repository = repository;
+        this.pushService = pushService;
     }
 
     // ---- Eventos (chamados por amizades e feed) ----
@@ -24,6 +27,8 @@ public class NotificationService {
         if (sameUser(from, to)) return;
         repository.deleteMatching(Notification.Type.FRIEND_REQUEST, to.getId(), from.getId(), null);
         repository.save(new Notification(to, from, Notification.Type.FRIEND_REQUEST, null, null));
+        pushService.notifyUser(to.getId(), "req:" + from.getId() + ">" + to.getId(), new PushService.Message(
+                "Novo pedido de amizade", from.getDisplayName() + " quer ser seu amigo no TASTE.", "/app/amigos", "friend-" + from.getId()));
     }
 
     /** "accepter" aceitou o pedido de "requester": avisa quem pediu e limpa o aviso de pedido. */
@@ -31,6 +36,9 @@ public class NotificationService {
         if (sameUser(accepter, requester)) return;
         repository.deleteMatching(Notification.Type.FRIEND_REQUEST, accepter.getId(), requester.getId(), null);
         repository.save(new Notification(requester, accepter, Notification.Type.FRIEND_ACCEPTED, null, null));
+        pushService.notifyUser(requester.getId(), "acc:" + accepter.getId() + ">" + requester.getId(), new PushService.Message(
+                "Novo amigo no TASTE", accepter.getDisplayName() + " agora é seu amigo. Veja o que anda comendo!",
+                "/app/perfil/" + accepter.getUsername(), "friend-" + accepter.getId()));
     }
 
     /** Pedido recusado/cancelado ou amizade desfeita: remove pedidos pendentes entre os dois. */
@@ -47,6 +55,9 @@ public class NotificationService {
             return;
         }
         repository.save(new Notification(owner, actor, Notification.Type.LIKE, experience, null));
+        pushService.notifyUser(owner.getId(), "like:" + actor.getId() + ">" + experience.getId(), new PushService.Message(
+                actor.getDisplayName() + " curtiu seu prato", experience.getDishName(),
+                "/app/experiencias/" + experience.getId(), "like-" + experience.getId()));
     }
 
     public void unliked(User actor, Experience experience) {
@@ -58,6 +69,9 @@ public class NotificationService {
         if (sameUser(actor, owner)) return;
         String snippet = text.length() > 120 ? text.substring(0, 117) + "..." : text;
         repository.save(new Notification(owner, actor, Notification.Type.COMMENT, experience, snippet));
+        pushService.notifyUser(owner.getId(), null, new PushService.Message(
+                actor.getDisplayName() + " comentou em " + experience.getDishName(), snippet,
+                "/app/experiencias/" + experience.getId(), "comment-" + experience.getId()));
     }
 
     public void experienceDeleted(Long experienceId) {

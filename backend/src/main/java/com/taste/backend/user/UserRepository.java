@@ -17,6 +17,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsByUsernameIgnoreCase(String username);
 
+    Optional<User> findByInviteCode(String inviteCode);
+
+    boolean existsByInviteCode(String inviteCode);
+
     /** Busca por username ou nome de exibicao, sem incluir o proprio usuario. */
     @Query("""
             select u from User u

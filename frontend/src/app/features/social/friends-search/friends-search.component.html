@@ -4,6 +4,17 @@
     <h1>Amigos</h1>
   </header>
 
+  <!-- Convite: o jeito mais rápido de ter amigos no TASTE -->
+  <section class="invite-box surface-card">
+    <div class="invite-box__text">
+      <strong>Chame seus amigos</strong>
+      <span>Mande seu link no WhatsApp. Quem entrar por ele já vira seu amigo.</span>
+    </div>
+    <button type="button" class="btn btn-primary btn-sm" [class.btn-loading]="inviting()" [disabled]="inviting()" (click)="invite()">
+      <i class="bi bi-send" aria-hidden="true"></i> Convidar
+    </button>
+  </section>
+
   <div class="search-bar surface-card">
     <i class="bi bi-search"></i>
     <input

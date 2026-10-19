@@ -41,6 +41,10 @@ public class User {
     @Column(nullable = false, updatable = false)
     private Instant createdAt = Instant.now();
 
+    /** Codigo do link de convite (criado na primeira vez que a pessoa convida alguem). */
+    @Column(length = 16, unique = true)
+    private String inviteCode;
+
     public User() {
     }
 
@@ -106,6 +110,14 @@ public class User {
 
     public void setProfileVisibility(ProfileVisibility profileVisibility) {
         this.profileVisibility = profileVisibility;
+    }
+
+    public String getInviteCode() {
+        return inviteCode;
+    }
+
+    public void setInviteCode(String inviteCode) {
+        this.inviteCode = inviteCode;
     }
 
     public Instant getCreatedAt() {

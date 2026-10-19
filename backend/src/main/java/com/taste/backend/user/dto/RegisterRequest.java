@@ -20,6 +20,10 @@ public record RegisterRequest(
 
         @NotBlank(message = "informe uma senha")
         @Size(min = 6, max = 72, message = "a senha deve ter ao menos 6 caracteres")
-        String password
+        String password,
+
+        /** Codigo do link de convite, quando a pessoa chegou por um. */
+        @Size(max = 32)
+        String inviteCode
 ) {
 }

@@ -6,6 +6,7 @@ import { SocialService } from '../../../core/services/social.service';
 import { UserCardComponent } from '../../../shared/components/user-card/user-card.component';
 import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
 import { LoadingStateComponent } from '../../../shared/components/loading-state/loading-state.component';
+import { ShareService } from '../../../shared/services/share.service';
 import { ToastService } from '../../../shared/services/toast.service';
 
 @Component({
@@ -19,6 +20,28 @@ import { ToastService } from '../../../shared/services/toast.service';
 export class FriendsSearchComponent {
   private readonly socialService = inject(SocialService);
   private readonly toast = inject(ToastService);
+  private readonly share = inject(ShareService);
+
+  protected readonly inviting = signal(false);
+
+  /** Busca (ou cria) meu código e abre o menu de compartilhar com o link de convite. */
+  protected invite(): void {
+    this.inviting.set(true);
+    this.socialService.myInviteCode().subscribe({
+      next: (code) => {
+        this.inviting.set(false);
+        this.share.share({
+          title: 'Vem pro TASTE',
+          text: 'Tô usando o TASTE pra guardar os pratos que eu como e ver onde os amigos andam comendo. Entra pelo meu convite:',
+          path: `/convite/${code}`,
+        });
+      },
+      error: (err: Error) => {
+        this.inviting.set(false);
+        this.toast.error(err.message);
+      },
+    });
+  }
 
   protected readonly term = signal('');
   protected readonly loading = signal(true);

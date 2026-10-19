@@ -27,6 +27,8 @@ export interface User {
 export interface AuthCredentials {
   email: string;
   password: string;
+  /** Código do link de convite, quando a pessoa chegou por um. */
+  inviteCode?: string;
 }
 
 export interface RegisterPayload {

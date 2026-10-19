@@ -2,6 +2,8 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { returnUrlFrom } from '../../../core/guards/auth.guard';
+import { pendingInvite } from '../../../core/services/pending-invite';
+import { SocialService } from '../../../core/services/social.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { ServerStatusService } from '../../../core/services/server-status.service';
 import { ToastService } from '../../../shared/services/toast.service';
@@ -22,6 +24,7 @@ export class LoginComponent {
   protected readonly serverStatus = inject(ServerStatusService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+  private readonly social = inject(SocialService);
   private readonly toast = inject(ToastService);
 
   protected readonly loading = signal(false);
@@ -46,12 +49,24 @@ export class LoginComponent {
       next: () => {
         this.loading.set(false);
         this.toast.success('Que bom te ver de novo!');
+        this.acceptPendingInvite();
         this.router.navigateByUrl(returnUrlFrom(this.route.snapshot.queryParamMap.get('voltar')));
       },
       error: (err: Error) => {
         this.loading.set(false);
         this.errorMessage.set(err.message);
       },
+    });
+  }
+
+  /** Abriu um convite antes de entrar: vira amigo de quem convidou. */
+  private acceptPendingInvite(): void {
+    const code = pendingInvite.get();
+    if (!code) return;
+    pendingInvite.clear();
+    this.social.acceptInvite(code).subscribe({
+      next: (friend) => this.toast.success(`Agora você e ${friend.displayName} são amigos.`),
+      error: () => undefined,
     });
   }
 }

@@ -1,4 +1,8 @@
 <div class="container-narrow section-spacing">
+  <!-- Puxar para atualizar (celular) -->
+  <div class="pull" [style.height.px]="pull()" [class.is-refreshing]="refreshing()" aria-hidden="true">
+    <i class="bi bi-arrow-clockwise pull__icon" [style.transform]="'rotate(' + pull() * 4 + 'deg)'"></i>
+  </div>
   <header class="page-header">
     <div>
       <p class="eyebrow">Comunidade</p>
@@ -27,10 +31,22 @@
         <app-feed-item
           [item]="item"
           (toggleLike)="onToggleLike($event)"
+          (toggleSave)="onToggleSave($event)"
           (addComment)="onAddComment($event)"
           (removeComment)="onRemoveComment($event)"
         ></app-feed-item>
       }
     </div>
+
+    <!-- Fim da lista: carrega a próxima página antes de a pessoa chegar aqui -->
+    @if (hasMore()) {
+      <div class="feed-more" appInView (inView)="loadMore()">
+        @if (loadingMore()) {
+          <span class="spinner-border spinner-border-sm" aria-hidden="true"></span> Carregando mais...
+        }
+      </div>
+    } @else if (items().length > 3) {
+      <p class="feed-end">Você viu tudo por enquanto. <a routerLink="/app/amigos">Encontre mais amigos</a></p>
+    }
   }
 </div>

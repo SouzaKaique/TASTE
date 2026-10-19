@@ -1,0 +1,55 @@
+<div class="container-narrow section-spacing">
+  <header class="page-header">
+    <p class="eyebrow">Para a próxima saída</p>
+    <h1>Quero ir</h1>
+    <p class="saved-lede">Pratos que você salvou do feed. Toque em <i class="bi bi-bookmark" aria-hidden="true"></i> num post para guardar aqui.</p>
+  </header>
+
+  @if (loading()) {
+    <app-loading-state [count]="3"></app-loading-state>
+  } @else if (error()) {
+    <app-error-state title="Não foi possível carregar sua lista" (retry)="load()"></app-error-state>
+  } @else if (!items().length) {
+    <app-empty-state
+      icon="bi-bookmark"
+      title="Sua lista está vazia"
+      description="Quando um amigo postar um prato que deu vontade, toque no marcador do post. Ele aparece aqui para você não esquecer."
+    >
+      <a routerLink="/app/social" class="btn btn-primary mt-3">Ver o feed</a>
+    </app-empty-state>
+  } @else {
+    <ul class="saved-list">
+      @for (item of items(); track item.id) {
+        <li class="saved-card surface-card">
+          <a class="saved-card__media" [routerLink]="['/app/experiencias', item.experienceId]" [attr.aria-label]="'Ver ' + item.dishName">
+            @if (item.photoUrl) {
+              <img [src]="item.photoUrl" alt="" loading="lazy" />
+            } @else {
+              <app-food-art [hints]="[item.restaurantName, item.dishName]"></app-food-art>
+            }
+          </a>
+
+          <div class="saved-card__body">
+            <a class="saved-card__dish" [routerLink]="['/app/experiencias', item.experienceId]">{{ item.dishName }}</a>
+            <p class="saved-card__place"><i class="bi bi-geo-alt" aria-hidden="true"></i> {{ item.restaurantName }}{{ item.city ? ' · ' + item.city : '' }}</p>
+            <p class="saved-card__who">
+              Indicado por <a [routerLink]="['/app/perfil', item.user.username]">{{ item.user.displayName }}</a>
+              @if (item.rating) {
+                <app-star-rating [readonly]="true" size="sm" [rating]="item.rating"></app-star-rating>
+              }
+            </p>
+
+            <div class="saved-card__actions">
+              <a class="btn btn-primary btn-sm" [href]="mapsUrl(item)" target="_blank" rel="noopener">
+                <i class="bi bi-signpost-2" aria-hidden="true"></i> Como chegar
+              </a>
+              <button type="button" class="btn btn-ghost btn-sm" (click)="remove(item)">
+                <i class="bi bi-bookmark-x" aria-hidden="true"></i> Já fui / remover
+              </button>
+            </div>
+          </div>
+        </li>
+      }
+    </ul>
+  }
+</div>

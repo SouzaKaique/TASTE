@@ -19,6 +19,7 @@ import { StarRatingComponent } from '../star-rating/star-rating.component';
 export class FeedItemComponent {
   item = input.required<FeedItem>();
   toggleLike = output<string>();
+  toggleSave = output<string>();
   addComment = output<{ feedItemId: string; text: string }>();
   removeComment = output<{ feedItemId: string; commentId: string }>();
 

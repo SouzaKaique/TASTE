@@ -4,6 +4,44 @@
     <h1>Notificações</h1>
   </header>
 
+  <!-- Avisos no celular, mesmo com o app fechado -->
+  @switch (push.state()) {
+    @case ('off') {
+      <section class="push-box surface-card">
+        <i class="bi bi-phone-vibrate push-box__icon" aria-hidden="true"></i>
+        <div class="push-box__text">
+          <strong>Receba os avisos no celular</strong>
+          <span>Saiba na hora quando curtirem, comentarem ou pedirem sua amizade.</span>
+        </div>
+        <button type="button" class="btn btn-primary btn-sm" [class.btn-loading]="push.busy()" [disabled]="push.busy()" (click)="enablePush()">Ativar</button>
+      </section>
+    }
+    @case ('needs-install') {
+      <section class="push-box surface-card">
+        <i class="bi bi-phone push-box__icon" aria-hidden="true"></i>
+        <div class="push-box__text">
+          <strong>Quer receber os avisos no iPhone?</strong>
+          <span>Primeiro instale o TASTE: toque em <i class="bi bi-box-arrow-up" aria-label="Compartilhar"></i> no Safari e depois em "Adicionar à Tela de Início". Abra pelo ícone e ative aqui.</span>
+        </div>
+      </section>
+    }
+    @case ('denied') {
+      <section class="push-box surface-card">
+        <i class="bi bi-bell-slash push-box__icon" aria-hidden="true"></i>
+        <div class="push-box__text">
+          <strong>Avisos bloqueados neste aparelho</strong>
+          <span>Para receber, libere as notificações do TASTE nas configurações do navegador ou do celular.</span>
+        </div>
+      </section>
+    }
+    @case ('on') {
+      <p class="push-on">
+        <i class="bi bi-check2-circle" aria-hidden="true"></i> Avisos no celular ativados
+        <button type="button" class="push-on__off" [disabled]="push.busy()" (click)="disablePush()">Desativar</button>
+      </p>
+    }
+  }
+
   @if (loading()) {
     <app-loading-state [count]="4"></app-loading-state>
   } @else if (error()) {

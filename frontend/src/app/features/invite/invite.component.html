@@ -1,0 +1,36 @@
+<main class="invite-page">
+  <app-logo [showTagline]="true" tone="light"></app-logo>
+
+  <section class="invite-card surface-card">
+    @if (notFound()) {
+      <h1>Convite não encontrado</h1>
+      <p class="invite-card__text">O link pode estar incompleto. Peça para a pessoa mandar de novo, ou conheça o TASTE mesmo assim.</p>
+      <a routerLink="/" class="btn btn-primary w-100">Conhecer o TASTE</a>
+    } @else {
+      @if (inviter(); as who) {
+      <app-avatar [src]="who.avatarUrl" [name]="who.displayName" size="xl"></app-avatar>
+      <h1><span>{{ who.displayName }}</span> te convidou para o TASTE</h1>
+      <p class="invite-card__text">
+        Veja o que {{ who.displayName.split(' ')[0] }} anda comendo, guarde os pratos que você provou e descubra onde ir pela indicação de quem você confia.
+      </p>
+
+      @if (auth.isAuthenticated()) {
+        @if (isMe()) {
+          <p class="invite-card__note">Este é o seu link de convite. Mande para os amigos!</p>
+          <a routerLink="/app/amigos" class="btn btn-ghost w-100">Voltar</a>
+        } @else {
+          <button type="button" class="btn btn-primary w-100" [class.btn-loading]="accepting()" [disabled]="accepting()" (click)="accept()">
+            Adicionar {{ who.displayName.split(' ')[0] }} como amigo
+          </button>
+        }
+      } @else {
+        <a routerLink="/cadastro" class="btn btn-primary w-100">Criar conta grátis</a>
+        <a routerLink="/entrar" class="btn btn-ghost w-100">Já tenho conta</a>
+        <p class="invite-card__note">Vocês viram amigos assim que você entrar.</p>
+      }
+      } @else {
+        <span class="spinner-border" aria-label="Carregando convite"></span>
+      }
+    }
+  </section>
+</main>

@@ -54,6 +54,19 @@
         <app-star-rating [readonly]="true" size="sm" [rating]="item().rating ?? 0"></app-star-rating>
       </span>
     }
+    @if (item().experienceId) {
+      <button
+        type="button"
+        class="feed-item__icon-btn feed-item__save"
+        [class.is-active]="item().savedByMe"
+        [attr.aria-pressed]="item().savedByMe"
+        [attr.aria-label]="item().savedByMe ? 'Tirar da lista Quero ir' : 'Salvar na lista Quero ir'"
+        [title]="item().savedByMe ? 'Salvo em Quero ir' : 'Quero ir'"
+        (click)="toggleSave.emit(item().id)"
+      >
+        <i class="bi" [class.bi-bookmark-fill]="item().savedByMe" [class.bi-bookmark]="!item().savedByMe" aria-hidden="true"></i>
+      </button>
+    }
   </div>
 
   @if (item().likesCount) {

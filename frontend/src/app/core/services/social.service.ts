@@ -33,6 +33,7 @@ interface ApiFeedItem {
   text: string | null;
   likesCount: number;
   likedByMe: boolean;
+  savedByMe: boolean;
   comments: ApiFeedComment[];
 }
 
@@ -59,9 +60,57 @@ export class SocialService {
 
   // ---- Feed ----
 
-  getFeed(): Observable<FeedItem[]> {
-    return this.http.get<ApiFeedItem[]>(`${this.baseUrl}/feed`).pipe(
+  /**
+   * Feed em páginas. Sem "after" vem a primeira; com o último post recebido, vêm os seguintes.
+   */
+  getFeed(after?: FeedItem, limit = 10): Observable<FeedItem[]> {
+    const params: Record<string, string> = { limit: String(limit) };
+    if (after) {
+      params['beforeAt'] = after.createdAt;
+      params['beforeId'] = after.id;
+    }
+    return this.http.get<ApiFeedItem[]>(`${this.baseUrl}/feed`, { params }).pipe(
       map((items) => items.map(toFeedItem)),
+      catchError(toFriendlyError),
+    );
+  }
+
+  /** Salva ou tira da lista "Quero ir"; devolve o item atualizado. */
+  toggleSave(experienceId: string): Observable<FeedItem> {
+    return this.http.post<ApiFeedItem>(`${this.baseUrl}/experiences/${experienceId}/save`, null).pipe(
+      map(toFeedItem),
+      catchError(toFriendlyError),
+    );
+  }
+
+  /** Lista "Quero ir": posts salvos, do mais recente ao mais antigo. */
+  saved(): Observable<FeedItem[]> {
+    return this.http.get<ApiFeedItem[]>(`${this.baseUrl}/saved`).pipe(
+      map((items) => items.map(toFeedItem)),
+      catchError(toFriendlyError),
+    );
+  }
+
+  // ---- Convites ----
+
+  /** Meu código de convite (o backend cria na primeira vez). */
+  myInviteCode(): Observable<string> {
+    return this.http.post<{ code: string }>(`${this.baseUrl}/invites/me`, null).pipe(
+      map((r) => r.code),
+      catchError(toFriendlyError),
+    );
+  }
+
+  /** Quem está convidando (funciona sem login). */
+  inviter(code: string): Observable<{ displayName: string; username: string; avatarUrl: string | null }> {
+    return this.http
+      .get<{ displayName: string; username: string; avatarUrl: string | null }>(`${this.baseUrl}/public/invites/${encodeURIComponent(code)}`)
+      .pipe(catchError(toFriendlyError));
+  }
+
+  acceptInvite(code: string): Observable<UserSummary> {
+    return this.http.post<ApiUserSummary>(`${this.baseUrl}/invites/${encodeURIComponent(code)}/accept`, null).pipe(
+      map(toUserSummary),
       catchError(toFriendlyError),
     );
   }

@@ -49,6 +49,13 @@ public class DatabaseUrlEnvironmentPostProcessor implements EnvironmentPostProce
         } else {
             jdbcUrl.append('?').append(query);
         }
+        // O Neon passa as conexoes por um pooler (PgBouncer) que reaproveita consultas preparadas.
+        // Quando a estrutura de uma tabela muda (o Hibernate cria colunas/tabelas na partida),
+        // o Postgres recusa a consulta guardada ("cached plan must not change result type").
+        // Sem consultas preparadas no servidor, isso nao acontece.
+        if (!jdbcUrl.toString().contains("prepareThreshold=")) {
+            jdbcUrl.append("&prepareThreshold=0");
+        }
 
         Map<String, Object> props = new HashMap<>();
         props.put("spring.datasource.url", jdbcUrl.toString());

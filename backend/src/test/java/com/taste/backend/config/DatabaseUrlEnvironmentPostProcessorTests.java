@@ -16,7 +16,7 @@ class DatabaseUrlEnvironmentPostProcessorTests {
 
         assertThat(props)
                 .containsEntry("spring.datasource.url",
-                        "jdbc:postgresql://ep-cool-tree-a1b2c3.sa-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require")
+                        "jdbc:postgresql://ep-cool-tree-a1b2c3.sa-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require&prepareThreshold=0")
                 .containsEntry("spring.datasource.username", "neondb_owner")
                 .containsEntry("spring.datasource.password", "abc123");
     }
@@ -27,7 +27,7 @@ class DatabaseUrlEnvironmentPostProcessorTests {
                 "postgres://user:p%40ss%3Aword@localhost:5432/taste");
 
         assertThat(props)
-                .containsEntry("spring.datasource.url", "jdbc:postgresql://localhost:5432/taste?sslmode=require")
+                .containsEntry("spring.datasource.url", "jdbc:postgresql://localhost:5432/taste?sslmode=require&prepareThreshold=0")
                 .containsEntry("spring.datasource.password", "p@ss:word");
     }
 

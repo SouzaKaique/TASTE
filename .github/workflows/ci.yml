@@ -1,0 +1,86 @@
+# Verificações automáticas a cada envio para o GitHub.
+# Se algo quebrar, o commit fica marcado com um X vermelho no GitHub.
+name: Testes
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend-h2:
+    name: Backend (H2)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+      - name: Testes
+        run: sed -i 's/\r$//' mvnw && bash mvnw -B -q test
+
+  backend-postgres:
+    name: Backend (Postgres + migrações)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: backend
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: taste
+          POSTGRES_PASSWORD: taste
+          POSTGRES_DB: taste
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U taste"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      # Mesmo caminho da produção: DATABASE_URL liga o Flyway
+      DATABASE_URL: postgresql://taste:taste@localhost:5432/taste?sslmode=disable
+      # Confere se as migracoes criam exatamente o que as entidades esperam
+      TASTE_DB_VALIDATE: 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+      - name: Testes no Postgres
+        run: sed -i 's/\r$//' mvnw && bash mvnw -B -q test
+
+  frontend:
+    name: Site (build)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci --no-audit --no-fund
+      - run: npm run build

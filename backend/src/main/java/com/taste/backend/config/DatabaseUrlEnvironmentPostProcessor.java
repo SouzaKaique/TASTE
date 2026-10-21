@@ -28,7 +28,13 @@ public class DatabaseUrlEnvironmentPostProcessor implements EnvironmentPostProce
         if (databaseUrl == null || databaseUrl.isBlank()) {
             return;
         }
-        environment.getPropertySources().addFirst(new MapPropertySource(SOURCE_NAME, toDatasourceProperties(databaseUrl.trim())));
+        Map<String, Object> props = new HashMap<>(toDatasourceProperties(databaseUrl.trim()));
+        // Producao: o Hibernate nao mexe no banco (quem muda e o Flyway) e nem confere na partida,
+        // para uma diferenca antiga do banco nao derrubar o servidor. A conferencia (validate)
+        // roda nos testes do GitHub, num Postgres criado do zero so pelas migracoes.
+        boolean validate = Boolean.parseBoolean(environment.getProperty("TASTE_DB_VALIDATE", "false"));
+        props.put("spring.jpa.hibernate.ddl-auto", validate ? "validate" : "none");
+        environment.getPropertySources().addFirst(new MapPropertySource(SOURCE_NAME, props));
     }
 
     static Map<String, Object> toDatasourceProperties(String databaseUrl) {
@@ -59,6 +65,8 @@ public class DatabaseUrlEnvironmentPostProcessor implements EnvironmentPostProce
 
         Map<String, Object> props = new HashMap<>();
         props.put("spring.datasource.url", jdbcUrl.toString());
+        // Com Postgres, a estrutura do banco e controlada pelas migracoes do Flyway
+        props.put("spring.flyway.enabled", "true");
 
         String userInfo = uri.getRawUserInfo();
         if (userInfo != null) {

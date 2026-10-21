@@ -93,6 +93,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleGeneric(Exception ex) {
         log.error("Erro inesperado", ex);
+        // Vai para o Sentry (quando configurado); sem SENTRY_DSN nao faz nada
+        io.sentry.Sentry.captureException(ex);
         return ResponseEntity.internalServerError()
                 .body(ApiError.of(500, "Internal Server Error", "Ocorreu um erro inesperado."));
     }

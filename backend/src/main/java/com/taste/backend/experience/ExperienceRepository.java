@@ -49,6 +49,46 @@ public interface ExperienceRepository extends JpaRepository<Experience, Long> {
             """)
     List<Object[]> findCoverCandidates(@Param("restaurantIds") Collection<String> restaurantIds);
 
+    /**
+     * Grade do Descobrir: posts com foto que a pessoa pode ver (dos amigos ou publicos de
+     * perfis publicos), dos mais recentes aos mais antigos. Duas versoes, como o feed.
+     */
+    @Query("""
+            select e from Experience e
+            where e.photoUrl is not null and e.visibility <> 'private'
+              and (e.user.id in :friendIds
+                   or (e.visibility = 'public' and e.user.profileVisibility = com.taste.backend.user.ProfileVisibility.PUBLIC))
+            order by e.createdAt desc, e.id desc
+            """)
+    List<Experience> findExplore(@Param("friendIds") Collection<Long> friendIds, Pageable pageable);
+
+    @Query("""
+            select e from Experience e
+            where e.photoUrl is not null and e.visibility <> 'private'
+              and (e.user.id in :friendIds
+                   or (e.visibility = 'public' and e.user.profileVisibility = com.taste.backend.user.ProfileVisibility.PUBLIC))
+              and (e.createdAt < :beforeAt or (e.createdAt = :beforeAt and e.id < :beforeId))
+            order by e.createdAt desc, e.id desc
+            """)
+    List<Experience> findExploreBefore(
+            @Param("friendIds") Collection<Long> friendIds,
+            @Param("beforeAt") java.time.Instant beforeAt,
+            @Param("beforeId") Long beforeId,
+            Pageable pageable);
+
+    /**
+     * Lugares em alta: restaurantes com mais registros publicos (de perfis publicos),
+     * desempatando pela nota media. Linhas: [restaurantId, nome, cidade, quantidade, media].
+     */
+    @Query("""
+            select e.restaurantId, e.restaurantName, e.city, count(e), avg(e.rating) from Experience e
+            where e.visibility = 'public'
+              and e.user.profileVisibility = com.taste.backend.user.ProfileVisibility.PUBLIC
+            group by e.restaurantId, e.restaurantName, e.city
+            order by count(e) desc, avg(e.rating) desc
+            """)
+    List<Object[]> findTopPlaces(Pageable pageable);
+
     long countByUserId(Long userId);
 
     long countByUserIdAndFavoriteTrue(Long userId);

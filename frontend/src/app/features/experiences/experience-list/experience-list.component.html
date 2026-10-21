@@ -86,7 +86,7 @@
         <div class="experience-row">
           <a [routerLink]="['/app/experiencias', exp.id]" class="experience-row__main">
             @if (exp.photos[0]) {
-              <img [src]="exp.photos[0].url" [alt]="exp.dishName" />
+              <img [src]="exp.photos[0].url" [alt]="exp.dishName" loading="lazy" decoding="async" />
             }
             <div>
               <p class="experience-row__title">{{ exp.dishName }}</p>

@@ -23,7 +23,7 @@ export type FoodSegment =
  * ("Pizzaria Italiana" é pizza antes de ser massa; "Pad thai de camarão" é asiática).
  */
 const RULES: [FoodSegment, string[]][] = [
-  ['pizza', ['pizza', 'pizzaria']],
+  ['pizza', ['pizza', 'pizzaria', 'pizzeria']],
   ['japonesa', ['japon', 'sushi', 'temaki', 'sashimi', 'ramen', 'lamen', 'izakaya', 'poke', 'yakisoba', 'omakase', 'nigiri', 'udon', 'tempura', 'gyoza', 'hashi']],
   ['hamburguer', ['hamburg', 'burger', 'burguer', 'lanche', 'lanchonete', 'sanduich', 'hot dog', 'cachorro']],
   ['sorvete', ['sorvete', 'gelato', 'ice cream', 'acai', 'paleta', 'frozen']],

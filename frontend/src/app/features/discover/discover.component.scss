@@ -1,118 +1,270 @@
-.page-header { max-width: 640px; }
+// Descobrir: coluna central como o feed, grade de fotos no estilo "Explorar".
+.discover {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: var(--space-5) var(--space-4) var(--space-6);
 
-.discover-section {
-  margin-bottom: var(--space-6);
+  @media (max-width: 480px) { padding: var(--space-4) var(--space-3) var(--space-5); }
 
-  &__header {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
+  &__head {
     margin-bottom: var(--space-4);
 
-    h2 { color: var(--color-heading-on-bg); }
-    a { color: var(--color-text-on-bg); }
-    a:hover { color: var(--color-eyebrow-on-bg); }
+    h1 { margin: 0 0 var(--space-1); color: var(--color-heading-on-bg); }
+    p { margin: 0; font-size: var(--fs-small); color: var(--color-text-on-bg); }
   }
-}
-
-.discover-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: var(--space-4);
-}
-
-.discover-activity {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: var(--space-3);
-
-  &__item {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    padding: var(--space-3);
-    color: inherit;
-
-    img { width: 56px; height: 56px; border-radius: var(--radius-md); object-fit: cover; }
-  }
-
-  &__art {
-    flex-shrink: 0;
-    width: 56px;
-    height: 56px;
-    border-radius: var(--radius-md);
-    overflow: hidden;
-  }
-
-  &__name { margin: 0; font-weight: 600; font-size: var(--fs-small); }
-  &__dish { margin: 0; font-size: var(--fs-caption); color: var(--color-text-secondary); }
 }
 
 .discover-search {
+  position: relative;
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  padding: var(--space-2) var(--space-3);
-  margin-bottom: var(--space-3);
+  padding: 0 var(--space-2) 0 var(--space-3);
+  border-radius: var(--radius-pill);
 
   > i { color: var(--color-text-secondary); }
 
   .form-control {
     border: none;
+    background: transparent;
     box-shadow: none;
-    padding-inline: var(--space-1);
+    padding-inline: 0;
+    min-height: 46px;
+
     &:focus { box-shadow: none; }
   }
 
   &__clear {
-    flex-shrink: 0;
-    width: 40px;
-    height: 40px;
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
     border: none;
-    background: none;
-    color: var(--color-text-secondary);
     border-radius: 50%;
-    &:hover { background: var(--color-surface-alt); }
+    background: var(--color-surface-alt);
+    color: var(--color-text-secondary);
+    cursor: pointer;
   }
 }
 
-.discover-note {
-  font-size: var(--fs-caption);
-  color: var(--color-text-on-bg);
-  margin-top: var(--space-5);
-
-  a { color: var(--color-heading-on-bg); text-decoration: underline; }
-  text-align: center;
-  max-width: 70ch;
-  margin-inline: auto;
-}
-
-// Filtro por cidade (chips roláveis no celular)
+// Filtros de cidade: rolam de lado no celular, sem quebrar linha
 .city-filter {
   display: flex;
   gap: var(--space-2);
-  margin-bottom: var(--space-4);
+  margin: var(--space-3) calc(var(--space-4) * -1) 0;
+  padding: 0 var(--space-4) var(--space-1);
   overflow-x: auto;
-  padding-bottom: 2px;
   scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+
+  &::-webkit-scrollbar { display: none; }
+
+  @media (max-width: 480px) {
+    margin-inline: calc(var(--space-3) * -1);
+    padding-inline: var(--space-3);
+  }
 
   &__chip {
     flex-shrink: 0;
-    min-height: 40px;
-    padding: 0 var(--space-4);
-    border-radius: var(--radius-pill);
+    padding: 0.45rem 1rem;
     border: 1px solid var(--color-border-on-bg);
+    border-radius: var(--radius-pill);
     background: transparent;
-    color: var(--color-heading-on-bg);
+    color: var(--color-text-on-bg);
     font-size: var(--fs-small);
     font-weight: 500;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background-color var(--dur-fast) var(--ease-standard), color var(--dur-fast) var(--ease-standard), transform var(--dur-fast) var(--ease-standard);
 
-    &:hover { background: rgba(248, 246, 241, 0.08); }
+    &:active { transform: scale(0.95); }
 
     &.is-active {
-      background: var(--taste-beige-100);
-      border-color: var(--taste-beige-100);
+      background: var(--color-heading-on-bg);
+      border-color: var(--color-heading-on-bg);
       color: var(--taste-wine-900);
     }
   }
+}
+
+.discover-section {
+  margin-top: var(--space-5);
+
+  &__title {
+    margin: 0 0 var(--space-3);
+    font-size: 1.35rem;
+    color: var(--color-heading-on-bg);
+  }
+}
+
+// Linhas compactas de lugares (ranking e busca)
+.place-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+
+  li + li { border-top: 1px solid var(--color-border); }
+}
+
+.place-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 64px;
+  padding: var(--space-2) var(--space-3);
+  color: var(--color-text-primary);
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color var(--dur-fast) var(--ease-standard);
+
+  &:hover { color: var(--color-text-primary); background: var(--color-surface-alt); }
+  &:active { background: var(--color-brand-soft); }
+  &--static { cursor: default; }
+
+  &__rank {
+    width: 1.4rem;
+    flex-shrink: 0;
+    text-align: center;
+    font-family: var(--font-serif);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-brand);
+  }
+
+  &__art {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+
+  &__text {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+
+    strong,
+    small {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    strong { font-size: 0.95rem; }
+    small { font-size: var(--fs-caption); color: var(--color-text-secondary); }
+    small i { color: var(--taste-gold-500); }
+  }
+
+  &__go { color: var(--color-text-secondary); font-size: 0.85rem; }
+
+  &--skeleton {
+    span {
+      display: block;
+      height: 12px;
+      border-radius: 6px;
+      background: linear-gradient(90deg, var(--color-surface-alt) 25%, var(--color-border) 50%, var(--color-surface-alt) 75%);
+      background-size: 200% 100%;
+      animation: taste-skeleton 1.4s ease-in-out infinite;
+    }
+
+    span:first-child { width: 44px; height: 44px; border-radius: var(--radius-md); flex-shrink: 0; }
+    span:last-child { flex: 1; max-width: 60%; }
+  }
+}
+
+// Grade de fotos: 3 colunas de quadrados; algumas fotos ocupam 2x2, como no Instagram
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-auto-rows: 1fr;
+  grid-auto-flow: dense;
+  gap: 3px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+
+  @media (max-width: 480px) {
+    margin-inline: calc(var(--space-3) * -1); // borda a borda no celular
+    border-radius: 0;
+  }
+
+  &__tile {
+    position: relative;
+    aspect-ratio: 1;
+    overflow: hidden;
+    background: var(--color-surface-alt);
+    -webkit-tap-highlight-color: transparent;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 500ms var(--ease-out-soft, ease-out);
+    }
+
+    &:hover img { transform: scale(1.05); }
+    &:active img { transform: scale(0.98); }
+
+    &.big-left,
+    &.big-right {
+      grid-column: span 2;
+      grid-row: span 2;
+    }
+
+    &.big-right { grid-column: 2 / span 2; }
+
+    &--skeleton {
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0.06) 25%, rgba(255, 255, 255, 0.14) 50%, rgba(255, 255, 255, 0.06) 75%);
+      background-size: 200% 100%;
+      animation: taste-skeleton 1.4s ease-in-out infinite;
+    }
+  }
+
+  // Nome do prato só nas fotos grandes, sobre um degradê escuro
+  &__caption {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: none;
+    flex-direction: column;
+    padding: var(--space-4) var(--space-3) var(--space-2);
+    background: linear-gradient(180deg, transparent, rgba(20, 10, 14, 0.75));
+    color: #fff;
+    pointer-events: none;
+
+    strong { font-family: var(--font-serif); font-size: 1.1rem; line-height: 1.2; }
+    small { font-size: var(--fs-caption); opacity: 0.85; }
+  }
+
+  .big-left &__caption,
+  .big-right &__caption { display: flex; }
+}
+
+.grid-more {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 48px;
+  color: var(--color-text-on-bg);
+}
+
+.discover-empty {
+  margin: 0;
+  font-size: var(--fs-small);
+  color: var(--color-text-on-bg);
+}
+
+.discover-note {
+  margin: var(--space-6) 0 0;
+  font-size: var(--fs-caption);
+  line-height: 1.5;
+  color: var(--color-text-on-bg);
+  opacity: 0.8;
+
+  a { color: inherit; text-decoration: underline; }
 }

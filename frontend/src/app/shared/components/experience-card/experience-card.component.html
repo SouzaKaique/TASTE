@@ -5,7 +5,7 @@
 >
   <div class="exp-card__media">
     @if (experience().photos[0]) {
-      <img [src]="experience().photos[0].url" [alt]="experience().dishName" loading="lazy" />
+      <img [src]="experience().photos[0].url" [alt]="experience().dishName" loading="lazy" decoding="async" />
     } @else {
       <app-food-art [hints]="[experience().cuisineType, experience().restaurantName, experience().dishName]"></app-food-art>
     }

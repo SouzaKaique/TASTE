@@ -23,7 +23,7 @@
         <li class="saved-card surface-card">
           <a class="saved-card__media" [routerLink]="['/app/experiencias', item.experienceId]" [attr.aria-label]="'Ver ' + item.dishName">
             @if (item.photoUrl) {
-              <img [src]="item.photoUrl" alt="" loading="lazy" />
+              <img [src]="item.photoUrl" alt="" loading="lazy" decoding="async" />
             } @else {
               <app-food-art [hints]="[item.restaurantName, item.dishName]"></app-food-art>
             }

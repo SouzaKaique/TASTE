@@ -16,8 +16,8 @@
 
   @if (item().photoUrl) {
     <!-- Dois toques na foto curtem, como no Instagram -->
-    <div class="feed-item__media" (dblclick)="likeFromPhoto()">
-      <img [src]="item().photoUrl" [alt]="item().dishName ?? 'Foto da publicação'" loading="lazy" />
+    <div class="feed-item__media" (pointerup)="onPhotoTap($event)" (dblclick)="onPhotoDoubleClick()">
+      <img [src]="item().photoUrl" [alt]="item().dishName ?? 'Foto da publicação'" loading="lazy" decoding="async" />
       @if (burst()) {
         <i class="bi bi-heart-fill feed-item__burst" aria-hidden="true"></i>
       }

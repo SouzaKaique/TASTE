@@ -15,7 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @Service
@@ -33,6 +35,7 @@ public class FeedService {
     private final UserRepository userRepository;
     private final NotificationService notificationService;
     private final SavedExperienceRepository savedRepository;
+    private final com.taste.backend.experience.PhotoUrls photoUrls;
 
     public FeedService(
             ExperienceRepository experienceRepository,
@@ -42,7 +45,8 @@ public class FeedService {
             ExperienceCommentRepository commentRepository,
             UserRepository userRepository,
             NotificationService notificationService,
-            SavedExperienceRepository savedRepository
+            SavedExperienceRepository savedRepository,
+            com.taste.backend.experience.PhotoUrls photoUrls
     ) {
         this.experienceRepository = experienceRepository;
         this.experienceAccess = experienceAccess;
@@ -52,6 +56,7 @@ public class FeedService {
         this.userRepository = userRepository;
         this.notificationService = notificationService;
         this.savedRepository = savedRepository;
+        this.photoUrls = photoUrls;
     }
 
     /**
@@ -71,6 +76,59 @@ public class FeedService {
         return experiences.stream()
                 .filter(e -> experienceAccess.canView(me, e))
                 .map(e -> toItem(me, e))
+                .toList();
+    }
+
+    /** Lugar do ranking "em alta" do Descobrir. */
+    public record PlaceRanking(String restaurantId, String name, String city, long count, double averageRating) { }
+
+    /** Grade de fotos do Descobrir (amigos + publicos), em paginas como o feed. */
+    @Transactional(readOnly = true)
+    public List<FeedItemResponse> explore(Long me, java.time.Instant beforeAt, Long beforeId, Integer limit) {
+        Set<Long> friends = new HashSet<>(friendshipService.friendIds(me));
+        friends.add(me);
+        int size = limit == null ? 18 : Math.max(1, Math.min(limit, 36));
+        PageRequest page = PageRequest.of(0, size);
+        List<Experience> experiences = (beforeAt != null && beforeId != null)
+                ? experienceRepository.findExploreBefore(friends, beforeAt, beforeId, page)
+                : experienceRepository.findExplore(friends, page);
+        return experiences.stream()
+                .filter(e -> experienceAccess.canView(me, e))
+                .map(e -> toItem(me, e))
+                .toList();
+    }
+
+    /** Ranking de lugares em alta (opcionalmente de uma cidade). */
+    @Transactional(readOnly = true)
+    public List<PlaceRanking> topPlaces(String city) {
+        String wanted = city == null || city.isBlank() ? null : city.trim().toLowerCase(java.util.Locale.ROOT);
+        // O mesmo lugar pode ter sido salvo com ids diferentes: junta por nome + cidade
+        Map<String, double[]> totals = new java.util.LinkedHashMap<>(); // [quantidade, soma das notas]
+        Map<String, String[]> info = new HashMap<>();                     // [id, nome, cidade]
+        for (Object[] r : experienceRepository.findTopPlaces(PageRequest.of(0, 200))) {
+            String id = (String) r[0];
+            String name = (String) r[1];
+            String placeCity = (String) r[2];
+            if (name == null) continue;
+            if (wanted != null && (placeCity == null || !placeCity.toLowerCase(java.util.Locale.ROOT).equals(wanted))) continue;
+            String key = (name.trim() + "|" + (placeCity == null ? "" : placeCity.trim())).toLowerCase(java.util.Locale.ROOT);
+            long count = ((Number) r[3]).longValue();
+            double avg = ((Number) r[4]).doubleValue();
+            double[] t = totals.computeIfAbsent(key, k -> new double[2]);
+            t[0] += count;
+            t[1] += avg * count;
+            String[] i = info.computeIfAbsent(key, k -> new String[]{id, name, placeCity});
+            if (i[0] == null) i[0] = id;
+        }
+        return totals.entrySet().stream()
+                .map(e -> {
+                    String[] i = info.get(e.getKey());
+                    double[] t = e.getValue();
+                    return new PlaceRanking(i[0], i[1], i[2], (long) t[0], Math.round(t[1] / t[0] * 10) / 10.0);
+                })
+                .sorted(java.util.Comparator.comparingLong(PlaceRanking::count).reversed()
+                        .thenComparing(java.util.Comparator.comparingDouble(PlaceRanking::averageRating).reversed()))
+                .limit(10)
                 .toList();
     }
 
@@ -165,7 +223,7 @@ public class FeedService {
                 e.getRestaurantName(),
                 e.getCity(),
                 e.getRating(),
-                e.getPhotoUrl(),
+                photoUrls.urlFor(e),
                 e.getNotes(),
                 likeRepository.countByExperienceId(e.getId()),
                 likeRepository.existsByExperienceIdAndUserId(e.getId(), me),

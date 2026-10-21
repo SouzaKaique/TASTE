@@ -27,7 +27,15 @@ export const appConfig: ApplicationConfig = {
   providers: [
     { provide: LOCALE_ID, useValue: 'pt-BR' },
     provideZoneChangeDetection({ eventCoalescing: true }),
-    provideRouter(routes, withComponentInputBinding(), withNavigationErrorHandler(reloadOnStaleChunk), withViewTransitions({ skipInitialTransition: true })),
+    provideRouter(routes, withComponentInputBinding(), withNavigationErrorHandler(reloadOnStaleChunk), withViewTransitions({
+        skipInitialTransition: true,
+        // Navegar rápido cancela a animação anterior: isso é normal, não é erro
+        onViewTransitionCreated: ({ transition }) => {
+          transition.ready.catch(() => undefined);
+          transition.finished.catch(() => undefined);
+          transition.updateCallbackDone.catch(() => undefined);
+        },
+      })),
     provideHttpClient(withInterceptors([authInterceptor])),
   ],
 };

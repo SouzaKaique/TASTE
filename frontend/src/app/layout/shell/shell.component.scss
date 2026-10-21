@@ -173,7 +173,7 @@
     // No celular, só o espaço da barra de navegação inferior
     @media (max-width: 991px) {
       margin-left: 0;
-      padding-bottom: var(--bottomnav-height);
+      padding-bottom: calc(var(--bottomnav-height) + env(safe-area-inset-bottom) + var(--space-3));
     }
   }
 }

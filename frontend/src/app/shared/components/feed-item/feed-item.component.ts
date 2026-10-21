@@ -41,6 +41,36 @@ export class FeedItemComponent {
   protected readonly burst = signal(false);
   private burstTimer?: ReturnType<typeof setTimeout>;
 
+  private lastTapAt = 0;
+  private lastTapX = 0;
+  private lastTapY = 0;
+  private lastTouchAt = 0;
+
+  /**
+   * Dois toques no celular. O Safari do iPhone não dispara "dblclick" em fotos,
+   * então os toques são contados aqui: dois em menos de 300 ms, no mesmo lugar.
+   */
+  protected onPhotoTap(event: PointerEvent): void {
+    if (event.pointerType === 'mouse') return;
+    const now = Date.now();
+    this.lastTouchAt = now;
+    const near = Math.hypot(event.clientX - this.lastTapX, event.clientY - this.lastTapY) < 40;
+    if (now - this.lastTapAt < 300 && near) {
+      this.lastTapAt = 0;
+      this.likeFromPhoto();
+    } else {
+      this.lastTapAt = now;
+      this.lastTapX = event.clientX;
+      this.lastTapY = event.clientY;
+    }
+  }
+
+  /** Duplo clique com o mouse (computador). Ignorado logo depois de toques, para não curtir duas vezes. */
+  protected onPhotoDoubleClick(): void {
+    if (Date.now() - this.lastTouchAt < 800) return;
+    this.likeFromPhoto();
+  }
+
   /** Dois toques na foto: mostra o coração e curte (nunca descurte, como no Instagram). */
   protected likeFromPhoto(): void {
     if (!this.item().likedByMe) this.toggleLike.emit(this.item().id);

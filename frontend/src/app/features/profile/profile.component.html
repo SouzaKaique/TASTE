@@ -53,12 +53,19 @@
         ></app-error-state>
       } @else {
         <section class="profile-grid-section" aria-label="Pratos">
-          @if (experiences().length) {
+          @if (loading()) {
+            <!-- Enquanto os pratos chegam: quadrados "carregando", sem piscar o aviso de vazio -->
+            <div class="photo-grid" aria-busy="true" aria-label="Carregando pratos">
+              @for (i of [1, 2, 3, 4, 5, 6]; track i) {
+                <span class="photo-grid__tile photo-grid__tile--skeleton"></span>
+              }
+            </div>
+          } @else if (experiences().length) {
             <div class="photo-grid">
               @for (exp of experiences(); track exp.id) {
                 <a class="photo-grid__tile" [routerLink]="['/app/experiencias', exp.id]" [attr.aria-label]="exp.dishName + ', nota ' + exp.rating + ' de 5'">
                   @if (exp.photos[0]) {
-                    <img [src]="exp.photos[0].url" alt="" loading="lazy" />
+                    <img [src]="exp.photos[0].url" alt="" loading="lazy" decoding="async" />
                   } @else {
                     <app-food-art class="photo-grid__art" [hints]="[exp.cuisineType, exp.restaurantName, exp.dishName]"></app-food-art>
                     <span class="photo-grid__text">

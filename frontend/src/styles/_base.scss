@@ -54,3 +54,15 @@ img {
   scrollbar-width: thin;
   scrollbar-color: var(--taste-wine-300) transparent;
 }
+
+// Campos de data no iPhone: o Safari centraliza e quebra o texto ("21 de out. de 2026");
+// aqui ficam alinhados à esquerda, numa linha só e com a mesma altura dos outros campos.
+input[type='date'].form-control {
+  -webkit-appearance: none;
+  appearance: none;
+  min-height: calc(1.5em + 0.75rem + 2px);
+  text-align: left;
+  white-space: nowrap;
+
+  &::-webkit-date-and-time-value { text-align: left; margin: 0; }
+}

@@ -314,4 +314,75 @@ class ApiFlowTests {
                 .content("{\"endpoint\":\"https://fcm.googleapis.com/fcm/send/teste-" + a.id() + "\"}"))
                 .andExpect(status().isNoContent());
     }
+
+    @Test
+    void fotoVaiPorEnderecoAssinadoEContinuaNaEdicao() throws Exception {
+        Account a = register();
+        // PNG 1x1 em base64
+        String png = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==";
+        Map<String, Object> body = new java.util.HashMap<>(Map.of(
+                "dishName", "Prato com foto", "category", "main-course", "cuisineType", "Brasileira",
+                "restaurantName", "Restaurante Teste", "city", "Londrina", "date", LocalDate.now().toString(),
+                "rating", 5, "visibility", "friends", "photoUrl", png));
+        JsonNode created = json.readTree(mvc.perform(post("/api/experiences").header("Authorization", a.bearer())
+                        .contentType(MediaType.APPLICATION_JSON).content(json.writeValueAsString(body)))
+                .andExpect(status().is2xxSuccessful()).andReturn().getResponse().getContentAsString());
+        long id = created.get("id").asLong();
+        String url = created.at("/photos/0/url").asText();
+        assertThat(url).startsWith("/api/public/photos/" + id + "?v=");
+
+        // A imagem sai como imagem, com cache longo, sem login
+        mvc.perform(get(url))
+                .andExpect(status().isOk())
+                .andExpect(header().string("Content-Type", "image/png"))
+                .andExpect(header().string("Cache-Control", org.hamcrest.Matchers.containsString("immutable")));
+        // Assinatura alterada: nao acha
+        mvc.perform(get(url.substring(0, url.length() - 3) + "abc")).andExpect(status().isNotFound());
+
+        // Editar devolvendo o proprio endereco mantem a foto
+        body.put("photoUrl", "https://taste-backend.example" + url);
+        body.put("dishName", "Prato renomeado");
+        mvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put("/api/experiences/" + id)
+                        .header("Authorization", a.bearer()).contentType(MediaType.APPLICATION_JSON).content(json.writeValueAsString(body)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.photos[0].url").value(url));
+
+        // Link externo no lugar da foto: recusado
+        body.put("photoUrl", "https://rastreador.example/pixel.gif");
+        mvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put("/api/experiences/" + id)
+                        .header("Authorization", a.bearer()).contentType(MediaType.APPLICATION_JSON).content(json.writeValueAsString(body)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void descobrirMostraFotosDeAmigosEPublicasMasNaoPrivadas() throws Exception {
+        Account eu = register();
+        Account amigo = register();
+        Account estranho = register();
+        befriend(eu, amigo);
+        String png = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==";
+        long doAmigo = createWithPhoto(amigo, "friends", png);
+        long publicoDoEstranho = createWithPhoto(estranho, "public", png);
+        long soAmigosDoEstranho = createWithPhoto(estranho, "friends", png);
+
+        String grade = mvc.perform(get("/api/explore?limit=36").header("Authorization", eu.bearer()))
+                .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+        assertThat(grade).contains("\"experienceId\":" + doAmigo).contains("\"experienceId\":" + publicoDoEstranho)
+                .doesNotContain("\"experienceId\":" + soAmigosDoEstranho + ",");
+
+        mvc.perform(get("/api/explore/places").header("Authorization", eu.bearer()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].name").exists())
+                .andExpect(jsonPath("$[0].averageRating").exists());
+    }
+
+    private long createWithPhoto(Account a, String visibility, String photo) throws Exception {
+        String body = json.writeValueAsString(Map.of(
+                "dishName", "Prato " + visibility, "category", "main-course", "cuisineType", "Brasileira",
+                "restaurantName", "Restaurante Teste", "city", "Londrina", "date", LocalDate.now().toString(),
+                "rating", 4, "visibility", visibility, "photoUrl", photo));
+        return json.readTree(mvc.perform(post("/api/experiences").header("Authorization", a.bearer())
+                        .contentType(MediaType.APPLICATION_JSON).content(body))
+                .andExpect(status().is2xxSuccessful()).andReturn().getResponse().getContentAsString()).get("id").asLong();
+    }
 }

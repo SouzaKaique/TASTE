@@ -27,6 +27,7 @@ public class ExperienceService {
     private final ExperienceCommentRepository commentRepository;
     private final NotificationService notificationService;
     private final com.taste.backend.social.SavedExperienceRepository savedRepository;
+    private final PhotoUrls photoUrls;
 
     public ExperienceService(
             ExperienceRepository experienceRepository,
@@ -35,7 +36,8 @@ public class ExperienceService {
             ExperienceLikeRepository likeRepository,
             ExperienceCommentRepository commentRepository,
             NotificationService notificationService,
-            com.taste.backend.social.SavedExperienceRepository savedRepository
+            com.taste.backend.social.SavedExperienceRepository savedRepository,
+            PhotoUrls photoUrls
     ) {
         this.experienceRepository = experienceRepository;
         this.userRepository = userRepository;
@@ -44,6 +46,7 @@ public class ExperienceService {
         this.commentRepository = commentRepository;
         this.notificationService = notificationService;
         this.savedRepository = savedRepository;
+        this.photoUrls = photoUrls;
     }
 
     public List<ExperienceResponse> listForUser(Long userId) {
@@ -117,7 +120,7 @@ public class ExperienceService {
         experience.setCountry(request.country());
         experience.setDate(request.date());
         experience.setRating(request.rating());
-        experience.setPhotoUrl(request.photoUrl());
+        applyPhoto(experience, request.photoUrl());
         experience.setNotes(request.notes());
         experience.setTags(request.tags() == null ? List.of() : request.tags());
         experience.setFavorite(request.favorite());
@@ -129,10 +132,27 @@ public class ExperienceService {
         experience.setExperienceCriteria(request.experienceCriteria());
     }
 
+    /**
+     * Foto nova (base64 vinda do app), sem foto, ou o proprio endereco da foto atual
+     * (edicao sem trocar a foto). Qualquer outra coisa e recusada.
+     */
+    private void applyPhoto(Experience experience, String photo) {
+        if (photo == null || photo.isBlank()) {
+            experience.setPhotoUrl(null);
+        } else if (PhotoUrls.isOwnUrl(photo, experience.getId())) {
+            // mantem a foto que ja estava
+        } else if (PhotoUrls.isUpload(photo)) {
+            experience.setPhotoUrl(photo);
+        } else {
+            throw new com.taste.backend.common.BadRequestException("Foto inválida. Envie uma imagem JPG, PNG ou WebP.");
+        }
+    }
+
     private ExperienceResponse toResponse(Experience e) {
-        List<PhotoResponse> photos = (e.getPhotoUrl() == null || e.getPhotoUrl().isBlank())
+        String photoUrl = photoUrls.urlFor(e);
+        List<PhotoResponse> photos = photoUrl == null
                 ? List.of()
-                : List.of(new PhotoResponse("p-" + e.getId(), e.getPhotoUrl(), true));
+                : List.of(new PhotoResponse("p-" + e.getId(), photoUrl, true));
 
         return new ExperienceResponse(
                 e.getId(),

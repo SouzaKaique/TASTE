@@ -56,7 +56,6 @@
 // Cards e itens de lista entram em cascata ao carregar
 app-feed-item,
 app-experience-card,
-app-restaurant-card,
 .notification-list > * {
   display: block;
   animation: taste-rise 420ms var(--ease-out-soft) both;
@@ -64,6 +63,22 @@ app-restaurant-card,
   @for $i from 1 through 8 {
     &:nth-child(#{$i}) { animation-delay: #{($i - 1) * 45}ms; }
   }
+}
+
+// Toque com cara de app: sem o flash cinza do navegador no iPhone,
+// e cards/linhas "afundam" levemente enquanto o dedo está em cima
+a,
+button,
+[role='button'] {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+a.surface-card,
+.surface-card--hover {
+  transition: transform 180ms var(--ease-out-soft), box-shadow 260ms var(--ease-out-soft);
+
+  &:active { transform: scale(0.985); }
 }
 
 // Cards levantam no hover com sombra mais macia

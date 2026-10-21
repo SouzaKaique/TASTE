@@ -21,9 +21,27 @@ public class PublicPhotoController {
     private static final int MAX_COVER_IDS = 60;
 
     private final ExperienceRepository experienceRepository;
+    private final PhotoUrls photoUrls;
 
-    public PublicPhotoController(ExperienceRepository experienceRepository) {
+    public PublicPhotoController(ExperienceRepository experienceRepository, PhotoUrls photoUrls) {
         this.experienceRepository = experienceRepository;
+        this.photoUrls = photoUrls;
+    }
+
+    /**
+     * Foto de qualquer experiencia, pelo endereco assinado que a API devolve para quem pode ve-la.
+     * Como o endereco muda quando a foto muda, o celular pode guardar a imagem por um ano.
+     */
+    @GetMapping("/api/public/photos/{id}")
+    @Transactional(readOnly = true)
+    public ResponseEntity<byte[]> signedPhoto(@PathVariable Long id, @RequestParam("v") String version, @RequestParam("s") String signature) {
+        if (!photoUrls.isValid(id, version, signature)) {
+            throw new NotFoundException("Foto não encontrada.");
+        }
+        Experience e = experienceRepository.findById(id)
+                .filter(exp -> exp.getPhotoUrl() != null && version.equals(PhotoUrls.version(exp.getPhotoUrl())))
+                .orElseThrow(() -> new NotFoundException("Foto não encontrada."));
+        return image(e.getPhotoUrl(), CacheControl.maxAge(Duration.ofDays(365)).cachePublic().immutable());
     }
 
     @GetMapping("/api/public/experiences/{id}/photo")
@@ -35,17 +53,20 @@ public class PublicPhotoController {
                 .filter(exp -> exp.getPhotoUrl() != null && exp.getPhotoUrl().startsWith("data:image/"))
                 .orElseThrow(() -> new NotFoundException("Foto não encontrada."));
 
-        // Formato: data:image/jpeg;base64,AAAA...
-        String dataUri = e.getPhotoUrl();
+        return image(e.getPhotoUrl(), CacheControl.maxAge(Duration.ofHours(6)).cachePublic());
+    }
+
+    /** Formato guardado: data:image/jpeg;base64,AAAA... */
+    private static ResponseEntity<byte[]> image(String dataUri, CacheControl cache) {
         int comma = dataUri.indexOf(',');
         String meta = comma > 5 ? dataUri.substring(5, comma) : ""; // ex: image/jpeg;base64
         if (!meta.endsWith(";base64")) {
             throw new NotFoundException("Foto não encontrada.");
         }
-        byte[] bytes = Base64.getDecoder().decode(dataUri.substring(comma + 1));
+        byte[] bytes = Base64.getMimeDecoder().decode(dataUri.substring(comma + 1));
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(meta.substring(0, meta.length() - ";base64".length())))
-                .cacheControl(CacheControl.maxAge(Duration.ofHours(6)).cachePublic())
+                .cacheControl(cache)
                 .body(bytes);
     }
 

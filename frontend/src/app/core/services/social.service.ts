@@ -4,6 +4,7 @@ import { Observable, catchError, map } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { FeedComment, FeedItem, FriendshipStatus, UserSummary } from '../models';
 import { toFriendlyError } from './api-error.util';
+import { mediaUrl } from './media-url';
 
 /** Formatos devolvidos pelo backend (ids numéricos). */
 interface ApiUserSummary {
@@ -37,6 +38,15 @@ interface ApiFeedItem {
   comments: ApiFeedComment[];
 }
 
+/** Lugar do ranking "em alta" do Descobrir. */
+export interface PlaceRanking {
+  restaurantId: string | null;
+  name: string;
+  city: string;
+  count: number;
+  averageRating: number;
+}
+
 export function toUserSummary(api: ApiUserSummary): UserSummary {
   return { ...api, id: String(api.id) };
 }
@@ -47,7 +57,7 @@ function toFeedItem(api: ApiFeedItem): FeedItem {
     id: String(api.id),
     user: toUserSummary(api.user),
     experienceId: String(api.experienceId),
-    photoUrl: api.photoUrl ?? undefined,
+    photoUrl: mediaUrl(api.photoUrl),
     text: api.text ?? undefined,
     comments: api.comments.map((c) => ({ ...c, id: String(c.id), userId: String(c.userId) })),
   };
@@ -73,6 +83,25 @@ export class SocialService {
       map((items) => items.map(toFeedItem)),
       catchError(toFriendlyError),
     );
+  }
+
+  /** Grade do Descobrir: fotos de pratos dos amigos e públicas, em páginas. */
+  explore(after?: FeedItem, limit = 18): Observable<FeedItem[]> {
+    const params: Record<string, string> = { limit: String(limit) };
+    if (after) {
+      params['beforeAt'] = after.createdAt;
+      params['beforeId'] = after.id;
+    }
+    return this.http.get<ApiFeedItem[]>(`${this.baseUrl}/explore`, { params }).pipe(
+      map((items) => items.map(toFeedItem)),
+      catchError(toFriendlyError),
+    );
+  }
+
+  /** Lugares em alta na comunidade (opcionalmente de uma cidade). */
+  topPlaces(city?: string | null): Observable<PlaceRanking[]> {
+    const params: Record<string, string> = city ? { city } : {};
+    return this.http.get<PlaceRanking[]>(`${this.baseUrl}/explore/places`, { params }).pipe(catchError(toFriendlyError));
   }
 
   /** Salva ou tira da lista "Quero ir"; devolve o item atualizado. */

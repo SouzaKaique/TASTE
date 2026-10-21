@@ -1,36 +1,69 @@
+// Barra de navegação do celular.
+// A altura soma a área do indicador do iPhone (safe area), para os ícones terem os 64px inteiros.
 .bottom-nav {
   display: none;
 
   @media (max-width: 991px) {
     display: flex;
     position: fixed;
-    bottom: 0; left: 0; right: 0;
-    height: var(--bottomnav-height);
-    background: var(--taste-wine-900);
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: calc(var(--bottomnav-height) + env(safe-area-inset-bottom));
+    padding-bottom: env(safe-area-inset-bottom);
+    background: rgba(61, 21, 33, 0.92); // vinho translúcido, como as barras dos apps atuais
+    backdrop-filter: saturate(160%) blur(14px);
+    -webkit-backdrop-filter: saturate(160%) blur(14px);
     border-top: 1px solid var(--color-border-on-bg);
     z-index: 30;
-    padding-bottom: env(safe-area-inset-bottom);
   }
 
   &__link {
     flex: 1;
+    min-width: 0;
+    height: var(--bottomnav-height);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 0.2rem;
+    gap: 3px;
     color: var(--color-text-on-bg);
-    font-size: 0.65rem;
+    font-size: 0.68rem;
     font-weight: 500;
+    -webkit-tap-highlight-color: transparent;
+    transition: color var(--dur-fast) var(--ease-standard);
 
-    i { font-size: 1.25rem; }
+    i {
+      font-size: 1.3rem;
+      line-height: 1;
+      transition: transform 220ms var(--ease-spring, ease-out);
+    }
+
+    span { white-space: nowrap; }
+
+    &:active i { transform: scale(0.86); }
 
     &.is-active { color: var(--color-eyebrow-on-bg); }
-
-    &--cta i {
-      font-size: 2.2rem;
-      color: var(--color-eyebrow-on-bg);
-      margin-top: -1.4rem;
-    }
+    &.is-active i { transform: translateY(-1px); }
   }
+
+  // Botão de registrar: círculo dourado que sobe um pouco acima da barra.
+  // O anel na cor do fundo "recorta" a linha de cima, sem cortar o ícone.
+  &__cta {
+    display: grid;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    margin-top: -22px;
+    border-radius: 50%;
+    background: var(--taste-gold-500);
+    box-shadow: 0 0 0 4px var(--taste-wine-900), 0 6px 16px rgba(0, 0, 0, 0.35);
+    color: var(--taste-wine-900);
+
+    i { font-size: 1.35rem; }
+  }
+
+  &__link--cta:active .bottom-nav__cta { transform: scale(0.92); }
+  &__link--cta .bottom-nav__cta { transition: transform 200ms var(--ease-spring, ease-out); }
+  &__link--cta.is-active { color: var(--color-eyebrow-on-bg); }
 }

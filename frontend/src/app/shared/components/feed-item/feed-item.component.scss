@@ -52,6 +52,8 @@
     cursor: pointer;
     touch-action: manipulation; // dois toques sem dar zoom na página
     user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none; // segurar a foto não abre o menu do iOS
 
     img { width: 100%; height: 100%; object-fit: cover; }
   }

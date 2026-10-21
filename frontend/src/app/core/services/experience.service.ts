@@ -11,6 +11,7 @@ import {
   ExperiencePhoto,
   ExperienceVisibility,
 } from '../models';
+import { mediaUrl } from './media-url';
 import { toFriendlyError } from './api-error.util';
 
 export interface ExperienceFilters {
@@ -174,7 +175,7 @@ function toExperience(api: ApiExperience): Experience {
     country: api.country ?? '',
     notes: api.notes ?? '',
     tags: api.tags ?? [],
-    photos: api.photos ?? [],
+    photos: (api.photos ?? []).map((p) => ({ ...p, url: mediaUrl(p.url) ?? p.url })),
     optionalCriteria,
   };
 }

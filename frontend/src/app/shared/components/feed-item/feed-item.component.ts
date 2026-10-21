@@ -65,6 +65,20 @@ export class FeedItemComponent {
     }
   }
 
+  private lastTouchEndAt = 0;
+
+  /**
+   * No iPhone, dois toques rápidos ampliam a tela. Cancelar o segundo "touchend"
+   * impede esse zoom (a pinça com dois dedos continua funcionando normalmente).
+   */
+  protected onPhotoTouchEnd(event: TouchEvent): void {
+    const now = Date.now();
+    if (now - this.lastTouchEndAt < 350 && event.cancelable) {
+      event.preventDefault();
+    }
+    this.lastTouchEndAt = now;
+  }
+
   /** Duplo clique com o mouse (computador). Ignorado logo depois de toques, para não curtir duas vezes. */
   protected onPhotoDoubleClick(): void {
     if (Date.now() - this.lastTouchAt < 800) return;

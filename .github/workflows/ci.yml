@@ -60,6 +60,8 @@ jobs:
       DATABASE_URL: postgresql://taste:taste@localhost:5432/taste?sslmode=disable
       # Confere se as migracoes criam exatamente o que as entidades esperam
       TASTE_DB_VALIDATE: 'true'
+      # Com DATABASE_URL o backend age como producao e exige um segredo proprio (este vale so no teste)
+      TASTE_JWT_SECRET: segredo-apenas-para-os-testes-do-github-actions-0123456789
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4

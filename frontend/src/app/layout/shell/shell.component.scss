@@ -177,3 +177,24 @@
     }
   }
 }
+
+// Aviso de "sem internet": faixa fina no topo, acima de tudo
+.offline-bar {
+  position: fixed;
+  top: env(safe-area-inset-top);
+  left: 50%;
+  z-index: 60;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: var(--space-2);
+  padding: 0.35rem 0.9rem;
+  border-radius: var(--radius-pill);
+  background: rgba(20, 10, 14, 0.85);
+  color: #fff;
+  font-size: var(--fs-caption);
+  white-space: nowrap;
+  box-shadow: var(--shadow-md);
+  animation: taste-rise 300ms var(--ease-out-soft, ease-out) both;
+}

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
@@ -33,6 +33,9 @@ export class ShellComponent {
   protected readonly notifications = inject(NotificationService);
   private readonly push = inject(PushService);
 
+  /** Sem internet: o app segue com o que já estava guardado e avisa discretamente. */
+  protected readonly offline = signal(typeof navigator !== 'undefined' && !navigator.onLine);
+
   protected readonly navItems: NavItem[] = [
     { label: 'Início', icon: 'bi-house', route: '/app/inicio' },
     { label: 'Minhas experiências', icon: 'bi-journal-richtext', route: '/app/experiencias' },
@@ -55,6 +58,15 @@ export class ShellComponent {
     inject(DestroyRef).onDestroy(() => clearInterval(timer));
     // Notificações no celular: confere a situação e mantém a inscrição em dia
     this.push.refresh().catch(() => undefined);
+
+    const goOffline = () => this.offline.set(true);
+    const goOnline = () => this.offline.set(false);
+    window.addEventListener('offline', goOffline);
+    window.addEventListener('online', goOnline);
+    inject(DestroyRef).onDestroy(() => {
+      window.removeEventListener('offline', goOffline);
+      window.removeEventListener('online', goOnline);
+    });
   }
 
   protected logout(): void {

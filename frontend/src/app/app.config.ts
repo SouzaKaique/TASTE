@@ -5,6 +5,7 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 
 import { routes } from './app.routes';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
+import { offlineCacheInterceptor } from './core/interceptors/offline-cache.interceptor';
 
 /**
  * Depois de uma nova publicação, uma aba aberta antes ainda aponta para os arquivos
@@ -38,6 +39,6 @@ export const appConfig: ApplicationConfig = {
           transition.updateCallbackDone.catch(() => undefined);
         },
       })),
-    provideHttpClient(withInterceptors([authInterceptor])),
+    provideHttpClient(withInterceptors([offlineCacheInterceptor, authInterceptor])),
   ],
 };

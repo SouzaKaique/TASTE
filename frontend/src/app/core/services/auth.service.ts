@@ -6,6 +6,7 @@ import { environment } from '../../../environments/environment';
 import { AuthCredentials, ProfileVisibility, RegisterPayload, User } from '../models';
 import { ToastService } from '../../shared/services/toast.service';
 import { toFriendlyError } from './api-error.util';
+import { offlineCache } from './offline-cache';
 
 const TOKEN_KEY = 'taste.session.token';
 const USER_KEY = 'taste.session.user';
@@ -75,6 +76,8 @@ export class AuthService {
   }
 
   logout(): void {
+    // Dados guardados para abrir offline saem junto com a conta
+    offlineCache.clear();
     this.currentUser.set(null);
     try {
       localStorage.removeItem(TOKEN_KEY);

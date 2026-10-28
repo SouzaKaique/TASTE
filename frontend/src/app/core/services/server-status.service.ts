@@ -20,7 +20,8 @@ export class ServerStatusService {
 
   /** Dispara uma chamada leve e sem login para acordar o servidor cedo. */
   warmUp(): void {
-    fetch(this.healthUrl, { cache: 'no-store' }).catch(() => undefined);
+    // 'no-cors': só precisa chegar ao servidor para acordá-lo; a resposta não é lida (evita erro de CORS no console)
+    fetch(this.healthUrl, { cache: 'no-store', mode: 'no-cors' }).catch(() => undefined);
   }
 
   /** Operador RxJS: liga `waking` se a requisição passar do tempo normal. */

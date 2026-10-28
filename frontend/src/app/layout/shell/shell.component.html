@@ -59,6 +59,11 @@
     </a>
   </header>
 
+  @if (offline()) {
+    <div class="offline-bar" role="status">
+      <i class="bi bi-wifi-off" aria-hidden="true"></i> Sem internet. Mostrando o que já estava salvo.
+    </div>
+  }
   <main class="app-shell__content">
     <router-outlet></router-outlet>
   </main>

@@ -7,11 +7,12 @@ import { AuthService } from '../../../core/services/auth.service';
 import { ShareService } from '../../services/share.service';
 import { AvatarComponent } from '../avatar/avatar.component';
 import { StarRatingComponent } from '../star-rating/star-rating.component';
+import { BottomSheetComponent } from '../bottom-sheet/bottom-sheet.component';
 
 @Component({
   selector: 'app-feed-item',
   standalone: true,
-  imports: [DatePipe, RouterLink, FormsModule, AvatarComponent, StarRatingComponent],
+  imports: [DatePipe, RouterLink, FormsModule, AvatarComponent, StarRatingComponent, BottomSheetComponent],
   templateUrl: './feed-item.component.html',
   styleUrl: './feed-item.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -38,6 +39,17 @@ export class FeedItemComponent {
   }
 
   protected readonly showComments = signal(false);
+  protected readonly showOptions = signal(false);
+
+  protected isMine(): boolean {
+    return this.item().user.id === this.auth.user()?.id;
+  }
+
+  /** Abre a busca do lugar no Google Maps (só um link, sem custo). */
+  protected mapsUrl(): string {
+    const query = [this.item().restaurantName, this.item().city].filter(Boolean).join(', ');
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+  }
   protected readonly burst = signal(false);
   private burstTimer?: ReturnType<typeof setTimeout>;
 

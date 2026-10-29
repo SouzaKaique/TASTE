@@ -8,6 +8,7 @@ import { NotificationService } from '../../core/services/notification.service';
 import { LogoComponent } from '../../shared/components/logo/logo.component';
 import { AvatarComponent } from '../../shared/components/avatar/avatar.component';
 import { BottomNavComponent } from '../bottom-nav/bottom-nav.component';
+import { SwipeBackComponent } from '../swipe-back/swipe-back.component';
 
 interface NavItem {
   label: string;
@@ -22,7 +23,7 @@ const UNREAD_POLL_MS = 60_000;
 @Component({
   selector: 'app-shell',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, RouterOutlet, LogoComponent, AvatarComponent, BottomNavComponent],
+  imports: [RouterLink, RouterLinkActive, RouterOutlet, LogoComponent, AvatarComponent, BottomNavComponent, SwipeBackComponent],
   templateUrl: './shell.component.html',
   styleUrl: './shell.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

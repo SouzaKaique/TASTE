@@ -32,8 +32,8 @@
 
     <h2 class="h3">Registros e interações</h2>
     <div class="form-check form-switch mb-2">
-      <input class="form-check-input" type="checkbox" role="switch" [checked]="allowComments()" (change)="allowComments.set(!allowComments())" />
-      <label class="form-check-label">Permitir comentários nas minhas publicações</label>
+      <input id="allowComments" class="form-check-input" type="checkbox" role="switch" [checked]="allowComments()" (change)="allowComments.set(!allowComments())" />
+      <label class="form-check-label" for="allowComments">Permitir comentários nas minhas publicações</label>
     </div>
 
     <hr class="divider-soft my-4" />

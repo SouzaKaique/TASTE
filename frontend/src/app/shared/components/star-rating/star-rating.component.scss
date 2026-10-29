@@ -25,11 +25,14 @@
     &:disabled { cursor: default; }
   }
 
+  // Só exibição (nota de um post): sem cara de botão
+  span.star-rating__star { cursor: default; padding: 0 0.05rem; }
+
   // Telas de toque: estrelas clicáveis com área mínima de ~40px para o dedo
   @media (pointer: coarse), (max-width: 768px) {
     gap: 0;
 
-    &__star:not(:disabled) {
+    button.star-rating__star:not(:disabled) {
       min-width: 40px;
       min-height: 40px;
       display: inline-flex;

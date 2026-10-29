@@ -1,0 +1,75 @@
+<main class="onboarding">
+  <header class="onboarding__top">
+    <span class="onboarding__hello">Boas-vindas{{ firstName ? ', ' + firstName : '' }}!</span>
+    @if (current() < total - 1) {
+      <button type="button" class="onboarding__skip" (click)="goTo(total - 1)">Pular</button>
+    }
+  </header>
+
+  <!-- Telas que passam arrastando para o lado -->
+  <div #track class="onboarding__track" (scroll)="onScroll()" aria-roledescription="carrossel" aria-label="Apresentação do TASTE">
+    @for (slide of slides; track slide.title; let i = $index) {
+      <section class="slide" [attr.aria-label]="'Tela ' + (i + 1) + ' de ' + total" [attr.aria-hidden]="current() !== i">
+        <div class="slide__art">
+          <app-food-art [hints]="slide.art"></app-food-art>
+        </div>
+        <h1 class="slide__title">{{ slide.title }}</h1>
+        <p class="slide__text">{{ slide.text }}</p>
+      </section>
+    }
+
+    <section class="slide slide--final" [attr.aria-label]="'Tela ' + total + ' de ' + total" [attr.aria-hidden]="current() !== total - 1">
+      <h1 class="slide__title">Por onde começar?</h1>
+      <p class="slide__text">O TASTE fica mais gostoso com amigos. Chame alguém ou registre o seu primeiro prato.</p>
+
+      <div class="first-steps">
+        <button type="button" class="first-step" [disabled]="inviting()" (click)="invite()">
+          <i class="bi bi-people-fill" aria-hidden="true"></i>
+          <span>
+            <strong>Chamar amigos</strong>
+            <small>Mande seu link no WhatsApp: quem entrar já vira seu amigo</small>
+          </span>
+          <i class="bi bi-chevron-right first-step__go" aria-hidden="true"></i>
+        </button>
+        <button type="button" class="first-step" (click)="finish('/app/experiencias/nova')">
+          <i class="bi bi-camera-fill" aria-hidden="true"></i>
+          <span>
+            <strong>Registrar meu primeiro prato</strong>
+            <small>Leva poucos segundos</small>
+          </span>
+          <i class="bi bi-chevron-right first-step__go" aria-hidden="true"></i>
+        </button>
+        <button type="button" class="first-step" (click)="finish('/app/amigos')">
+          <i class="bi bi-search" aria-hidden="true"></i>
+          <span>
+            <strong>Procurar quem já está no TASTE</strong>
+            <small>Busque pelo nome ou username</small>
+          </span>
+          <i class="bi bi-chevron-right first-step__go" aria-hidden="true"></i>
+        </button>
+      </div>
+    </section>
+  </div>
+
+  <footer class="onboarding__bottom">
+    <div class="dots" role="tablist" aria-label="Escolher tela">
+      @for (i of [0, 1, 2, 3]; track i) {
+        <button
+          type="button"
+          role="tab"
+          class="dots__dot"
+          [class.is-active]="current() === i"
+          [attr.aria-selected]="current() === i"
+          [attr.aria-label]="'Ir para a tela ' + (i + 1)"
+          (click)="goTo(i)"
+        ></button>
+      }
+    </div>
+
+    @if (current() < total - 1) {
+      <button type="button" class="btn btn-primary btn-lg onboarding__cta" (click)="next()">Continuar</button>
+    } @else {
+      <button type="button" class="btn btn-ghost-on-bg btn-lg onboarding__cta" (click)="finish('/app/social')">Ir para o feed</button>
+    }
+  </footer>
+</main>

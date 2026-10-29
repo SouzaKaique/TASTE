@@ -3,6 +3,7 @@ import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Va
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { returnUrlFrom } from '../../../core/guards/auth.guard';
 import { pendingInvite } from '../../../core/services/pending-invite';
+import { hasOnboarded } from '../../onboarding/onboarding.component';
 import { AuthService } from '../../../core/services/auth.service';
 import { ServerStatusService } from '../../../core/services/server-status.service';
 import { ToastService } from '../../../shared/services/toast.service';
@@ -74,7 +75,9 @@ export class RegisterComponent {
         this.loading.set(false);
         pendingInvite.clear();
         this.toast.success(inviteCode ? 'Conta criada! Vocês já são amigos no TASTE.' : 'Conta criada! Boas-vindas ao TASTE.');
-        this.router.navigateByUrl(returnUrlFrom(this.route.snapshot.queryParamMap.get('voltar')));
+        // Veio de um link (ex.: prato compartilhado): vai direto para ele; senão, boas-vindas
+        const back = this.route.snapshot.queryParamMap.get('voltar');
+        this.router.navigateByUrl(back || hasOnboarded() ? returnUrlFrom(back) : '/boas-vindas');
       },
       error: (err: Error) => {
         this.loading.set(false);

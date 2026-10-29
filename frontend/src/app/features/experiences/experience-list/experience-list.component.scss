@@ -9,36 +9,110 @@
 
 .filters-bar {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   gap: var(--space-2);
-  padding: var(--space-3) var(--space-4);
-  margin-bottom: var(--space-5);
+  margin-bottom: var(--space-4);
 
-  select { max-width: 150px; }
-
-  &__favorite {
-    display: flex;
+  &__open {
+    flex-shrink: 0;
+    display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
-    white-space: nowrap;
+    gap: 0.45rem;
+    min-height: 40px;
+    padding: 0 0.95rem;
+    border: 1px solid var(--color-border-on-bg);
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--color-heading-on-bg);
+    font-size: var(--fs-small);
+    font-weight: 600;
+    cursor: pointer;
+
+    &:hover { background: rgba(255, 255, 255, 0.06); }
+  }
+
+  &__count {
+    display: grid;
+    place-items: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 5px;
+    border-radius: 10px;
+    background: var(--taste-gold-500);
+    color: var(--taste-wine-900);
+    font-size: 0.72rem;
+    font-weight: 700;
+  }
+
+  // Etiquetas rolam de lado no celular, sem quebrar a linha
+  &__chips {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    gap: var(--space-2);
+    overflow-x: auto;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar { display: none; }
   }
 }
 
+.filter-chip {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  min-height: 34px;
+  padding: 0 0.6rem 0 0.8rem;
+  border: none;
+  border-radius: var(--radius-pill);
+  background: var(--color-heading-on-bg);
+  color: var(--taste-wine-900);
+  font-size: var(--fs-caption);
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  animation: taste-rise 220ms var(--ease-out-soft, ease-out) both;
+}
+
 .view-toggle {
+  flex-shrink: 0;
   display: flex;
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-border-on-bg);
   border-radius: var(--radius-pill);
   overflow: hidden;
 
   button {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 38px;
     border: none;
     background: transparent;
-    padding: 0.4rem 0.65rem;
-    color: var(--color-text-secondary);
+    color: var(--color-text-on-bg);
     cursor: pointer;
+    transition: background-color var(--dur-fast) var(--ease-standard);
 
-    &.is-active { background: var(--color-brand-soft); color: var(--color-brand-strong); }
+    &.is-active { background: var(--color-heading-on-bg); color: var(--taste-wine-900); }
+  }
+}
+
+// Formulário dentro do painel de filtros
+.filters-form {
+  display: flex;
+  flex-direction: column;
+
+  .form-label { margin: var(--space-3) 0 var(--space-1); font-size: var(--fs-small); font-weight: 600; }
+  .form-label:first-child { margin-top: 0; }
+
+  &__switch { margin: var(--space-4) 0 0; }
+
+  &__actions {
+    display: flex;
+    gap: var(--space-2);
+    margin-top: var(--space-4);
+
+    .btn-primary { flex: 1; }
   }
 }
 

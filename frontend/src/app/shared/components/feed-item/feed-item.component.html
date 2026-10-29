@@ -12,6 +12,9 @@
       </span>
     </a>
     <time class="feed-item__time" [attr.datetime]="item().createdAt">{{ item().createdAt | date: 'd MMM' }}</time>
+    <button type="button" class="feed-item__icon-btn feed-item__more-btn" aria-label="Mais opções" aria-haspopup="dialog" (click)="showOptions.set(true)">
+      <i class="bi bi-three-dots" aria-hidden="true"></i>
+    </button>
   </header>
 
   @if (item().photoUrl) {
@@ -38,9 +41,9 @@
     <button
       type="button"
       class="feed-item__icon-btn"
-      [attr.aria-expanded]="showComments()"
+      aria-haspopup="dialog"
       [attr.aria-label]="'Comentários (' + item().comments.length + ')'"
-      (click)="showComments.set(!showComments())"
+      (click)="showComments.set(true)"
     >
       <i class="bi bi-chat" aria-hidden="true"></i>
     </button>
@@ -92,43 +95,82 @@
     <p class="feed-item__collection"><i class="bi bi-collection"></i> {{ item().collectionName }}</p>
   }
 
-  @if (item().comments.length && !showComments()) {
-    <button type="button" class="feed-item__more" (click)="showComments.set(true)">
+  @if (item().comments.length) {
+    <button type="button" class="feed-item__more" aria-haspopup="dialog" (click)="showComments.set(true)">
       {{ item().comments.length === 1 ? 'Ver 1 comentário' : 'Ver os ' + item().comments.length + ' comentários' }}
     </button>
   }
 
-  @if (showComments()) {
-    <div class="feed-item__comments">
-      @for (comment of item().comments; track comment.id) {
-        <div class="feed-item__comment">
-          <app-avatar [src]="comment.userAvatarUrl" [name]="comment.userDisplayName" size="xs"></app-avatar>
-          <p><strong>{{ comment.userDisplayName }}</strong> {{ comment.text }}</p>
-          @if (canRemove(comment)) {
-            <button
-              type="button"
-              class="feed-item__comment-remove"
-              (click)="removeComment.emit({ feedItemId: item().id, commentId: comment.id })"
-              aria-label="Excluir comentário"
-            >
-              <i class="bi bi-x"></i>
-            </button>
-          }
-        </div>
-      }
+  <!-- Comentários num painel que sobe de baixo -->
+  <app-bottom-sheet [(open)]="showComments" title="Comentários">
+    @if (item().comments.length) {
+      <ul class="comments">
+        @for (comment of item().comments; track comment.id) {
+          <li class="comments__item">
+            <app-avatar [src]="comment.userAvatarUrl" [name]="comment.userDisplayName" size="xs"></app-avatar>
+            <p><strong>{{ comment.userDisplayName }}</strong> {{ comment.text }}</p>
+            @if (canRemove(comment)) {
+              <button
+                type="button"
+                class="comments__remove"
+                (click)="removeComment.emit({ feedItemId: item().id, commentId: comment.id })"
+                [attr.aria-label]="'Excluir comentário de ' + comment.userDisplayName"
+              >
+                <i class="bi bi-trash3" aria-hidden="true"></i>
+              </button>
+            }
+          </li>
+        }
+      </ul>
+    } @else {
+      <p class="comments__empty">Nenhum comentário ainda. Seja o primeiro!</p>
+    }
 
-      <form class="feed-item__comment-form" (ngSubmit)="submitComment()">
-        <input
-          type="text"
-          class="form-control form-control-sm"
-          placeholder="Escreva um comentário..."
-          aria-label="Escreva um comentário"
-          maxlength="500"
-          [(ngModel)]="commentDraft"
-          name="commentDraft"
-        />
-        <button type="submit" class="btn btn-primary btn-sm" [disabled]="!commentDraft.trim()">Enviar</button>
-      </form>
-    </div>
-  }
+    <form class="comments__form" (ngSubmit)="submitComment()">
+      <input
+        type="text"
+        class="form-control"
+        placeholder="Escreva um comentário..."
+        aria-label="Escreva um comentário"
+        maxlength="500"
+        enterkeyhint="send"
+        [(ngModel)]="commentDraft"
+        name="commentDraft"
+      />
+      <button type="submit" class="btn btn-primary" [disabled]="!commentDraft.trim()" aria-label="Enviar comentário">
+        <i class="bi bi-send-fill" aria-hidden="true"></i>
+      </button>
+    </form>
+  </app-bottom-sheet>
+
+  <!-- Opções do post ("...") -->
+  <app-bottom-sheet [(open)]="showOptions" [title]="item().dishName ?? 'Opções'">
+    <nav class="options" aria-label="Opções do post">
+      @if (item().experienceId) {
+        <a class="options__item" [routerLink]="['/app/experiencias', item().experienceId]" (click)="showOptions.set(false)">
+          <i class="bi bi-journal-text" aria-hidden="true"></i> Ver o prato
+        </a>
+        <button type="button" class="options__item" (click)="showOptions.set(false); share()">
+          <i class="bi bi-send" aria-hidden="true"></i> Compartilhar
+        </button>
+        <button type="button" class="options__item" (click)="showOptions.set(false); toggleSave.emit(item().id)">
+          <i class="bi" [class.bi-bookmark-x]="item().savedByMe" [class.bi-bookmark]="!item().savedByMe" aria-hidden="true"></i>
+          {{ item().savedByMe ? 'Tirar de "Quero ir"' : 'Salvar em "Quero ir"' }}
+        </button>
+      }
+      @if (item().restaurantName) {
+        <a class="options__item" [href]="mapsUrl()" target="_blank" rel="noopener" (click)="showOptions.set(false)">
+          <i class="bi bi-signpost-2" aria-hidden="true"></i> Como chegar ao {{ item().restaurantName }}
+        </a>
+      }
+      <a class="options__item" [routerLink]="['/app/perfil', item().user.username]" (click)="showOptions.set(false)">
+        <i class="bi bi-person" aria-hidden="true"></i> Ver perfil de {{ item().user.displayName }}
+      </a>
+      @if (isMine() && item().experienceId) {
+        <a class="options__item" [routerLink]="['/app/experiencias', item().experienceId, 'editar']" (click)="showOptions.set(false)">
+          <i class="bi bi-pencil" aria-hidden="true"></i> Editar
+        </a>
+      }
+    </nav>
+  </app-bottom-sheet>
 </article>

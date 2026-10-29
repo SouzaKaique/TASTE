@@ -15,6 +15,7 @@ import { ExperienceCardComponent } from '../../../shared/components/experience-c
 import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
 import { LoadingStateComponent } from '../../../shared/components/loading-state/loading-state.component';
 import { StarRatingComponent } from '../../../shared/components/star-rating/star-rating.component';
+import { BottomSheetComponent } from '../../../shared/components/bottom-sheet/bottom-sheet.component';
 
 type ViewMode = 'grid' | 'list' | 'timeline';
 
@@ -29,6 +30,7 @@ type ViewMode = 'grid' | 'list' | 'timeline';
     EmptyStateComponent,
     LoadingStateComponent,
     StarRatingComponent,
+    BottomSheetComponent,
   ],
   templateUrl: './experience-list.component.html',
   styleUrl: './experience-list.component.scss',
@@ -53,6 +55,20 @@ export class ExperienceListComponent {
     category: '' as string,
     cuisineType: '' as string,
     favoritesOnly: false,
+  });
+
+  protected readonly showFilters = signal(false);
+
+  /** Filtros ligados, para mostrar como etiquetas removíveis acima da lista. */
+  protected readonly activeFilters = computed(() => {
+    const f = this.filters();
+    const list: { key: 'year' | 'city' | 'category' | 'cuisineType' | 'favoritesOnly'; label: string }[] = [];
+    if (f.year) list.push({ key: 'year', label: String(f.year) });
+    if (f.city) list.push({ key: 'city', label: f.city });
+    if (f.category) list.push({ key: 'category', label: this.categoryLabels[f.category as ExperienceCategory] ?? f.category });
+    if (f.cuisineType) list.push({ key: 'cuisineType', label: f.cuisineType });
+    if (f.favoritesOnly) list.push({ key: 'favoritesOnly', label: 'Favoritos' });
+    return list;
   });
 
   protected readonly cities = computed(() =>

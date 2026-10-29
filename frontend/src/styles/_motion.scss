@@ -128,3 +128,9 @@ html.no-overscroll,
 html.no-overscroll body {
   overscroll-behavior-y: contain;
 }
+
+// Painel aberto: a página por trás não rola
+html.sheet-open,
+html.sheet-open body {
+  overflow: hidden;
+}

@@ -1,0 +1,117 @@
+.sheet-root {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  pointer-events: none;
+
+  &.is-open { pointer-events: auto; }
+}
+
+.sheet-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 6, 10, 0.55);
+  animation: sheet-fade-in 220ms var(--ease-standard) both;
+  transition: opacity 120ms linear;
+
+  .is-closing & { animation: sheet-fade-out 220ms var(--ease-standard) both; }
+}
+
+.sheet {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  max-height: min(85dvh, 720px);
+  padding-bottom: env(safe-area-inset-bottom);
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  border-radius: 20px 20px 0 0;
+  box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.35);
+  outline: none;
+  animation: sheet-up 340ms var(--ease-out-soft, cubic-bezier(0.22, 1, 0.36, 1)) both;
+  transition: transform 260ms var(--ease-out-soft, ease-out);
+
+  &.is-dragging { transition: none; }
+
+  .is-closing & { animation: sheet-down 220ms var(--ease-standard) both; }
+
+  // Computador: painel centralizado, não colado embaixo
+  @media (min-width: 768px) {
+    left: 50%;
+    right: auto;
+    bottom: 50%;
+    width: min(520px, calc(100vw - 2rem));
+    border-radius: 20px;
+    translate: -50% 50%;
+    animation-name: sheet-pop;
+
+    .is-closing & { animation-name: sheet-pop-out; }
+  }
+
+  &__grab {
+    flex-shrink: 0;
+    padding: 8px var(--space-4) 0;
+    touch-action: none; // o arrastar é do painel, não da página
+    cursor: grab;
+
+    @media (min-width: 768px) { cursor: default; }
+  }
+
+  &__handle {
+    display: block;
+    width: 40px;
+    height: 5px;
+    margin: 0 auto 6px;
+    border-radius: 3px;
+    background: var(--color-border-strong);
+
+    @media (min-width: 768px) { display: none; }
+  }
+
+  &__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  &__title {
+    margin: 0;
+    font-size: 1.1rem;
+    font-family: var(--font-sans);
+    font-weight: 600;
+  }
+
+  &__close {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    margin-right: -8px;
+    border: none;
+    border-radius: 50%;
+    background: none;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+
+    &:hover { background: var(--color-surface-alt); }
+  }
+
+  &__body {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: var(--space-3) var(--space-4) var(--space-4);
+  }
+}
+
+@keyframes sheet-up { from { transform: translateY(100%); } }
+@keyframes sheet-down { to { transform: translateY(100%); } }
+@keyframes sheet-pop { from { opacity: 0; transform: scale(0.96); } }
+@keyframes sheet-pop-out { to { opacity: 0; transform: scale(0.96); } }
+@keyframes sheet-fade-in { from { opacity: 0; } }
+@keyframes sheet-fade-out { to { opacity: 0; } }

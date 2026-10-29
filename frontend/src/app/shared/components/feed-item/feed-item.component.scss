@@ -37,6 +37,7 @@
 
   &__time {
     flex-shrink: 0;
+    margin-left: auto;
     font-size: var(--fs-caption);
     color: var(--color-text-secondary);
   }
@@ -123,6 +124,8 @@
 
   &__more {
     align-self: flex-start;
+    min-height: 32px; // área de toque confortável sem mudar o visual
+    margin: -6px 0;
     padding: 0;
     background: none;
     border: none;
@@ -133,35 +136,6 @@
     &:hover { color: var(--color-text-primary); }
   }
 
-  &__comments {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
-    padding-top: var(--space-2);
-    animation: taste-rise 260ms var(--ease-out-soft, ease-out) both;
-  }
-
-  &__comment {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--space-2);
-    font-size: var(--fs-small);
-
-    p { margin: 0; flex: 1; }
-  }
-
-  &__comment-remove {
-    background: none;
-    border: none;
-    color: var(--taste-ink-300);
-    cursor: pointer;
-  }
-
-  &__comment-form {
-    display: flex;
-    gap: var(--space-2);
-    margin-top: var(--space-1);
-  }
 
   // No celular, o card do post ocupa a largura toda, como num app
   @media (max-width: 480px) {
@@ -184,4 +158,99 @@
   45% { transform: translate(-50%, -50%) scale(0.95); }
   70% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
   100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
+}
+
+.feed-item__more-btn {
+  width: 36px;
+  height: 36px;
+  margin-right: -8px;
+  font-size: 1.15rem;
+  color: var(--color-text-secondary);
+}
+
+// Conteúdo dos painéis (ficam fora do card, no <body>)
+.comments {
+  margin: 0 0 var(--space-3);
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+
+  &__item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-2);
+    font-size: var(--fs-small);
+    animation: taste-rise 260ms var(--ease-out-soft, ease-out) both;
+
+    p { margin: 0; flex: 1; line-height: 1.45; overflow-wrap: anywhere; }
+  }
+
+  &__remove {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    margin: -6px -8px 0 0;
+    border: none;
+    border-radius: 50%;
+    background: none;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+
+    &:hover { background: var(--color-surface-alt); color: var(--taste-danger); }
+  }
+
+  &__empty {
+    margin: var(--space-2) 0 var(--space-4);
+    text-align: center;
+    color: var(--color-text-secondary);
+    font-size: var(--fs-small);
+  }
+
+  // Campo de comentar sempre visível no fim do painel
+  &__form {
+    position: sticky;
+    bottom: calc(var(--space-4) * -1);
+    display: flex;
+    gap: var(--space-2);
+    margin: 0 calc(var(--space-4) * -1) calc(var(--space-4) * -1);
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-surface);
+    border-top: 1px solid var(--color-border);
+
+    .form-control { border-radius: var(--radius-pill); font-size: 1rem; }
+    .btn { border-radius: 50%; width: 44px; height: 44px; padding: 0; flex-shrink: 0; }
+  }
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  margin: calc(var(--space-2) * -1) calc(var(--space-4) * -1) 0;
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    width: 100%;
+    min-height: 52px;
+    padding: 0 var(--space-4);
+    border: none;
+    background: none;
+    color: var(--color-text-primary);
+    font-size: 0.98rem;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color var(--dur-fast) var(--ease-standard);
+
+    i { width: 1.4rem; font-size: 1.15rem; color: var(--color-text-secondary); }
+
+    &:hover,
+    &:focus-visible { background: var(--color-surface-alt); color: var(--color-text-primary); }
+    &:active { background: var(--color-brand-soft); }
+
+    & + & { border-top: 1px solid var(--color-border); }
+  }
 }

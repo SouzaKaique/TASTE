@@ -149,3 +149,19 @@
   border: none;
   box-shadow: var(--shadow-lg);
 }
+
+// Caixas de marcar maiores: mais fáceis de acertar com o dedo (mínimo de 24px)
+.form-check-input[type='checkbox']:not([role='switch']) {
+  width: 1.5em;
+  height: 1.5em;
+  margin-top: -0.1em;
+}
+
+.form-check:has(> .form-check-input[type='checkbox']:not([role='switch'])) {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-left: 0;
+
+  > .form-check-input { float: none; margin: 0; flex-shrink: 0; }
+}

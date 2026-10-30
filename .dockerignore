@@ -1,0 +1,24 @@
+# Contexto do Dockerfile da raiz: so precisa de frontend/ e backend/ (sem builds e dependencias locais).
+**/node_modules/
+frontend/dist/
+frontend/.angular/
+backend/target/
+
+# Git, ferramentas e arquivos que nao entram na imagem
+.git/
+.github/
+.claude/
+**/.claude/
+.impeccable/
+**/.impeccable/
+.vscode/
+**/.vscode/
+.idea/
+*.iml
+taste-backend/
+/package.json
+/package-lock.json
+render.yaml
+*.md
+Dockerfile
+.dockerignore

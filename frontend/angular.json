@@ -61,6 +61,14 @@
               ],
               "outputHashing": "all"
             },
+            "container": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.container.ts"
+                }
+              ]
+            },
             "development": {
               "fileReplacements": [
                 {

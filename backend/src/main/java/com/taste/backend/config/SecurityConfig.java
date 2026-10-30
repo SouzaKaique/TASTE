@@ -45,6 +45,10 @@ public class SecurityConfig {
                         .requestMatchers("/actuator/health").permitAll()
                         // Fotos de experiencias publicas (capas de restaurantes); a regra de acesso fica no controller
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/public/**").permitAll()
+                        // Site embutido na imagem Docker da raiz: paginas e arquivos (fora de /api) sao publicos
+                        .requestMatchers(request -> "GET".equals(request.getMethod())
+                                && !request.getRequestURI().startsWith("/api/")
+                                && !request.getRequestURI().startsWith("/actuator")).permitAll()
                         .anyRequest().authenticated()
                 )
                 // Sem token (ou token invalido) responde 401, para o frontend mandar ao login.

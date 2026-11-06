@@ -76,6 +76,9 @@ public class SecurityConfig {
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
-        return source;
+        // O retorno do Google/Apple e um formulario vindo do site deles, nao uma chamada do nosso site
+        return request -> request.getRequestURI().matches("/api/auth/social/[a-z]+/callback")
+                ? null
+                : source.getCorsConfiguration(request);
     }
 }

@@ -1,16 +1,21 @@
 import { HttpErrorResponse, HttpInterceptorFn, HttpRequest, HttpResponse } from '@angular/common/http';
+import { NgZone, inject } from '@angular/core';
 import { EMPTY, catchError, concat, of, tap, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { PageStackStrategy } from '../routing/page-stack.strategy';
 import { offlineCache } from '../services/offline-cache';
 
 /**
  * Telas principais abrem na hora: mostram o que a pessoa viu da última vez e
- * atualizam por trás (feed, diário, "Quero ir", amigos, notificações, Descobrir).
+ * atualizam por trás (feed, diário, "Quero ir", amigos, notificações, Descobrir,
+ * pratos e perfis já abertos).
  */
 const INSTANT = [
   /^\/feed$/,
   /^\/experiences$/,
-  /^\/users\/me$/,
+  /^\/experiences\/\d+$/,
+  /^\/users\/[^/]+$/,
+  /^\/users\/[^/]+\/experiences$/,
   /^\/saved$/,
   /^\/explore$/,
   /^\/explore\/places$/,
@@ -21,6 +26,8 @@ const INSTANT = [
 
 /** Nunca guardados: mudam a cada instante, dependem de onde a pessoa está ou não servem offline. */
 const NEVER = [/^\/auth\//, /^\/places\//, /^\/push\//, /^\/notifications\/unread-count$/, /^\/public\//];
+
+const CACHE_WRITE_DELAY_MS = 250;
 
 /** Paginação ("carregar mais") sempre vai à rede. */
 const PAGING_PARAMS = ['beforeAt', 'beforeId'];
@@ -38,7 +45,14 @@ export const offlineCacheInterceptor: HttpInterceptorFn = (req, next) => {
 
   if (req.method !== 'GET') {
     const affected = affectedBy(path);
-    return next(req).pipe(tap((event) => event instanceof HttpResponse && event.ok && affected.length && offlineCache.clearMatching(affected)));
+    const pageStack = inject(PageStackStrategy);
+    return next(req).pipe(
+      tap((event) => {
+        if (!(event instanceof HttpResponse && event.ok && affected.length)) return;
+        offlineCache.clearMatching(affected);
+        pageStack.dropStackPages();
+      }),
+    );
   }
   if (NEVER.some((r) => r.test(path)) || PAGING_PARAMS.some((p) => req.params.has(p))) {
     return next(req);
@@ -46,8 +60,13 @@ export const offlineCacheInterceptor: HttpInterceptorFn = (req, next) => {
 
   const key = cacheKey(req);
   const cached = offlineCache.get(key);
+  const zone = inject(NgZone);
   const network = next(req).pipe(
-    tap((event) => event instanceof HttpResponse && event.ok && offlineCache.set(key, event.body)),
+    tap((event) => {
+      if (!(event instanceof HttpResponse && event.ok)) return;
+      // Gravar no aparelho é lento: fica para depois de a tela desenhar a resposta
+      zone.runOutsideAngular(() => setTimeout(() => offlineCache.set(key, event.body), CACHE_WRITE_DELAY_MS));
+    }),
   );
 
   if (INSTANT.some((r) => r.test(path))) {

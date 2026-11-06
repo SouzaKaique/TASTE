@@ -20,14 +20,20 @@
   margin-inline: auto;
 }
 
-// Indicador de "puxar para atualizar": cresce conforme o dedo desce
+.feed-page { position: relative; }
+
+// Indicador de "puxar para atualizar": fica logo acima da tela, que desce com o dedo
 .pull {
+  position: absolute;
+  top: -44px;
+  left: 0;
+  right: 0;
   display: grid;
   place-items: center;
-  overflow: hidden;
-  height: 0;
+  height: 44px;
   color: var(--color-text-on-bg);
-  transition: height 200ms var(--ease-out-soft, ease-out);
+  opacity: 0;
+  pointer-events: none;
 
   &__icon { font-size: 1.4rem; }
 

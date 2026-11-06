@@ -16,8 +16,17 @@
           </ul>
         </div>
 
-        <h1 class="profile-top__name">{{ user.displayName }}</h1>
-        <p class="profile-top__username">&#64;{{ user.username }}</p>
+        <div class="profile-top__identity">
+          <div>
+            <h1 class="profile-top__name">{{ user.displayName }}</h1>
+            <p class="profile-top__username">&#64;{{ user.username }}</p>
+          </div>
+          @if (isOwnProfile()) {
+            <button type="button" class="btn btn-ghost-on-bg btn-sm profile-top__signout" aria-label="Sair da conta" (click)="signOut()">
+              <i class="bi bi-box-arrow-right" aria-hidden="true"></i> Sair
+            </button>
+          }
+        </div>
         @if (user.bio) {
           <p class="profile-top__bio">{{ user.bio }}</p>
         }

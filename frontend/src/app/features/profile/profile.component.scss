@@ -25,6 +25,18 @@
     .btn { flex: 1; max-width: 220px; }
     .profile-top__icon-btn { flex: 0 0 auto; width: 40px; padding-inline: 0; }
   }
+
+  // Nome à esquerda e "Sair" à direita, fora da fileira de ações do dia a dia
+  &__identity {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+
+    > div { min-width: 0; }
+  }
+
+  &__signout { flex-shrink: 0; }
 }
 
 // Números lado a lado, como num perfil de rede social

@@ -1,0 +1,53 @@
+<div class="auth-page">
+  <div class="auth-page__aside">
+    <app-auth-aside></app-auth-aside>
+  </div>
+
+  <main class="auth-page__main">
+    <div class="auth-page__panel">
+      <app-logo class="auth-page__logo" [showTagline]="true"></app-logo>
+
+      @switch (phase()) {
+        @case ('waiting') {
+          <h1 class="auth-page__title">Entrando</h1>
+          <p class="auth-page__subtitle" role="status">
+            <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+            Termine o login na janela que abriu. Esta tela continua sozinha.
+          </p>
+          <p class="auth-page__switch"><a routerLink="/entrar">Cancelar</a></p>
+        }
+        @case ('close-window') {
+          <h1 class="auth-page__title">Tudo certo</h1>
+          <p class="auth-page__subtitle">Pode fechar esta janela e voltar para o TASTE.</p>
+        }
+        @case ('link') {
+          <h1 class="auth-page__title">Confirme sua senha</h1>
+          <p class="auth-page__subtitle">
+            Já existe uma conta TASTE com {{ linkEmail() }}. Digite a senha dela uma vez para ligar as duas.
+          </p>
+          <form class="auth-page__form" (ngSubmit)="confirmPassword()" novalidate>
+            @if (errorMessage()) {
+              <div class="alert alert-danger" role="alert">{{ errorMessage() }}</div>
+            }
+            <div class="mb-4">
+              <label class="form-label" for="password">Senha</label>
+              <input id="password" type="password" class="form-control" [formControl]="passwordControl" autocomplete="current-password" />
+              @if (passwordControl.invalid && passwordControl.touched) {
+                <div class="invalid-feedback d-block">Informe sua senha.</div>
+              }
+            </div>
+            <button type="submit" class="btn btn-primary w-100" [class.btn-loading]="linking()" [disabled]="linking()">
+              Confirmar e entrar
+            </button>
+          </form>
+          <p class="auth-page__switch"><a routerLink="/entrar">Cancelar</a></p>
+        }
+        @case ('error') {
+          <h1 class="auth-page__title">Não deu para entrar</h1>
+          <p class="auth-page__subtitle">{{ errorMessage() }}</p>
+          <a routerLink="/entrar" class="btn btn-primary w-100 mt-4">Voltar para o login</a>
+        }
+      }
+    </div>
+  </main>
+</div>

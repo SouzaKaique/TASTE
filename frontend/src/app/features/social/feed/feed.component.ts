@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, NgZone, inject, signal, viewChild } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FeedItem } from '../../../core/models';
+import { RestorablePage } from '../../../core/routing/page-stack.strategy';
 import { SocialService } from '../../../core/services/social.service';
 import { ToastService } from '../../../shared/services/toast.service';
 import { ConfirmService } from '../../../shared/services/confirm.service';
@@ -21,16 +22,15 @@ const PULL_THRESHOLD = 70;
   templateUrl: './feed.component.html',
   styleUrl: './feed.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: {
-    '(window:touchstart)': 'onTouchStart($event)',
-    '(window:touchmove)': 'onTouchMove($event)',
-    '(window:touchend)': 'onTouchEnd()',
-  },
 })
-export class FeedComponent {
+export class FeedComponent implements RestorablePage {
   private readonly socialService = inject(SocialService);
   private readonly toast = inject(ToastService);
   private readonly confirmService = inject(ConfirmService);
+  private readonly zone = inject(NgZone);
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
+  private readonly page = viewChild.required<ElementRef<HTMLElement>>('page');
+  private readonly pullIndicator = viewChild.required<ElementRef<HTMLElement>>('pullIndicator');
 
   protected readonly loading = signal(true);
   protected readonly error = signal(false);
@@ -41,15 +41,36 @@ export class FeedComponent {
   protected readonly hasMore = signal(true);
 
   // Puxar para atualizar (celular)
-  protected readonly pull = signal(0);
   protected readonly refreshing = signal(false);
   private pullStartY: number | null = null;
+  private pullDistance = 0;
 
   constructor() {
     this.load();
-    // Sem o "puxar para recarregar" do navegador competindo com o nosso
-    document.documentElement.classList.add('no-overscroll');
-    inject(DestroyRef).onDestroy(() => document.documentElement.classList.remove('no-overscroll'));
+    // O toque move a tela direto, fora do Angular: cada movimento do dedo não revisa o app inteiro
+    this.zone.runOutsideAngular(() => {
+      const passive = { passive: true };
+      this.host.addEventListener('touchstart', (event) => this.onTouchStart(event), passive);
+      this.host.addEventListener('touchmove', (event) => this.onTouchMove(event), passive);
+      this.host.addEventListener('touchend', () => this.onTouchEnd(), passive);
+      this.host.addEventListener('touchcancel', () => this.onTouchEnd(), passive);
+    });
+  }
+
+  /** Voltou para o feed: atualiza por trás, sem mexer na posição de quem estava lendo. */
+  pageRestored(): void {
+    this.socialService.getFeed(undefined, PAGE_SIZE).subscribe({
+      next: (feed) => {
+        if (window.scrollY < 40) {
+          this.items.set(feed);
+          this.hasMore.set(feed.length === PAGE_SIZE);
+          return;
+        }
+        const fresh = new Map(feed.map((item) => [item.id, item]));
+        this.items.update((list) => list.map((item) => fresh.get(item.id) ?? item));
+      },
+      error: () => undefined,
+    });
   }
 
   protected load(): void {
@@ -74,51 +95,66 @@ export class FeedComponent {
     });
   }
 
-  private fetchFirstPage(done: () => void): void {
+  private fetchFirstPage(done: () => void, waitForNetwork = false): void {
     this.socialService.getFeed(undefined, PAGE_SIZE).subscribe({
       next: (feed) => {
         this.items.set(feed);
         this.hasMore.set(feed.length === PAGE_SIZE);
-        done();
+        if (!waitForNetwork) done();
       },
       error: () => {
         this.error.set(true);
         done();
+      },
+      complete: () => {
+        if (waitForNetwork) done();
       },
     });
   }
 
   // ---------- Puxar para atualizar ----------
 
-  protected onTouchStart(event: TouchEvent): void {
+  private onTouchStart(event: TouchEvent): void {
     this.pullStartY = window.scrollY <= 0 && !this.refreshing() ? event.touches[0].clientY : null;
   }
 
-  protected onTouchMove(event: TouchEvent): void {
+  private onTouchMove(event: TouchEvent): void {
     if (this.pullStartY === null) return;
     const distance = event.touches[0].clientY - this.pullStartY;
     // Resistência: o indicador anda menos que o dedo, como nos apps
-    this.pull.set(distance > 0 ? Math.min(110, distance * 0.5) : 0);
+    this.setPull(distance > 0 ? Math.min(110, distance * 0.5) : 0, false);
   }
 
-  protected onTouchEnd(): void {
+  private onTouchEnd(): void {
     if (this.pullStartY === null) return;
     this.pullStartY = null;
     // O indicador anda metade do dedo: soltar depois de puxar PULL_THRESHOLD px atualiza
-    if (this.pull() >= PULL_THRESHOLD / 2) {
-      this.refresh();
+    if (this.pullDistance >= PULL_THRESHOLD / 2) {
+      this.zone.run(() => this.refresh());
     } else {
-      this.pull.set(0);
+      this.setPull(0, true);
     }
   }
 
   protected refresh(): void {
     this.refreshing.set(true);
-    this.pull.set(48);
+    this.setPull(48, true);
+    // O indicador fica até chegar a resposta nova, não só a guardada no aparelho
     this.fetchFirstPage(() => {
       this.refreshing.set(false);
-      this.pull.set(0);
-    });
+      this.setPull(0, true);
+    }, true);
+  }
+
+  /** A tela desce com o dedo só com transform: nada é recalculado na página a cada movimento. */
+  private setPull(distance: number, animated: boolean): void {
+    this.pullDistance = distance;
+    const page = this.page().nativeElement;
+    page.style.transition = animated ? 'transform 220ms var(--ease-out-soft)' : 'none';
+    page.style.transform = distance ? `translate3d(0, ${distance}px, 0)` : '';
+    const indicator = this.pullIndicator().nativeElement;
+    indicator.style.opacity = String(Math.min(1, distance / 32));
+    indicator.firstElementChild?.setAttribute('style', `transform: rotate(${distance * 4}deg)`);
   }
 
   // ---------- Interações ----------

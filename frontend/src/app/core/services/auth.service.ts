@@ -1,12 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { Router } from '@angular/router';
+import { RouteReuseStrategy, Router } from '@angular/router';
 import { Observable, catchError, map } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { AuthCredentials, ProfileVisibility, RegisterPayload, User } from '../models';
 import { ToastService } from '../../shared/services/toast.service';
 import { toFriendlyError } from './api-error.util';
 import { offlineCache } from './offline-cache';
+import type { PageStackStrategy } from '../routing/page-stack.strategy';
 
 const TOKEN_KEY = 'taste.session.token';
 const USER_KEY = 'taste.session.user';
@@ -17,7 +18,7 @@ export interface ApiUser extends Omit<User, 'id' | 'bio'> {
   bio: string | null;
 }
 
-interface AuthResponse {
+export interface AuthResponse {
   token: string;
   user: ApiUser;
 }
@@ -47,6 +48,7 @@ export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
   private readonly toast = inject(ToastService);
+  private readonly pageStack = inject(RouteReuseStrategy) as PageStackStrategy;
   private readonly baseUrl = environment.apiUrl;
 
   private readonly currentUser = signal<User | null>(this.restoreSession());
@@ -85,6 +87,7 @@ export class AuthService {
     } catch {
       // armazenamento indisponível: nada a limpar
     }
+    this.pageStack.clear();
   }
 
   /** Chamado pelo interceptor quando o backend responde 401 (token inválido/expirado). */
@@ -117,7 +120,8 @@ export class AuthService {
     );
   }
 
-  private setSession(res: AuthResponse): User {
+  /** Abre a sessão com a resposta do backend (também usado pelo login com Google e Apple). */
+  setSession(res: AuthResponse): User {
     try {
       localStorage.setItem(TOKEN_KEY, res.token);
     } catch {

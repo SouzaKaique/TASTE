@@ -101,6 +101,15 @@ export class DiscoverComponent {
     inject(DestroyRef).onDestroy(() => clearTimeout(this.searchTimer));
     this.restaurantService.listAll().subscribe((list) => this.curated.set(list.filter((r) => r.source === 'curated')));
     this.loadPlaces();
+    this.loadPhotos();
+  }
+
+  /** Voltou para Descobrir: no topo mostra as novidades; lendo mais abaixo, nada muda de lugar. */
+  pageRestored(): void {
+    if (window.scrollY < 40) this.loadPhotos();
+  }
+
+  private loadPhotos(): void {
     this.socialService.explore(undefined, GRID_PAGE).subscribe({
       next: (items) => {
         this.photos.set(items);

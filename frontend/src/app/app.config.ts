@@ -1,11 +1,12 @@
 import { ApplicationConfig, ErrorHandler, LOCALE_ID, provideZoneChangeDetection } from '@angular/core';
 import { ReportingErrorHandler } from './core/services/error-reporting';
-import { NavigationError, provideRouter, withComponentInputBinding, withNavigationErrorHandler, withViewTransitions } from '@angular/router';
+import { NavigationError, PreloadAllModules, RouteReuseStrategy, provideRouter, withComponentInputBinding, withNavigationErrorHandler, withPreloading } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 
 import { routes } from './app.routes';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { offlineCacheInterceptor } from './core/interceptors/offline-cache.interceptor';
+import { PageStackStrategy } from './core/routing/page-stack.strategy';
 
 /**
  * Depois de uma nova publicação, uma aba aberta antes ainda aponta para os arquivos
@@ -30,15 +31,10 @@ export const appConfig: ApplicationConfig = {
     { provide: LOCALE_ID, useValue: 'pt-BR' },
     { provide: ErrorHandler, useClass: ReportingErrorHandler },
     provideZoneChangeDetection({ eventCoalescing: true }),
-    provideRouter(routes, withComponentInputBinding(), withNavigationErrorHandler(reloadOnStaleChunk), withViewTransitions({
-        skipInitialTransition: true,
-        // Navegar rápido cancela a animação anterior: isso é normal, não é erro
-        onViewTransitionCreated: ({ transition }) => {
-          transition.ready.catch(() => undefined);
-          transition.finished.catch(() => undefined);
-          transition.updateCallbackDone.catch(() => undefined);
-        },
-      })),
+    // Sem View Transitions: elas congelam os toques durante a troca e somam uma segunda animação
+    // ao gesto de voltar do iPhone. Pré-carregar deixa todas as telas prontas antes do primeiro toque.
+    provideRouter(routes, withComponentInputBinding(), withNavigationErrorHandler(reloadOnStaleChunk), withPreloading(PreloadAllModules)),
+    { provide: RouteReuseStrategy, useExisting: PageStackStrategy },
     provideHttpClient(withInterceptors([offlineCacheInterceptor, authInterceptor])),
   ],
 };

@@ -2,11 +2,14 @@ import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signa
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
+import { SessionService } from '../../core/services/session.service';
+import { RestorablePage } from '../../core/routing/page-stack.strategy';
 import { ExperienceService } from '../../core/services/experience.service';
 import { CollectionService } from '../../core/services/collection.service';
 import { SocialService } from '../../core/services/social.service';
 import { Collection, Experience, User } from '../../core/models';
 import { ToastService } from '../../shared/services/toast.service';
+import { ConfirmService } from '../../shared/services/confirm.service';
 import { FoodArtComponent } from '../../shared/components/food-art/food-art.component';
 import { AvatarComponent } from '../../shared/components/avatar/avatar.component';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
@@ -21,13 +24,15 @@ import { LoadingStateComponent } from '../../shared/components/loading-state/loa
   styleUrl: './profile.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProfileComponent {
+export class ProfileComponent implements RestorablePage {
   private readonly route = inject(ActivatedRoute);
   private readonly auth = inject(AuthService);
   private readonly experienceService = inject(ExperienceService);
   private readonly collectionService = inject(CollectionService);
   private readonly socialService = inject(SocialService);
   private readonly toast = inject(ToastService);
+  private readonly confirmService = inject(ConfirmService);
+  private readonly session = inject(SessionService);
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly currentUser = this.auth.user;
@@ -54,11 +59,27 @@ export class ProfileComponent {
     this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => this.load(params.get('username')));
   }
 
-  private load(username: string | null): void {
-    this.loading.set(true);
-    this.notFound.set(false);
-    this.experiences.set([]);
-    this.collections.set([]);
+  /** Voltou para o perfil: atualiza por trás, sem a tela de carregamento. */
+  pageRestored(): void {
+    this.load(this.route.snapshot.paramMap.get('username'), true);
+  }
+
+  protected async signOut(): Promise<void> {
+    const confirmed = await this.confirmService.ask({
+      title: 'Sair da conta?',
+      message: 'Para voltar, é só entrar de novo.',
+      confirmLabel: 'Sair',
+    });
+    if (confirmed) this.session.signOut();
+  }
+
+  private load(username: string | null, silent = false): void {
+    if (!silent) {
+      this.loading.set(true);
+      this.notFound.set(false);
+      this.experiences.set([]);
+      this.collections.set([]);
+    }
 
     const me = this.currentUser();
     if (!username || username === me?.username) {

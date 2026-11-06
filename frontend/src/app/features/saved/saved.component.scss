@@ -25,7 +25,6 @@
   display: flex;
   gap: var(--space-3);
   padding: var(--space-3);
-  animation: taste-rise 360ms var(--ease-out-soft, ease-out) both;
 
   &__media {
     flex-shrink: 0;

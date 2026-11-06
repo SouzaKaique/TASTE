@@ -57,6 +57,10 @@ export class DashboardComponent {
   );
 
   constructor() {
+    this.pageRestored();
+  }
+
+  pageRestored(): void {
     this.experienceService.list().subscribe((list) => {
       this.experiences.set(list);
       this.loading.set(false);

@@ -1,7 +1,7 @@
-<div class="container-narrow section-spacing">
+<div #page class="feed-page container-narrow section-spacing">
   <!-- Puxar para atualizar (celular) -->
-  <div class="pull" [style.height.px]="pull()" [class.is-refreshing]="refreshing()" aria-hidden="true">
-    <i class="bi bi-arrow-clockwise pull__icon" [style.transform]="'rotate(' + pull() * 4 + 'deg)'"></i>
+  <div #pullIndicator class="pull" [class.is-refreshing]="refreshing()" aria-hidden="true">
+    <i class="bi bi-arrow-clockwise pull__icon"></i>
   </div>
   <header class="page-header">
     <div>

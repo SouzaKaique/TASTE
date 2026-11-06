@@ -12,6 +12,8 @@
       <h1 class="auth-page__title">Que bom te ver de novo</h1>
       <p class="auth-page__subtitle">Entre para continuar seu diário gastronômico.</p>
 
+      <app-social-login></app-social-login>
+
       <form [formGroup]="form" (ngSubmit)="submit()" class="auth-page__form" novalidate>
         @if (errorMessage()) {
           <div class="alert alert-danger" role="alert">{{ errorMessage() }}</div>

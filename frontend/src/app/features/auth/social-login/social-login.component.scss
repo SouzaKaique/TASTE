@@ -1,0 +1,63 @@
+.social-login {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-top: var(--space-5);
+
+  &__terms {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: var(--fs-caption);
+    text-align: center;
+  }
+
+  &__or {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin: var(--space-3) 0 0;
+    color: var(--color-text-secondary);
+    font-size: var(--fs-caption);
+
+    &::before,
+    &::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--color-border);
+    }
+  }
+}
+
+// Mesmo tamanho e peso nos dois: Apple e Google pedem destaque igual entre as opções de login
+.social-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  width: 100%;
+  min-height: 46px;
+  padding: 0 var(--space-3);
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform var(--dur-fast) var(--ease-out-soft);
+
+  &:active:not(:disabled) { transform: scale(0.98); }
+  &:disabled { opacity: 0.6; cursor: default; }
+
+  &--google {
+    border-color: var(--color-border);
+    background: #fff;
+    color: #1f1f1f;
+  }
+
+  &--apple {
+    background: #000;
+    color: #fff;
+
+    i { font-size: 1.1rem; line-height: 1; }
+  }
+}

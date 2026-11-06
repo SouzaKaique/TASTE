@@ -20,6 +20,14 @@ services:
       # Endereco do site na Vercel, ex: https://taste.vercel.app (sem barra no final).
       - key: TASTE_CORS_ALLOWED_ORIGINS
         sync: false
+      # Login com Google e Apple (opcional): sem o ID, o botao daquele provedor nao aparece.
+      - key: TASTE_GOOGLE_CLIENT_ID
+        sync: false
+      - key: TASTE_APPLE_CLIENT_ID
+        sync: false
+      # Endereco publico deste backend, ex: https://taste-backend.onrender.com (sem barra no final).
+      - key: TASTE_PUBLIC_API_URL
+        sync: false
       # Segredo dos tokens de login: o Render gera um valor aleatorio e seguro.
       - key: TASTE_JWT_SECRET
         generateValue: true

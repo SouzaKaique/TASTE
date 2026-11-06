@@ -12,6 +12,8 @@
       <h1 class="auth-page__title">Crie sua conta</h1>
       <p class="auth-page__subtitle">Comece a construir seu diário de sabores. É gratuito.</p>
 
+      <app-social-login></app-social-login>
+
       <form [formGroup]="form" (ngSubmit)="submit()" class="auth-page__form" novalidate>
         @if (errorMessage()) {
           <div class="alert alert-danger" role="alert">{{ errorMessage() }}</div>

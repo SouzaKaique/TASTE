@@ -59,14 +59,13 @@
     </a>
   </header>
 
-  <app-swipe-back></app-swipe-back>
   @if (offline()) {
     <div class="offline-bar" role="status">
       <i class="bi bi-wifi-off" aria-hidden="true"></i> Sem internet. Mostrando o que já estava salvo.
     </div>
   }
-  <main class="app-shell__content">
-    <router-outlet></router-outlet>
+  <main #content class="app-shell__content">
+    <router-outlet #outlet="outlet" (activate)="onPageOpened(outlet)" (attach)="onPageRestored($event)"></router-outlet>
   </main>
 
   <app-bottom-nav></app-bottom-nav>

@@ -95,12 +95,17 @@
     &.is-active { color: var(--taste-wine-800); }
   }
 
+  // Coração pula só no toque (ver tapLike)
+  &__icon-btn.is-popping i {
+    display: inline-block;
+    animation: taste-pop 380ms var(--ease-spring, ease-out);
+  }
+
   &__rating { margin-left: auto; }
 
   &__save {
     font-size: 1.3rem;
     &.is-active { color: var(--color-brand); }
-    &.is-active i { animation: taste-pop 380ms var(--ease-spring, ease-out); }
   }
 
   &__likes {

@@ -21,6 +21,9 @@ $font-family-base: $font-family-sans-serif;
 $link-color: $primary;
 $link-hover-color: darken($primary, 8%);
 
+// Rolagem pelo código é instantânea: a suave do Bootstrap animava toda volta para a posição guardada
+$enable-smooth-scroll: false;
+
 $border-radius: 10px;
 $border-radius-sm: 6px;
 $border-radius-lg: 16px;

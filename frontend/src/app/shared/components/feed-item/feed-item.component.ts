@@ -51,6 +51,7 @@ export class FeedItemComponent {
     return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
   }
   protected readonly burst = signal(false);
+  protected readonly likePop = signal(false);
   private burstTimer?: ReturnType<typeof setTimeout>;
 
   private lastTapAt = 0;
@@ -89,6 +90,12 @@ export class FeedItemComponent {
       event.preventDefault();
     }
     this.lastTouchEndAt = now;
+  }
+
+  /** Coração só "pula" no toque: animação fixa no CSS recomeçaria toda vez que a tela reaparece. */
+  protected tapLike(): void {
+    this.likePop.set(!this.item().likedByMe);
+    this.toggleLike.emit(this.item().id);
   }
 
   /** Duplo clique com o mouse (computador). Ignorado logo depois de toques, para não curtir duas vezes. */

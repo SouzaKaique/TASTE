@@ -11,9 +11,8 @@
     right: 0;
     height: calc(var(--bottomnav-height) + env(safe-area-inset-bottom));
     padding-bottom: env(safe-area-inset-bottom);
-    background: rgba(61, 21, 33, 0.92); // vinho translúcido, como as barras dos apps atuais
-    backdrop-filter: saturate(160%) blur(14px);
-    -webkit-backdrop-filter: saturate(160%) blur(14px);
+    // Vinho sólido: desfoque em barra fixa é recalculado a cada quadro da rolagem no iPhone
+    background: rgb(61, 21, 33);
     border-top: 1px solid var(--color-border-on-bg);
     z-index: 30;
   }

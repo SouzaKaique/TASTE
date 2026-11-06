@@ -22,26 +22,6 @@
   to { opacity: 1; transform: none; }
 }
 
-// Troca de página: o conteúdo some e o novo entra subindo um pouco
-.app-shell__content { view-transition-name: page; }
-
-::view-transition-old(page) {
-  animation: 140ms var(--ease-standard) both taste-page-out;
-}
-
-::view-transition-new(page) {
-  animation: 280ms var(--ease-out-soft) both taste-page-in;
-}
-
-// O resto da tela (menu, barra inferior) fica parado
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation: none;
-}
-
-@keyframes taste-page-out { to { opacity: 0; } }
-@keyframes taste-page-in { from { opacity: 0; transform: translateY(8px); } }
-
 // Botões afundam levemente ao toque
 .btn {
   transition: transform var(--dur-fast) var(--ease-out-soft),
@@ -53,16 +33,11 @@
   &:active:not(:disabled) { transform: scale(0.97); }
 }
 
-// Cards e itens de lista entram em cascata ao carregar
+// Telas ficam guardadas vivas e reaparecem na hora: uma animação CSS aqui recomeçaria a cada volta,
+// por isso nada de entrada automática em cards e listas (é o que parecia "recarregar").
 app-feed-item,
-app-experience-card,
-.notification-list > * {
+app-experience-card {
   display: block;
-  animation: taste-rise 420ms var(--ease-out-soft) both;
-
-  @for $i from 1 through 8 {
-    &:nth-child(#{$i}) { animation-delay: #{($i - 1) * 45}ms; }
-  }
 }
 
 // Toque com cara de app: sem o flash cinza do navegador no iPhone,
@@ -86,26 +61,11 @@ a.surface-card,
   transition: box-shadow 260ms var(--ease-out-soft), transform 260ms var(--ease-out-soft);
 }
 
-// Coração "pula" ao curtir
-.bi-heart-fill {
-  display: inline-block;
-  animation: taste-pop 380ms var(--ease-spring);
-}
-
 // Campos ganham a borda de foco com suavidade
 .form-control,
 .form-select {
   transition: border-color var(--dur-medium) var(--ease-standard),
               box-shadow var(--dur-medium) var(--ease-standard);
-}
-
-// Imagens aparecem com um fade curto
-img[loading='lazy'] {
-  animation: taste-fade 360ms var(--ease-out-soft) both;
-}
-
-@keyframes taste-fade {
-  from { opacity: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -115,11 +75,6 @@ img[loading='lazy'] {
     animation-duration: 1ms !important;
     animation-delay: 0ms !important;
     transition-duration: 1ms !important;
-  }
-
-  ::view-transition-old(page),
-  ::view-transition-new(page) {
-    animation: none;
   }
 }
 

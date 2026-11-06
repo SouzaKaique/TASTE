@@ -96,6 +96,10 @@ export class ExperienceListComponent {
 
   protected load(): void {
     this.loading.set(true);
+    this.pageRestored();
+  }
+
+  pageRestored(): void {
     this.experienceService.list().subscribe((list) => {
       this.experiences.set(list);
       this.loading.set(false);

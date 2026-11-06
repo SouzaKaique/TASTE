@@ -19,6 +19,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByInviteCode(String inviteCode);
 
+    Optional<User> findByGoogleSub(String googleSub);
+
+    Optional<User> findByAppleSub(String appleSub);
+
     boolean existsByInviteCode(String inviteCode);
 
     /** Busca por username ou nome de exibicao, sem incluir o proprio usuario. */

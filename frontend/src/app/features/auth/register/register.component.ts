@@ -9,6 +9,7 @@ import { ServerStatusService } from '../../../core/services/server-status.servic
 import { ToastService } from '../../../shared/services/toast.service';
 import { LogoComponent } from '../../../shared/components/logo/logo.component';
 import { AuthAsideComponent } from '../auth-aside/auth-aside.component';
+import { SocialLoginComponent } from '../social-login/social-login.component';
 
 function passwordsMatchValidator(control: AbstractControl): ValidationErrors | null {
   const password = control.get('password')?.value;
@@ -19,7 +20,7 @@ function passwordsMatchValidator(control: AbstractControl): ValidationErrors | n
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, LogoComponent, AuthAsideComponent],
+  imports: [ReactiveFormsModule, RouterLink, LogoComponent, AuthAsideComponent, SocialLoginComponent],
   templateUrl: './register.component.html',
   styleUrl: '../auth.shared.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

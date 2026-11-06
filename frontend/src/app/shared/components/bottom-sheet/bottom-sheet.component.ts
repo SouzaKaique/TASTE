@@ -1,15 +1,20 @@
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   ElementRef,
   OnDestroy,
   effect,
+  inject,
   input,
   model,
   signal,
   viewChild,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { NavigationStart, Router } from '@angular/router';
+import { filter } from 'rxjs';
 
 let sheetId = 0;
 
@@ -88,6 +93,22 @@ export class BottomSheetComponent implements AfterViewInit, OnDestroy {
       if (this.open()) this.show();
       else if (this.visible()) this.hide();
     });
+
+    // A tela de baixo fica guardada viva e o painel mora no <body>: sem isto ele ficaria sobre a próxima tela
+    const changes = inject(ChangeDetectorRef);
+    inject(Router)
+      .events.pipe(filter((e) => e instanceof NavigationStart), takeUntilDestroyed())
+      .subscribe(() => {
+        if (!this.visible()) return;
+        clearTimeout(this.closeTimer);
+        this.open.set(false);
+        this.visible.set(false);
+        this.closing.set(false);
+        this.dragY.set(0);
+        changes.detectChanges();
+        // Depois de atualizar a tela: a trava só sai quando nenhum painel consta como aberto
+        this.unlockScroll();
+      });
   }
 
   ngAfterViewInit(): void {

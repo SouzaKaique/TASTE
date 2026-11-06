@@ -32,9 +32,11 @@
       type="button"
       class="feed-item__icon-btn"
       [class.is-active]="item().likedByMe"
+      [class.is-popping]="likePop()"
       [attr.aria-pressed]="item().likedByMe"
       [attr.aria-label]="(item().likedByMe ? 'Descurtir' : 'Curtir') + ' (' + item().likesCount + ' curtidas)'"
-      (click)="toggleLike.emit(item().id)"
+      (click)="tapLike()"
+      (animationend)="likePop.set(false)"
     >
       <i class="bi" [class.bi-heart-fill]="item().likedByMe" [class.bi-heart]="!item().likedByMe" aria-hidden="true"></i>
     </button>

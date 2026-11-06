@@ -7,7 +7,9 @@ import java.time.Instant;
 @Entity
 @Table(name = "app_user", uniqueConstraints = {
         @UniqueConstraint(name = "uk_user_email", columnNames = "email"),
-        @UniqueConstraint(name = "uk_user_username", columnNames = "username")
+        @UniqueConstraint(name = "uk_user_username", columnNames = "username"),
+        @UniqueConstraint(name = "uk_user_google_sub", columnNames = "google_sub"),
+        @UniqueConstraint(name = "uk_user_apple_sub", columnNames = "apple_sub")
 })
 public class User {
 
@@ -24,8 +26,16 @@ public class User {
     @Column(nullable = false)
     private String email;
 
-    @Column(nullable = false)
+    /** Vazio em contas criadas pelo Google ou pela Apple. */
     private String passwordHash;
+
+    /** Identificador fixo da pessoa no Google (o e-mail dela pode mudar, este nao). */
+    @Column(name = "google_sub")
+    private String googleSub;
+
+    /** Identificador fixo da pessoa na Apple. */
+    @Column(name = "apple_sub")
+    private String appleSub;
 
     @Column(length = 2000)
     private String bio;
@@ -46,6 +56,22 @@ public class User {
     private String inviteCode;
 
     public User() {
+    }
+
+    public String getGoogleSub() {
+        return googleSub;
+    }
+
+    public void setGoogleSub(String googleSub) {
+        this.googleSub = googleSub;
+    }
+
+    public String getAppleSub() {
+        return appleSub;
+    }
+
+    public void setAppleSub(String appleSub) {
+        this.appleSub = appleSub;
     }
 
     public Long getId() {
